@@ -357,17 +357,19 @@ export const ReadingJournalSection: React.FC = () => {
                           className="w-full h-full object-cover grayscale-[15%] contrast-[105%]"
                           referrerPolicy="no-referrer"
                         />
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setActiveReplaceReview(review);
-                          }}
-                          title="Replace Cover Photo"
-                          className="absolute inset-0 bg-black/60 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center text-white cursor-pointer"
-                        >
-                          <Camera size={14} />
-                        </button>
+                        {isAdminUnlocked && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveReplaceReview(review);
+                            }}
+                            title="Replace Cover Photo"
+                            className="absolute inset-0 bg-black/60 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center text-white cursor-pointer"
+                          >
+                            <Camera size={14} />
+                          </button>
+                        )}
                       </div>
 
                       <div className="flex-1 min-w-0">

@@ -247,45 +247,51 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
                   referrerPolicy="no-referrer"
                 />
                 
-                {/* Quick Hover / Click Replace Overlay */}
-                <div 
-                  onClick={() => setIsQuickImageOpen(true)}
-                  className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 cursor-pointer text-white text-center"
-                >
-                  <Camera size={24} className="mb-1 text-[#e8e2d8]" />
-                  <span className="font-sans text-xs uppercase font-black tracking-wider">
-                    Replace Cover Image
-                  </span>
-                  <span className="font-mono text-[9px] text-[#d4cfc7] mt-1">
-                    Upload file or paste URL
-                  </span>
-                </div>
+                {/* Quick Hover / Click Replace Overlay - only for unlocked admin */}
+                {isAdminUnlocked && (
+                  <div 
+                    onClick={() => setIsQuickImageOpen(true)}
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-3 cursor-pointer text-white text-center"
+                  >
+                    <Camera size={24} className="mb-1 text-[#e8e2d8]" />
+                    <span className="font-sans text-xs uppercase font-black tracking-wider">
+                      Replace Cover Image
+                    </span>
+                    <span className="font-mono text-[9px] text-[#d4cfc7] mt-1">
+                      Upload file or paste URL
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between pt-1.5 border-t border-black mt-1">
                 <div className="font-mono text-[10px] uppercase tracking-widest text-[#1a1a1a] font-bold">
                   EVIDENCE ITEM #{review.caseNumber}-A
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setIsQuickImageOpen(true)}
-                  className="font-sans text-[9px] font-bold uppercase text-[#8b0000] hover:underline flex items-center gap-0.5"
-                  title="Change image"
-                >
-                  <Camera size={10} /> Change
-                </button>
+                {isAdminUnlocked && (
+                  <button
+                    type="button"
+                    onClick={() => setIsQuickImageOpen(true)}
+                    className="font-sans text-[9px] font-bold uppercase text-[#8b0000] hover:underline flex items-center gap-0.5"
+                    title="Change image"
+                  >
+                    <Camera size={10} /> Change
+                  </button>
+                )}
               </div>
             </div>
 
-            {/* Quick Change Cover Button */}
-            <button
-              type="button"
-              onClick={() => setIsQuickImageOpen(true)}
-              className="mb-2 bg-[#f5f2ed] hover:bg-black hover:text-white text-[#1a1a1a] border border-black px-3 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
-            >
-              <Camera size={11} />
-              <span>Replace Dossier Photo</span>
-            </button>
+            {/* Quick Change Cover Button - only for unlocked admin */}
+            {isAdminUnlocked && (
+              <button
+                type="button"
+                onClick={() => setIsQuickImageOpen(true)}
+                className="mb-2 bg-[#f5f2ed] hover:bg-black hover:text-white text-[#1a1a1a] border border-black px-3 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+              >
+                <Camera size={11} />
+                <span>Replace Dossier Photo</span>
+              </button>
+            )}
 
             {/* Recommended for Tag */}
             {review.recommendedFor && (

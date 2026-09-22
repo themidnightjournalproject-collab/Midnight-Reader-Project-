@@ -22,6 +22,7 @@ import { StatsEditorModal } from './components/modals/StatsEditorModal';
 import { TimelineEditorModal } from './components/modals/TimelineEditorModal';
 import { IntelligenceEditorModal } from './components/modals/IntelligenceEditorModal';
 import { CurrentlyReadingModal } from './components/modals/CurrentlyReadingModal';
+import { AboutEditorModal } from './components/modals/AboutEditorModal';
 import { AdminAuthModal } from './components/modals/AdminAuthModal';
 import { Footer } from './components/Footer';
 
@@ -108,6 +109,7 @@ export default function App() {
         <TimelineEditorModal />
         <IntelligenceEditorModal />
         <CurrentlyReadingModal />
+        <AboutEditorModal />
         <AdminAuthModal />
 
         <Footer />

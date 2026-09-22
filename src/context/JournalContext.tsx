@@ -10,7 +10,8 @@ import {
   HeroConfig,
   TimelineMilestone,
   TimelineStats,
-  IntelligenceStats
+  IntelligenceStats,
+  AboutConfig
 } from '../types';
 import { 
   INITIAL_REVIEWS, 
@@ -21,7 +22,8 @@ import {
   INITIAL_HERO_CONFIG,
   INITIAL_TIMELINE_STATS,
   INITIAL_TIMELINE_MILESTONES,
-  INITIAL_INTELLIGENCE_STATS
+  INITIAL_INTELLIGENCE_STATS,
+  INITIAL_ABOUT_CONFIG
 } from '../data/initialData';
 
 export type ActiveView = 
@@ -48,6 +50,7 @@ interface JournalContextType {
   timelineStats: TimelineStats;
   timelineMilestones: TimelineMilestone[];
   intelligenceStats: IntelligenceStats;
+  aboutConfig: AboutConfig;
   selectedReview: BookReview | null;
   selectedNonFictionBook: NonFictionBook | null;
   activeView: ActiveView;
@@ -65,6 +68,7 @@ interface JournalContextType {
   isIntelligenceEditorOpen: boolean;
   isCurrentlyReadingModalOpen: boolean;
   isEditHeroModalOpen: boolean;
+  isEditAboutModalOpen: boolean;
   editingReview: BookReview | null;
   editingNonFictionBook: NonFictionBook | null;
   
@@ -108,6 +112,8 @@ interface JournalContextType {
 
   // Hero Section Editor
   updateHeroConfig: (config: Partial<HeroConfig>) => void;
+  // About Section Editor
+  updateAboutConfig: (config: Partial<AboutConfig>) => void;
 
   updateCurrentlyReading: (cr: Partial<CurrentlyReading>) => void;
   updateStats: (st: Partial<ReadingStats>) => void;
@@ -131,6 +137,7 @@ interface JournalContextType {
   setIsIntelligenceEditorOpen: (open: boolean) => void;
   setIsCurrentlyReadingModalOpen: (open: boolean) => void;
   setIsEditHeroModalOpen: (open: boolean) => void;
+  setIsEditAboutModalOpen: (open: boolean) => void;
   
   // Interactivity Actions
   toggleLikePost: (reviewId: string) => void;
@@ -216,6 +223,7 @@ const STORAGE_KEYS = {
   TIMELINE_STATS: 'midnight_reader_timeline_stats_v4',
   TIMELINE_MILESTONES: 'midnight_reader_timeline_milestones_v4',
   INTELLIGENCE_STATS: 'midnight_reader_intelligence_stats_v4',
+  ABOUT_CONFIG: 'midnight_reader_about_config_v4',
   CUSTOM_THRILLER_TROPES: 'midnight_reader_custom_thriller_tropes_v4',
   CUSTOM_RESEARCH_TROPES: 'midnight_reader_custom_research_tropes_v4',
 };
@@ -338,6 +346,15 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   });
 
+  const [aboutConfig, setAboutConfig] = useState<AboutConfig>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.ABOUT_CONFIG);
+      return saved ? JSON.parse(saved) : INITIAL_ABOUT_CONFIG;
+    } catch {
+      return INITIAL_ABOUT_CONFIG;
+    }
+  });
+
   const [selectedReview, setSelectedReview] = useState<BookReview | null>(null);
   const [selectedNonFictionBook, setSelectedNonFictionBook] = useState<NonFictionBook | null>(null);
   const [activeView, setActiveView] = useState<ActiveView>('home');
@@ -423,13 +440,15 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isIntelligenceEditorOpen, setIsIntelligenceEditorOpen] = useState(false);
   const [isCurrentlyReadingModalOpen, setIsCurrentlyReadingModalOpen] = useState(false);
   const [isEditHeroModalOpen, setIsEditHeroModalOpen] = useState(false);
+  const [isEditAboutModalOpen, setIsEditAboutModalOpen] = useState(false);
   const [editingReview, setEditingReview] = useState<BookReview | null>(null);
   const [editingNonFictionBook, setEditingNonFictionBook] = useState<NonFictionBook | null>(null);
 
-  // Chief Investigator / Admin Editor clearance
+  // Chief Investigator / Admin Editor clearance (starts locked on every fresh tab/window open)
   const [isAdminUnlocked, setIsAdminUnlocked] = useState<boolean>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.ADMIN_UNLOCKED);
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_UNLOCKED);
+      const saved = sessionStorage.getItem(STORAGE_KEYS.ADMIN_UNLOCKED);
       return saved ? JSON.parse(saved) : false;
     } catch {
       return false;
@@ -506,6 +525,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     timelineStats?: TimelineStats;
     timelineMilestones?: TimelineMilestone[];
     intelligenceStats?: IntelligenceStats;
+    aboutConfig?: AboutConfig;
     postLikes?: Record<string, number>;
     readerPollVotes?: Record<string, Record<string, number>>;
     witnessComments?: Record<string, WitnessComment[]>;
@@ -516,6 +536,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         reviews,
         nonFictionBooks,
         heroConfig,
+        aboutConfig,
         currentlyReading,
         stats,
         timelineStats,
@@ -538,7 +559,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (e) {
       console.warn('Server sync skipped/failed (running in client-only mode or dev restart)', e);
     }
-  }, [adminPasscode, reviews, nonFictionBooks, heroConfig, currentlyReading, stats, timelineStats, timelineMilestones, intelligenceStats, postLikes, readerPollVotes, witnessComments, userTheories]);
+  }, [adminPasscode, reviews, nonFictionBooks, heroConfig, aboutConfig, currentlyReading, stats, timelineStats, timelineMilestones, intelligenceStats, postLikes, readerPollVotes, witnessComments, userTheories]);
 
   // Initial fetch from server to get persistent server records
   useEffect(() => {
@@ -558,6 +579,9 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
         if (data.heroConfig) {
           setHeroConfig(data.heroConfig);
+        }
+        if (data.aboutConfig) {
+          setAboutConfig(data.aboutConfig);
         }
         if (data.currentlyReading) {
           setCurrentlyReading(data.currentlyReading);
@@ -719,7 +743,16 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEYS.ADMIN_UNLOCKED, JSON.stringify(isAdminUnlocked));
+      localStorage.setItem(STORAGE_KEYS.ABOUT_CONFIG, JSON.stringify(aboutConfig));
+    } catch (e) {
+      console.warn('Storage save error', e);
+    }
+  }, [aboutConfig]);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STORAGE_KEYS.ADMIN_UNLOCKED, JSON.stringify(isAdminUnlocked));
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_UNLOCKED);
     } catch (e) {
       console.warn('Storage save error', e);
     }
@@ -765,6 +798,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   const lockAdmin = () => {
     setIsAdminUnlocked(false);
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.ADMIN_UNLOCKED);
+      localStorage.removeItem(STORAGE_KEYS.ADMIN_UNLOCKED);
+    } catch (e) {
+      console.warn('Storage clear error', e);
+    }
   };
 
   // Change Admin Passcode - updates server & initialData.ts permanently
@@ -1173,6 +1212,13 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     syncWithServer({ heroConfig: updated });
   };
 
+  // About Section Editor
+  const updateAboutConfig = (config: Partial<AboutConfig>) => {
+    const updated = { ...aboutConfig, ...config };
+    setAboutConfig(updated);
+    syncWithServer({ aboutConfig: updated });
+  };
+
   // Redeployment & Data Export / Import utilities
   const exportDataAsJSON = (): string => {
     const exportBundle = {
@@ -1181,6 +1227,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       reviews,
       nonFictionBooks,
       heroConfig,
+      aboutConfig,
       currentlyReading,
       stats,
       timelineStats,
@@ -1203,6 +1250,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       setReviews(parsed.reviews);
       if (parsed.nonFictionBooks && Array.isArray(parsed.nonFictionBooks)) setNonFictionBooks(parsed.nonFictionBooks);
       if (parsed.heroConfig) setHeroConfig(parsed.heroConfig);
+      if (parsed.aboutConfig) setAboutConfig(parsed.aboutConfig);
       if (parsed.currentlyReading) setCurrentlyReading(parsed.currentlyReading);
       if (parsed.stats) setStats(parsed.stats);
       if (parsed.timelineStats) setTimelineStats(parsed.timelineStats);
@@ -1217,6 +1265,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         reviews: parsed.reviews,
         nonFictionBooks: parsed.nonFictionBooks || nonFictionBooks,
         heroConfig: parsed.heroConfig || heroConfig,
+        aboutConfig: parsed.aboutConfig || aboutConfig,
         currentlyReading: parsed.currentlyReading,
         stats: parsed.stats,
         timelineStats: parsed.timelineStats || timelineStats,
@@ -1228,18 +1277,36 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         userTheories: parsed.userTheories,
       });
 
-      return { success: true, message: `Successfully restored ${parsed.reviews.length} thriller case files, ${parsed.nonFictionBooks?.length || 0} field research books, hero config, and metrics!` };
+      return { success: true, message: `Successfully restored ${parsed.reviews.length} thriller case files, ${parsed.nonFictionBooks?.length || 0} field research books, hero config, about config, and metrics!` };
     } catch (e: any) {
       return { success: false, message: `Failed to parse JSON file: ${e.message}` };
     }
   };
 
   const generateSeedCode = (): string => {
-    return `import { BookReview, CurrentlyReading, ReadingStats, NonFictionBook, HeroConfig } from '../types';
+    return `import { 
+  BookReview, 
+  CurrentlyReading, 
+  ReadingStats, 
+  NonFictionBook, 
+  HeroConfig,
+  TimelineMilestone,
+  TimelineStats,
+  IntelligenceStats,
+  AboutConfig
+} from '../types';
 
 export const INITIAL_ADMIN_PASSCODE: string = ${JSON.stringify(adminPasscode || 'detective')};
 
+export const INITIAL_TIMELINE_STATS: TimelineStats = ${JSON.stringify(timelineStats || INITIAL_TIMELINE_STATS, null, 2)};
+
+export const INITIAL_TIMELINE_MILESTONES: TimelineMilestone[] = ${JSON.stringify(timelineMilestones || INITIAL_TIMELINE_MILESTONES, null, 2)};
+
+export const INITIAL_INTELLIGENCE_STATS: IntelligenceStats = ${JSON.stringify(intelligenceStats || INITIAL_INTELLIGENCE_STATS, null, 2)};
+
 export const INITIAL_HERO_CONFIG: HeroConfig = ${JSON.stringify(heroConfig, null, 2)};
+
+export const INITIAL_ABOUT_CONFIG: AboutConfig = ${JSON.stringify(aboutConfig, null, 2)};
 
 export const INITIAL_CURRENTLY_READING: CurrentlyReading = ${JSON.stringify(currentlyReading, null, 2)};
 
@@ -1256,6 +1323,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
       setReviews(INITIAL_REVIEWS);
       setNonFictionBooks(INITIAL_NON_FICTION_BOOKS);
       setHeroConfig(INITIAL_HERO_CONFIG);
+      setAboutConfig(INITIAL_ABOUT_CONFIG);
       setCurrentlyReading(INITIAL_CURRENTLY_READING);
       setStats(INITIAL_STATS);
       setTimelineStats(INITIAL_TIMELINE_STATS);
@@ -1277,6 +1345,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         reviews: INITIAL_REVIEWS,
         nonFictionBooks: INITIAL_NON_FICTION_BOOKS,
         heroConfig: INITIAL_HERO_CONFIG,
+        aboutConfig: INITIAL_ABOUT_CONFIG,
         currentlyReading: INITIAL_CURRENTLY_READING,
         stats: INITIAL_STATS,
         timelineStats: INITIAL_TIMELINE_STATS,
@@ -1296,6 +1365,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         reviews,
         nonFictionBooks,
         heroConfig,
+        aboutConfig,
         currentlyReading,
         stats,
         timelineStats,
@@ -1318,6 +1388,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         isIntelligenceEditorOpen,
         isCurrentlyReadingModalOpen,
         isEditHeroModalOpen,
+        isEditAboutModalOpen,
         editingReview,
         editingNonFictionBook,
         isAdminUnlocked,
@@ -1351,6 +1422,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         toggleLikeNonFictionBook,
         addNonFictionScratchpadNote,
         updateHeroConfig,
+        updateAboutConfig,
         updateCurrentlyReading,
         updateStats,
         updateTimelineStats,
@@ -1373,6 +1445,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         setIsIntelligenceEditorOpen,
         setIsCurrentlyReadingModalOpen,
         setIsEditHeroModalOpen,
+        setIsEditAboutModalOpen,
         toggleLikePost,
         voteReaderPoll,
         addWitnessComment,

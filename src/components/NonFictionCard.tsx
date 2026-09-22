@@ -23,7 +23,8 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
     setEditingNonFictionBook, 
     setIsNewNonFictionModalOpen, 
     toggleLikeNonFictionBook,
-    addNonFictionScratchpadNote 
+    addNonFictionScratchpadNote,
+    isAdminUnlocked
   } = useJournal();
 
   const [isQuickNoteOpen, setIsQuickNoteOpen] = useState(false);
@@ -83,13 +84,15 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
           </div>
 
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={handleEdit}
-              className="p-1 text-gray-400 hover:text-black border border-transparent hover:border-black transition-colors"
-              title="Edit dossier"
-            >
-              <Edit3 size={13} />
-            </button>
+            {isAdminUnlocked && (
+              <button
+                onClick={handleEdit}
+                className="p-1 text-gray-400 hover:text-black border border-transparent hover:border-black transition-colors"
+                title="Edit dossier"
+              >
+                <Edit3 size={13} />
+              </button>
+            )}
             <button
               onClick={handleLike}
               className="flex items-center gap-1 text-[11px] font-bold font-mono px-2 py-0.5 bg-[#fcfaf2] border border-black hover:bg-red-50 transition-colors"

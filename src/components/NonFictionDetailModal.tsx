@@ -32,7 +32,8 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
     setIsNewNonFictionModalOpen, 
     deleteNonFictionBook, 
     toggleLikeNonFictionBook,
-    addNonFictionScratchpadNote
+    addNonFictionScratchpadNote,
+    isAdminUnlocked
   } = useJournal();
 
   const [scratchpadInput, setScratchpadInput] = useState('');
@@ -122,22 +123,26 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               <span>{book.likes || 1}</span>
             </button>
 
-            <button
-              onClick={handleEdit}
-              className="flex items-center gap-1.5 px-3 py-1 bg-white border border-black text-xs font-bold uppercase hover:bg-gray-100 transition-colors cursor-pointer"
-              title="Edit all dossier data"
-            >
-              <Edit3 size={13} />
-              <span>Edit Dossier</span>
-            </button>
+            {isAdminUnlocked && (
+              <>
+                <button
+                  onClick={handleEdit}
+                  className="flex items-center gap-1.5 px-3 py-1 bg-white border border-black text-xs font-bold uppercase hover:bg-gray-100 transition-colors cursor-pointer"
+                  title="Edit all dossier data"
+                >
+                  <Edit3 size={13} />
+                  <span>Edit Dossier</span>
+                </button>
 
-            <button
-              onClick={handleDelete}
-              className="p-1.5 bg-white border border-black text-xs text-gray-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
-              title="Delete dossier"
-            >
-              <Trash2 size={15} />
-            </button>
+                <button
+                  onClick={handleDelete}
+                  className="p-1.5 bg-white border border-black text-xs text-gray-500 hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
+                  title="Delete dossier"
+                >
+                  <Trash2 size={15} />
+                </button>
+              </>
+            )}
 
             <button
               onClick={onClose}

@@ -11,6 +11,9 @@ export const Masthead: React.FC = () => {
     setIsNewReviewModalOpen,
     setIsNewNonFictionModalOpen,
     setIsEditHeroModalOpen,
+    setIsIntelligenceEditorOpen,
+    setIsEditAboutModalOpen,
+    setIsTimelineEditorOpen,
     setSelectedReview,
     setSelectedNonFictionBook,
     reviews,
@@ -105,6 +108,25 @@ export const Masthead: React.FC = () => {
               className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
             >
               <span>Edit Dispatch</span>
+            </button>
+            <button
+              onClick={() => setIsIntelligenceEditorOpen(true)}
+              className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
+            >
+              <BarChart2 size={11} className="text-[#8b0000]" />
+              <span>Edit Impact & Titles</span>
+            </button>
+            <button
+              onClick={() => setIsEditAboutModalOpen(true)}
+              className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
+            >
+              <span>Edit About</span>
+            </button>
+            <button
+              onClick={() => setIsTimelineEditorOpen(true)}
+              className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
+            >
+              <span>Edit Timeline</span>
             </button>
             <button
               onClick={() => handleNavClick('manage-books')}

@@ -248,6 +248,27 @@ export interface IntelligenceStats {
   bureauTitle: string;
   headline: string;
   dispatchNote: string;
+  kpiSectionTitle?: string;
+  leaderboardTitle?: string;
+  breakdownTableTitle?: string;
+  testimoniesTitle?: string;
+  card1Title?: string;
+  card1Subtitle?: string;
+  card2Title?: string;
+  card2Subtitle?: string;
+  card3Title?: string;
+  card3Subtitle?: string;
+  card4Title?: string;
+  card4Subtitle?: string;
+  tableColRef?: string;
+  tableColTitle?: string;
+  tableColGenre?: string;
+  tableColScore?: string;
+  tableColEndorsements?: string;
+  tableColPollVotes?: string;
+  tableColSolved?: string;
+  tableColNotes?: string;
+  tableColActions?: string;
   overrideLikes?: number | null;
   overridePollVotes?: number | null;
   overrideComments?: number | null;
@@ -256,6 +277,29 @@ export interface IntelligenceStats {
   customHighlightValue?: string;
   featuredQuoteAuthor?: string;
   featuredQuoteText?: string;
+}
+
+export interface AboutRule {
+  number: number;
+  title: string;
+  description: string;
+}
+
+export interface AboutConfig {
+  headerSubtitle: string;
+  headerBadge: string;
+  pageTitle: string;
+  curatorPhoto: string;
+  photoStamp: string;
+  classification: string;
+  obsession: string;
+  featuredQuote: string;
+  bioParagraph1: string;
+  bioParagraph2: string;
+  bioParagraph3: string;
+  rulesHeading: string;
+  rules: AboutRule[];
+  finalNote: string;
 }
 
 export interface UserTheorySubmission {

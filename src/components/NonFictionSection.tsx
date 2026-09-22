@@ -25,7 +25,8 @@ export const NonFictionSection: React.FC = () => {
   const { 
     nonFictionBooks, 
     setIsNewNonFictionModalOpen, 
-    setEditingNonFictionBook 
+    setEditingNonFictionBook,
+    isAdminUnlocked
   } = useJournal();
 
   const [selectedGenreFilter, setSelectedGenreFilter] = useState<OtherGenre | 'All'>('All');
@@ -100,15 +101,17 @@ export const NonFictionSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Quick Action to add non-fiction book */}
-          <button
-            id="btn-log-non-fiction"
-            onClick={handleOpenNewModal}
-            className="flex items-center gap-2 bg-black hover:bg-[#8b0000] text-white px-5 py-2.5 text-xs font-sans font-bold uppercase tracking-widest transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
-          >
-            <Plus size={15} />
-            <span>Log Research Dossier</span>
-          </button>
+          {/* Quick Action to add non-fiction book - only for unlocked admin */}
+          {isAdminUnlocked && (
+            <button
+              id="btn-log-non-fiction"
+              onClick={handleOpenNewModal}
+              className="flex items-center gap-2 bg-black hover:bg-[#8b0000] text-white px-5 py-2.5 text-xs font-sans font-bold uppercase tracking-widest transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+            >
+              <Plus size={15} />
+              <span>Log Research Dossier</span>
+            </button>
+          )}
         </div>
       </div>
 

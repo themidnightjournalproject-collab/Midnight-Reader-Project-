@@ -13,10 +13,11 @@ import {
   INITIAL_HERO_CONFIG,
   INITIAL_TIMELINE_STATS,
   INITIAL_TIMELINE_MILESTONES,
-  INITIAL_INTELLIGENCE_STATS
+  INITIAL_INTELLIGENCE_STATS,
+  INITIAL_ABOUT_CONFIG
 } from './src/data/initialData.ts';
 
-const PORT = 3000;
+const PORT = process.env.RENDER && process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DATA_FILE = path.join(DATA_DIR, 'journal_store.json');
 const INITIAL_DATA_TS = path.join(process.cwd(), 'src', 'data', 'initialData.ts');
@@ -40,6 +41,7 @@ interface DatabaseSchema {
   timelineStats?: any;
   timelineMilestones?: any[];
   intelligenceStats?: any;
+  aboutConfig?: any;
   postLikes: Record<string, number>;
   readerPollVotes: Record<string, Record<string, number>>;
   witnessComments: Record<string, any[]>;
@@ -61,6 +63,7 @@ function loadDatabase(): DatabaseSchema {
         timelineStats: parsed.timelineStats || INITIAL_TIMELINE_STATS,
         timelineMilestones: parsed.timelineMilestones || INITIAL_TIMELINE_MILESTONES,
         intelligenceStats: parsed.intelligenceStats || INITIAL_INTELLIGENCE_STATS,
+        aboutConfig: parsed.aboutConfig || INITIAL_ABOUT_CONFIG,
         postLikes: parsed.postLikes || {},
         readerPollVotes: parsed.readerPollVotes || {},
         witnessComments: parsed.witnessComments || {},
@@ -82,6 +85,7 @@ function loadDatabase(): DatabaseSchema {
     timelineStats: INITIAL_TIMELINE_STATS,
     timelineMilestones: INITIAL_TIMELINE_MILESTONES,
     intelligenceStats: INITIAL_INTELLIGENCE_STATS,
+    aboutConfig: INITIAL_ABOUT_CONFIG,
     postLikes: {
       'case-014': 248,
       'case-013': 189,
@@ -200,6 +204,7 @@ async function startServer() {
       timelineStats: db.timelineStats,
       timelineMilestones: db.timelineMilestones,
       intelligenceStats: db.intelligenceStats,
+      aboutConfig: db.aboutConfig,
       postLikes: db.postLikes,
       readerPollVotes: db.readerPollVotes,
       witnessComments: db.witnessComments,
@@ -254,6 +259,7 @@ async function startServer() {
       timelineStats,
       timelineMilestones,
       intelligenceStats,
+      aboutConfig,
       postLikes, 
       readerPollVotes, 
       witnessComments, 
@@ -273,6 +279,7 @@ async function startServer() {
     if (timelineStats) db.timelineStats = timelineStats;
     if (timelineMilestones && Array.isArray(timelineMilestones)) db.timelineMilestones = timelineMilestones;
     if (intelligenceStats) db.intelligenceStats = intelligenceStats;
+    if (aboutConfig) db.aboutConfig = aboutConfig;
     if (postLikes) db.postLikes = postLikes;
     if (readerPollVotes) db.readerPollVotes = readerPollVotes;
     if (witnessComments) db.witnessComments = witnessComments;

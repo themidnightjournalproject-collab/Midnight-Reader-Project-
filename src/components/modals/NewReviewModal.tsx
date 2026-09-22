@@ -39,33 +39,43 @@ export const NewReviewModal: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<'basic' | 'review' | 'evidence' | 'suspects' | 'spoilers'>('basic');
 
-  // Case File Identification & Basic Info
-  const defaultCaseNum = String(reviews.length + 1).padStart(3, '0');
-  const [caseNumber, setCaseNumber] = useState(defaultCaseNum);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [coverImage, setCoverImage] = useState('https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80');
+  // Case File Identification & Basic Info (Pre-filled by default)
+  const [caseNumber, setCaseNumber] = useState('002');
+  const [title, setTitle] = useState('The Silent Patient');
+  const [author, setAuthor] = useState('Alex Michaelides');
+  const [coverImage, setCoverImage] = useState('/covers/silent-patient.jpg');
   const [genre, setGenre] = useState<Genre>('Psychological Thriller');
-  const [dateRead, setDateRead] = useState(() => new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }));
-  const [dateStarted, setDateStarted] = useState('');
-  const [dateFinished, setDateFinished] = useState('');
-  const [yearRead, setYearRead] = useState<number>(new Date().getFullYear());
-  const [pages, setPages] = useState<number>(320);
-  const [rating, setRating] = useState<number>(5);
+  const [dateRead, setDateRead] = useState('Aug 4, 2026');
+  const [dateStarted, setDateStarted] = useState('Aug 12, 2025');
+  const [dateFinished, setDateFinished] = useState('Aug 17, 2025');
+  const [yearRead, setYearRead] = useState<number>(2025);
+  const [pages, setPages] = useState<number>(359);
+  const [rating, setRating] = useState<number>(4);
   const [status, setStatus] = useState<string>('CLOSED');
   const [readingFormat, setReadingFormat] = useState<'Paperback' | 'Hardcover' | 'Audiobook' | 'E-Reader'>('Paperback');
   const [correctGuess, setCorrectGuess] = useState<boolean>(true);
 
   // Editorial Review
-  const [leadQuote, setLeadQuote] = useState('');
-  const [summary, setSummary] = useState('');
-  const [reviewText, setReviewText] = useState('');
-  const [whatIThought, setWhatIThought] = useState('');
-  const [whatActuallyHappened, setWhatActuallyHappened] = useState('');
-  const [favoriteMoment, setFavoriteMoment] = useState('');
-  const [finalVerdict, setFinalVerdict] = useState('');
-  const [recommendedFor, setRecommendedFor] = useState('Fans of Gillian Flynn, Freida McFadden & Lucy Foley');
-  const [selectedTropes, setSelectedTropes] = useState<string[]>(['Unreliable Narrator', 'Multiple POVs']);
+  const [leadQuote, setLeadQuote] = useState('“Silence is a form of communication.”');
+  const [summary, setSummary] = useState('Alicia Berenson, a famous painter, is accused of murdering her husband Gabriel and then stops speaking entirely. Years later, psychotherapist Theo Faber becomes obsessed with discovering why she refuses to talk — only to uncover a connection between himself and Alicia that changes everything.');
+  const [reviewText, setReviewText] = useState(`I absolutely LOVE this book, like everyone else in the thriller community, what an amazing read. The Silent Patient is built around the mystery of Alicia’s silence, but its real strength is how it makes the reader question Theo while simultaneously trusting him. It makes for a perfectly suspenseful read while making me think through every interaction again and again. His investigation into Alicia felt so convincing because we experience everything through his perspective, making his personal obsession so easy to overlook.
+
+I love the use of Alicia’s diary, gradually revealing pieces of her life before Gabriel’s death, it gave so much essence to Alicia as a character even without her actually ever communicating. The biggest trick is the timeline: Theo makes the reader believe his personal story is happening alongside Alicia’s treatment, when his story actually takes place years earlier.
+
+Its beautifully revealed using Alicia’s final diary entry exposing the truth and turning the entire narrative on its head. What an amazing experience this book was its almost admirable how brilliantly it was created. It was truly mind boggling throughout and kept me entertained but the ending could've done better, it all felt a bit anti climatic and too easy to digest I just wanted something more.`);
+  const [whatIThought, setWhatIThought] = useState('I had instantly felt that there was something wrong with Theo, so I was mainly watching for how the story would reveal his connection to Alicia.');
+  const [whatActuallyHappened, setWhatActuallyHappened] = useState('Theo was the masked man who confronted Alicia and Gabriel, and his actions led to Gabriel’s death. Years later, Alicia recognises him as her therapist and secretly documents the truth. (Which was insane)');
+  const [favoriteMoment, setFavoriteMoment] = useState("In between when it all seems to become painfully obvious but then we're in for so much more as the book progresses");
+  const [finalVerdict, setFinalVerdict] = useState('A masterpiece with the best story writing concepts all deliciously combined into one delightful experience');
+  const [recommendedFor, setRecommendedFor] = useState('Fans of Alex Michaelides, Freida McFadden, Ruth Ware, Lucy Foley, and Lisa Jewell');
+  const [selectedTropes, setSelectedTropes] = useState<string[]>([
+    'Unreliable Narrator',
+    'Multiple POVs',
+    'Psychological Manipulation',
+    'Cat-and-Mouse Game',
+    'Obsession & Jealousy',
+    'Dual Timelines'
+  ]);
   const [customTropeInput, setCustomTropeInput] = useState('');
 
   // Forensic Deep Dive Ratings (All Metrics)
@@ -78,11 +88,13 @@ export const NewReviewModal: React.FC = () => {
 
   // Evidence Bullets & Sticky Marginalia
   const [evidenceBullets, setEvidenceBullets] = useState<string[]>([
-    'Inconsistent crime scene timeline reported by primary witness',
-    'Discrepancies in the locked room floorplan'
+    'Alicia’s diary — Hidden entries reveal what happened before Gabriel’s murder and expose Theo’s connection to the crime.',
+    'The Missing Gun — Gabriel is shot, but the circumstances surrounding the weapon and Alicia’s silence leave questions about what really happened that night.',
+    'Gabriel’s murder scene — The physical evidence points toward Alicia, but key details surrounding the night of the murder don’t completely add up.'
   ]);
   const [marginaliaNotes, setMarginaliaNotes] = useState<string[]>([
-    'Check the dates on the correspondence—some do not line up!'
+    'Something about Theo feels WAY too personal…',
+    'Everyone keeps looking at Alicia. Maybe we should be watching someone else'
   ]);
   const [newEvidenceInput, setNewEvidenceInput] = useState('');
   const [newMarginaliaInput, setNewMarginaliaInput] = useState('');
@@ -90,14 +102,38 @@ export const NewReviewModal: React.FC = () => {
   // Suspects builder
   const [suspects, setSuspects] = useState<Suspect[]>([
     {
-      id: 's-new-1',
-      name: 'Primary Suspect',
-      role: 'The Suspicious Partner / Neighbor',
-      motive: 'Greed, hidden debts, or secret history',
-      opportunity: 'HIGH',
-      alibi: 'Claims to have been asleep upstairs during the incident',
+      id: 's-sp-1',
+      name: 'Alicia Berenson',
+      role: 'Painter and Gabriel’s wife',
+      motive: 'Anger or betrayal within her marriage',
+      opportunity: 'MAXIMUM',
+      alibi: 'No explanation — she stops speaking after Gabriel’s death.',
       suspicionLevel: 4,
       clues: ['Contradictory timeline statement during interrogation'],
+      isActualCulprit: false,
+      revealNotes: ''
+    },
+    {
+      id: 's-sp-2',
+      name: 'Theo Faber',
+      role: 'Psychotherapist treating Alicia',
+      motive: 'Jealousy and revenge after discovering his wife\'s secret',
+      opportunity: 'MAXIMUM',
+      alibi: 'Presents himself as Alicia’s therapist, concealing his previous connection to the murder.',
+      suspicionLevel: 5,
+      clues: ['Initial interrogator observation'],
+      isActualCulprit: true,
+      revealNotes: 'Theo discovered Kathy’s affair with Gabriel and became obsessed with confronting them. He disguised himself with a mask, followed Gabriel and Alicia, and confronted them at their home. He restrained Gabriel and threatened him with a gun, demanding that he confess to the affair. When Gabriel refused, Theo left him with Alicia, creating the situation that ultimately led to Gabriel’s death.'
+    },
+    {
+      id: 's-sp-3',
+      name: 'Kathy Faber',
+      role: 'Theo’s wife',
+      motive: 'Her secret creates a direct connection between the characters.',
+      opportunity: 'MEDIUM',
+      alibi: 'Theo\'s obliviousness',
+      suspicionLevel: 3,
+      clues: ['Initial interrogator observation'],
       isActualCulprit: false,
       revealNotes: ''
     }
@@ -106,18 +142,318 @@ export const NewReviewModal: React.FC = () => {
   // Clues builder
   const [clues, setClues] = useState<ClueItem[]>([
     {
-      id: 'c-new-1',
-      title: 'The Missing Key / Hidden Letter',
-      summary: 'A crucial item was found relocated or secured under false pretenses.',
-      detailedAnalysis: 'Analysis of why this clue blew open the investigator’s working theory.',
+      id: 'c-sp-1',
+      title: 'Gabriel’s Autopsy Report',
+      summary: 'The report establishes that Gabriel died from a gunshot wound.',
+      detailedAnalysis: 'The medical evidence confirms the manner of death and becomes part of the investigation into Alicia’s involvement.',
       pageDiscovered: 64,
       importance: 'CRUCIAL'
+    },
+    {
+      id: 'c-sp-2',
+      title: 'Alicia’s Paintings',
+      summary: 'Alicia’s paintings contain disturbing imagery connected to her state of mind.',
+      detailedAnalysis: 'They provide visual clues about Alicia’s trauma and experiences without directly explaining the murder.',
+      pageDiscovered: 179,
+      importance: 'ANOMALOUS'
+    },
+    {
+      id: 'c-sp-3',
+      title: 'Theo’s Records',
+      summary: 'Theo’s collected notes and case information appear to document his search for the truth.',
+      detailedAnalysis: 'They initially make Theo appear like an investigator from outside the crime, hiding how personally connected he actually is.',
+      pageDiscovered: 179,
+      importance: 'DECEPTIVE (RED HERRING)'
     }
   ]);
 
   // Spoilers & Evidence
-  const [spoilerEvidence, setSpoilerEvidence] = useState('');
-  const [spoilerCulpritReveal, setSpoilerCulpritReveal] = useState('');
+  const [spoilerEvidence, setSpoilerEvidence] = useState('Theo Faber is the masked man who confronted Alicia and Gabriel on the night of the murder. After discovering Kathy’s affair with Gabriel, Theo became obsessed with revenge. He broke into their home, restrained Gabriel and forced him to face what he had done. Theo then left Alicia with Gabriel, expecting Gabriel to be killed. Alicia later recognized Theo when he became her therapist and secretly recorded the truth in her diary.');
+  const [spoilerCulpritReveal, setSpoilerCulpritReveal] = useState('Theo’s motive was revenge. He wanted Gabriel to suffer for having an affair with Kathy, but his plan ultimately led to Gabriel’s death and Alicia’s silence. When Alicia realized who Theo was, she documented the truth, eventually exposing him.');
+
+  // Quick Preset Handlers
+  const loadSilentPatientPreset = () => {
+    setCaseNumber('002');
+    setTitle('The Silent Patient');
+    setAuthor('Alex Michaelides');
+    setCoverImage('/covers/silent-patient.jpg');
+    setGenre('Psychological Thriller');
+    setDateRead('Aug 4, 2026');
+    setDateStarted('Aug 12, 2025');
+    setDateFinished('Aug 17, 2025');
+    setYearRead(2025);
+    setPages(359);
+    setRating(4);
+    setStatus('CLOSED');
+    setReadingFormat('Paperback');
+    setCorrectGuess(true);
+    setLeadQuote('“Silence is a form of communication.”');
+    setSummary('Alicia Berenson, a famous painter, is accused of murdering her husband Gabriel and then stops speaking entirely. Years later, psychotherapist Theo Faber becomes obsessed with discovering why she refuses to talk — only to uncover a connection between himself and Alicia that changes everything.');
+    setReviewText(`I absolutely LOVE this book, like everyone else in the thriller community, what an amazing read. The Silent Patient is built around the mystery of Alicia’s silence, but its real strength is how it makes the reader question Theo while simultaneously trusting him. It makes for a perfectly suspenseful read while making me think through every interaction again and again. His investigation into Alicia felt so convincing because we experience everything through his perspective, making his personal obsession so easy to overlook.
+
+I love the use of Alicia’s diary, gradually revealing pieces of her life before Gabriel’s death, it gave so much essence to Alicia as a character even without her actually ever communicating. The biggest trick is the timeline: Theo makes the reader believe his personal story is happening alongside Alicia’s treatment, when his story actually takes place years earlier.
+
+Its beautifully revealed using Alicia’s final diary entry exposing the truth and turning the entire narrative on its head. What an amazing experience this book was its almost admirable how brilliantly it was created. It was truly mind boggling throughout and kept me entertained but the ending could've done better, it all felt a bit anti climatic and too easy to digest I just wanted something more.`);
+    setWhatIThought('I had instantly felt that there was something wrong with Theo, so I was mainly watching for how the story would reveal his connection to Alicia.');
+    setWhatActuallyHappened('Theo was the masked man who confronted Alicia and Gabriel, and his actions led to Gabriel’s death. Years later, Alicia recognises him as her therapist and secretly documents the truth. (Which was insane)');
+    setFavoriteMoment("In between when it all seems to become painfully obvious but then we're in for so much more as the book progresses");
+    setFinalVerdict('A masterpiece with the best story writing concepts all deliciously combined into one delightful experience');
+    setRecommendedFor('Fans of Alex Michaelides, Freida McFadden, Ruth Ware, Lucy Foley, and Lisa Jewell');
+    setSelectedTropes(['Unreliable Narrator', 'Multiple POVs', 'Psychological Manipulation', 'Cat-and-Mouse Game', 'Obsession & Jealousy', 'Dual Timelines']);
+    setAtmosphereRating(5);
+    setPacingRating(5);
+    setTwistRating(5);
+    setParanoiaRating(5);
+    setUnreliableRating(5);
+    setTwistsCount(3);
+    setEvidenceBullets([
+      'Alicia’s diary — Hidden entries reveal what happened before Gabriel’s murder and expose Theo’s connection to the crime.',
+      'The Missing Gun — Gabriel is shot, but the circumstances surrounding the weapon and Alicia’s silence leave questions about what really happened that night.',
+      'Gabriel’s murder scene — The physical evidence points toward Alicia, but key details surrounding the night of the murder don’t completely add up.'
+    ]);
+    setMarginaliaNotes([
+      'Something about Theo feels WAY too personal…',
+      'Everyone keeps looking at Alicia. Maybe we should be watching someone else'
+    ]);
+    setSuspects([
+      {
+        id: 's-sp-1',
+        name: 'Alicia Berenson',
+        role: 'Painter and Gabriel’s wife',
+        motive: 'Anger or betrayal within her marriage',
+        opportunity: 'MAXIMUM',
+        alibi: 'No explanation — she stops speaking after Gabriel’s death.',
+        suspicionLevel: 4,
+        clues: ['Contradictory timeline statement during interrogation'],
+        isActualCulprit: false,
+        revealNotes: ''
+      },
+      {
+        id: 's-sp-2',
+        name: 'Theo Faber',
+        role: 'Psychotherapist treating Alicia',
+        motive: 'Jealousy and revenge after discovering his wife\'s secret',
+        opportunity: 'MAXIMUM',
+        alibi: 'Presents himself as Alicia’s therapist, concealing his previous connection to the murder.',
+        suspicionLevel: 5,
+        clues: ['Initial interrogator observation'],
+        isActualCulprit: true,
+        revealNotes: 'Theo discovered Kathy’s affair with Gabriel and became obsessed with confronting them. He disguised himself with a mask, followed Gabriel and Alicia, and confronted them at their home. He restrained Gabriel and threatened him with a gun, demanding that he confess to the affair. When Gabriel refused, Theo left him with Alicia, creating the situation that ultimately led to Gabriel’s death.'
+      },
+      {
+        id: 's-sp-3',
+        name: 'Kathy Faber',
+        role: 'Theo’s wife',
+        motive: 'Her secret creates a direct connection between the characters.',
+        opportunity: 'MEDIUM',
+        alibi: 'Theo\'s obliviousness',
+        suspicionLevel: 3,
+        clues: ['Initial interrogator observation'],
+        isActualCulprit: false,
+        revealNotes: ''
+      }
+    ]);
+    setClues([
+      {
+        id: 'c-sp-1',
+        title: 'Gabriel’s Autopsy Report',
+        summary: 'The report establishes that Gabriel died from a gunshot wound.',
+        detailedAnalysis: 'The medical evidence confirms the manner of death and becomes part of the investigation into Alicia’s involvement.',
+        pageDiscovered: 64,
+        importance: 'CRUCIAL'
+      },
+      {
+        id: 'c-sp-2',
+        title: 'Alicia’s Paintings',
+        summary: 'Alicia’s paintings contain disturbing imagery connected to her state of mind.',
+        detailedAnalysis: 'They provide visual clues about Alicia’s trauma and experiences without directly explaining the murder.',
+        pageDiscovered: 179,
+        importance: 'ANOMALOUS'
+      },
+      {
+        id: 'c-sp-3',
+        title: 'Theo’s Records',
+        summary: 'Theo’s collected notes and case information appear to document his search for the truth.',
+        detailedAnalysis: 'They initially make Theo appear like an investigator from outside the crime, hiding how personally connected he actually is.',
+        pageDiscovered: 179,
+        importance: 'DECEPTIVE (RED HERRING)'
+      }
+    ]);
+    setSpoilerEvidence('Theo Faber is the masked man who confronted Alicia and Gabriel on the night of the murder. After discovering Kathy’s affair with Gabriel, Theo became obsessed with revenge. He broke into their home, restrained Gabriel and forced him to face what he had done. Theo then left Alicia with Gabriel, expecting Gabriel to be killed. Alicia later recognized Theo when he became her therapist and secretly recorded the truth in her diary.');
+    setSpoilerCulpritReveal('Theo’s motive was revenge. He wanted Gabriel to suffer for having an affair with Kathy, but his plan ultimately led to Gabriel’s death and Alicia’s silence. When Alicia realized who Theo was, she documented the truth, eventually exposing him.');
+  };
+
+  const loadTheLastWordPreset = () => {
+    setCaseNumber('003');
+    setTitle('The Last Word');
+    setAuthor('Taylor Adams');
+    setCoverImage('/covers/the-last-word.jpg');
+    setGenre('Psychological Thriller');
+    setDateRead(new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }));
+    setDateStarted('Feb 12, 2026');
+    setDateFinished('Feb 20, 2026');
+    setYearRead(2026);
+    setPages(337);
+    setRating(5);
+    setStatus('CLOSED');
+    setReadingFormat('Paperback');
+    setCorrectGuess(true);
+    setLeadQuote('“Never post a negative review for a psychotic author.”');
+    setSummary('Emma Carpenter is house-sitting an isolated beachfront home with her golden retriever Laika. After posting a 1-star review for a poorly written self-published horror novel, the deranged author tracks her down during a brutal coastal storm.');
+    setReviewText('Taylor Adams delivers an unrelenting, claustrophobic cat-and-mouse survival thriller. The pacing is breathless, and every chapter raises the stakes. What starts as an online feud between a petulant author and a grieving reviewer turns into a terrifying invasion story with twists you will not see coming.');
+    setWhatIThought('I thought the author H.G. Kane was a standard internet creep coming to intimidate Emma.');
+    setWhatActuallyHappened('The home itself and Emma’s own past conceal devastating secrets that converge with Kane’s true identity and motive.');
+    setFavoriteMoment('The tense standoff on the stormy beach where communication lines are severed.');
+    setFinalVerdict('A relentless pulse-pounding thriller that makes you want to delete your Goodreads account.');
+    setRecommendedFor('Fans of No Exit, Misery, and locked-in survival thrillers.');
+    setSelectedTropes(['Isolated Island / Cabin', 'Cat-and-Mouse Game', 'Locked Room', 'Unreliable Narrator']);
+    setAtmosphereRating(5);
+    setPacingRating(5);
+    setTwistRating(5);
+    setParanoiaRating(5);
+    setUnreliableRating(4);
+    setTwistsCount(4);
+    setEvidenceBullets([
+      'The 1-Star Review on Amazon that triggered the invasion',
+      'The severed landline wire outside the storm doors',
+      'A mysterious vehicle idling on the dark coastal road'
+    ]);
+    setMarginaliaNotes([
+      'Check who really owns the beachfront house!',
+      'Emma is hiding something about her husband'
+    ]);
+    setSuspects([
+      {
+        id: 's-lw-1',
+        name: 'H.G. Kane',
+        role: 'Self-published author',
+        motive: 'Narcissistic rage over negative review',
+        opportunity: 'MAXIMUM',
+        alibi: 'None',
+        suspicionLevel: 5,
+        clues: ['IP address tracking', 'Online messaging logs'],
+        isActualCulprit: true,
+        revealNotes: 'Tracks Emma to her isolated location seeking violent retribution.'
+      }
+    ]);
+    setClues([
+      {
+        id: 'c-lw-1',
+        title: 'The Novel Manuscript',
+        summary: 'Details in the author’s terrible horror novel mirror real unsolved local crimes.',
+        detailedAnalysis: 'Proves the author wasn’t just writing fiction; he was confessing.',
+        pageDiscovered: 112,
+        importance: 'CRUCIAL'
+      }
+    ]);
+    setSpoilerEvidence('H.G. Kane used his published book to scout and re-enact actual burglaries.');
+    setSpoilerCulpritReveal('Kane was an alias for a serial predator targeting isolated houses along the coast.');
+  };
+
+  const loadTheHousemaidPreset = () => {
+    setCaseNumber('001');
+    setTitle('The Housemaid');
+    setAuthor('Freida McFadden');
+    setCoverImage('https://imgs.search.brave.com/Wy7CV-9Cw3aIMDYtE5525byLLeXxeS29XANx3P6mzHM/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2E4LzZl/L2I2L2E4NmViNjdk/NzU3ZTU1YjU2NGZk/YzBjYzUzMzk4MmRi/LmpwZw');
+    setGenre('Domestic Thriller');
+    setDateRead('June 30, 2026');
+    setDateStarted('June 25, 2026');
+    setDateFinished('June 30, 2026');
+    setYearRead(2026);
+    setPages(336);
+    setRating(5);
+    setStatus('CLOSED');
+    setReadingFormat('Paperback');
+    setCorrectGuess(false);
+    setLeadQuote('“Every day I clean the Winchesters’ beautiful house... But when I try the door to my tiny attic bedroom, it only locks from the outside.”');
+    setSummary('A desperate ex-con lands a live-in maid position with a wealthy family, only to discover the attic door locks from the exterior and the charming husband might not be the victim.');
+    setReviewText('An addictive masterclass in domestic psychological manipulation. The mid-point perspective shift completely recontextualizes the entire narrative.');
+    setWhatIThought('I was 100% convinced Nina Winchester was an unhinged, sadistic socialite terrorizing her sweet husband Andrew.');
+    setWhatActuallyHappened('Nina was systematically tortured by Andrew, and deliberately recruited Millie—an ex-felon convicted of manslaughter—as her weapon of retribution.');
+    setFavoriteMoment('The sudden perspective shift at the exact midpoint where we see Nina’s actual diary entries.');
+    setFinalVerdict('Pure popcorn thriller perfection that keeps you guessing until the final page.');
+    setRecommendedFor('Fans of Gone Girl, The Girl on the Train, and domestic psychological thrillers.');
+    setSelectedTropes(['Unreliable Narrator', 'Domestic Gaslighting', 'Multiple POVs', 'Locked Room']);
+    setAtmosphereRating(5);
+    setPacingRating(5);
+    setTwistRating(5);
+    setParanoiaRating(5);
+    setUnreliableRating(5);
+    setTwistsCount(3);
+    setEvidenceBullets([
+      'Attic room door locks exclusively from the hallway',
+      'Sudden manic episodes of Nina Winchester over peanut butter',
+      'Andrew’s immaculate tailoring and perpetual victim complex'
+    ]);
+    setMarginaliaNotes([
+      'Note to self: Never accept a live-in job with an exterior locking attic door.'
+    ]);
+    setSuspects([
+      {
+        id: 's-hm-1',
+        name: 'Andrew Winchester',
+        role: 'The wealthy husband',
+        motive: 'Sociopathic control and abuse',
+        opportunity: 'MAXIMUM',
+        alibi: 'Presents himself as the long-suffering spouse',
+        suspicionLevel: 5,
+        clues: ['The locked attic key in his pocket'],
+        isActualCulprit: true,
+        revealNotes: 'Andrew is a sadistic serial abuser who locks his wives in the attic.'
+      }
+    ]);
+    setClues([
+      {
+        id: 'c-hm-1',
+        title: 'The Exterior Lock on the Attic',
+        summary: 'The lock was installed backwards to lock the occupant in from the outside.',
+        detailedAnalysis: 'Irrefutable proof of intentional confinement.',
+        pageDiscovered: 45,
+        importance: 'CRUCIAL'
+      }
+    ]);
+    setSpoilerEvidence('Andrew locked both his first wife and Nina in the attic for days without food or water.');
+    setSpoilerCulpritReveal('Millie and Nina turn the tables on Andrew, locking him in his own torture room.');
+  };
+
+  const clearToEmptyForm = () => {
+    const nextNum = String(reviews.length + 1).padStart(3, '0');
+    setCaseNumber(nextNum);
+    setTitle('');
+    setAuthor('');
+    setCoverImage('https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80');
+    setGenre('Psychological Thriller');
+    setDateRead(new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }));
+    setDateStarted('');
+    setDateFinished('');
+    setYearRead(new Date().getFullYear());
+    setPages(300);
+    setRating(5);
+    setStatus('CLOSED');
+    setReadingFormat('Paperback');
+    setCorrectGuess(true);
+    setLeadQuote('');
+    setSummary('');
+    setReviewText('');
+    setWhatIThought('');
+    setWhatActuallyHappened('');
+    setFavoriteMoment('');
+    setFinalVerdict('');
+    setRecommendedFor('');
+    setSelectedTropes(['Unreliable Narrator', 'Multiple POVs']);
+    setAtmosphereRating(5);
+    setPacingRating(5);
+    setTwistRating(5);
+    setParanoiaRating(5);
+    setUnreliableRating(5);
+    setTwistsCount(2);
+    setEvidenceBullets(['Suspicious crime scene inconsistency']);
+    setMarginaliaNotes(['Check character timeline']);
+    setSuspects([]);
+    setClues([]);
+    setSpoilerEvidence('');
+    setSpoilerCulpritReveal('');
+  };
 
   if (!isNewReviewModalOpen) return null;
 
@@ -225,6 +561,7 @@ export const NewReviewModal: React.FC = () => {
       return;
     }
 
+    const defaultCaseNum = String(reviews.length + 1).padStart(3, '0');
     const cleanCaseNum = caseNumber.trim() || defaultCaseNum;
 
     addReview({
@@ -296,6 +633,46 @@ export const NewReviewModal: React.FC = () => {
           >
             ✕
           </button>
+        </div>
+
+        {/* Quick Autofill Toolbar */}
+        <div className="bg-[#1c1917] text-white p-3 border-2 border-black flex flex-wrap items-center justify-between gap-2.5 mb-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-[#eab308] shrink-0" />
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-[#eab308]">
+              ⚡ Quick Fill Form:
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={loadSilentPatientPreset}
+              className="px-2.5 py-1 text-[11px] font-mono font-bold bg-[#8b0000] text-white hover:bg-red-700 border border-white transition-colors"
+            >
+              Fill: The Silent Patient
+            </button>
+            <button
+              type="button"
+              onClick={loadTheLastWordPreset}
+              className="px-2.5 py-1 text-[11px] font-mono font-bold bg-[#2e2a27] text-white hover:bg-neutral-800 border border-neutral-500 transition-colors"
+            >
+              Fill: The Last Word
+            </button>
+            <button
+              type="button"
+              onClick={loadTheHousemaidPreset}
+              className="px-2.5 py-1 text-[11px] font-mono font-bold bg-[#2e2a27] text-white hover:bg-neutral-800 border border-neutral-500 transition-colors"
+            >
+              Fill: The Housemaid
+            </button>
+            <button
+              type="button"
+              onClick={clearToEmptyForm}
+              className="px-2 py-1 text-[11px] font-mono text-neutral-300 hover:text-white underline transition-colors"
+            >
+              Clear
+            </button>
+          </div>
         </div>
 
         {/* Tab Navigation */}

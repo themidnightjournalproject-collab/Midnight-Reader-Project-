@@ -56,16 +56,18 @@ export const CurrentlyReadingBanner: React.FC = () => {
                   referrerPolicy="no-referrer"
                 />
 
-                {/* Quick Replace Hover Overlay */}
-                <div 
-                  onClick={() => setIsQuickImageOpen(true)}
-                  className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 cursor-pointer text-white text-center"
-                >
-                  <Camera size={20} className="mb-1 text-[#e8e2d8]" />
-                  <span className="font-sans text-[10px] uppercase font-black tracking-wider">
-                    Replace Cover
-                  </span>
-                </div>
+                {/* Quick Replace Hover Overlay - only for unlocked admin */}
+                {isAdminUnlocked && (
+                  <div 
+                    onClick={() => setIsQuickImageOpen(true)}
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 cursor-pointer text-white text-center"
+                  >
+                    <Camera size={20} className="mb-1 text-[#e8e2d8]" />
+                    <span className="font-sans text-[10px] uppercase font-black tracking-wider">
+                      Replace Cover
+                    </span>
+                  </div>
+                )}
 
                 <span className="absolute bottom-1 right-1 font-mono text-[9px] bg-black text-white px-1 font-bold">
                   CASE #{currentlyReading.id || 'ACTIVE'}
@@ -73,15 +75,17 @@ export const CurrentlyReadingBanner: React.FC = () => {
               </div>
             </div>
 
-            {/* Change cover button */}
-            <button
-              type="button"
-              onClick={() => setIsQuickImageOpen(true)}
-              className="mt-2 text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] hover:underline flex items-center gap-1"
-            >
-              <Camera size={11} />
-              <span>Change Cover Image</span>
-            </button>
+            {/* Change cover button - only for unlocked admin */}
+            {isAdminUnlocked && (
+              <button
+                type="button"
+                onClick={() => setIsQuickImageOpen(true)}
+                className="mt-2 text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] hover:underline flex items-center gap-1"
+              >
+                <Camera size={11} />
+                <span>Change Cover Image</span>
+              </button>
+            )}
           </div>
 
           {/* Book Info & Editorial Progress Bar */}

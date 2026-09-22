@@ -9,7 +9,6 @@ import {
   Flame, 
   Eye, 
   Edit3, 
-  CheckCircle2, 
   Sparkles,
   BarChart2
 } from 'lucide-react';
@@ -24,8 +23,7 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
     setEditingReview,
     intelligenceStats,
     setIsIntelligenceEditorOpen,
-    isAdminUnlocked,
-    setIsAdminModalOpen
+    isAdminUnlocked
   } = useJournal();
 
   // Aggregate metrics
@@ -100,21 +98,14 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
             <span>{intelligenceStats.bureauTitle || 'BUREAU OF READER METRICS & MEASURABLE ENGAGEMENT'}</span>
           </div>
 
-          {isAdminUnlocked ? (
+          {/* Edit button strictly visible to unlocked Admin */}
+          {isAdminUnlocked && (
             <button
               onClick={() => setIsIntelligenceEditorOpen(true)}
               className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
             >
               <Edit3 size={13} />
               <span>EDIT INTELLIGENCE & METRICS</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsAdminModalOpen(true)}
-              className="flex items-center gap-1.5 border border-black hover:bg-[#e8e2d8] text-black px-3 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-            >
-              <Edit3 size={13} />
-              <span>ADMIN EDIT METRICS</span>
             </button>
           )}
         </div>
@@ -158,13 +149,13 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* 4 Big KPI Cards */}
+        {/* 4 Big Measurable Impact Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           
           <div className="bg-white border-2 border-black p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] space-y-1">
             <div className="flex items-center justify-between text-[#8b0000]">
               <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-[#737373]">
-                TOTAL CASE ENDORSEMENTS
+                {intelligenceStats.cardLikesTitle || 'TOTAL CASE ENDORSEMENTS'}
               </span>
               <Heart size={16} className="fill-[#8b0000]" />
             </div>
@@ -172,14 +163,14 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
               {displayLikes}
             </div>
             <p className="text-[11px] font-serif italic text-[#737373]">
-              Active reader upvotes logged
+              {intelligenceStats.cardLikesSubtitle || 'Active reader upvotes logged'}
             </p>
           </div>
 
           <div className="bg-white border-2 border-black p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] space-y-1">
             <div className="flex items-center justify-between text-[#8b0000]">
               <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-[#737373]">
-                INTERROGATION POLLS
+                {intelligenceStats.cardPollsTitle || 'INTERROGATION POLLS'}
               </span>
               <HelpCircle size={16} className="text-[#8b0000]" />
             </div>
@@ -187,14 +178,14 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
               {displayPollVotes} Votes
             </div>
             <p className="text-[11px] font-serif italic text-[#737373]">
-              Verdict choices cast by visitors
+              {intelligenceStats.cardPollsSubtitle || 'Verdict choices cast by visitors'}
             </p>
           </div>
 
           <div className="bg-white border-2 border-black p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] space-y-1">
             <div className="flex items-center justify-between text-[#8b0000]">
               <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-[#737373]">
-                WITNESS TESTIMONIES
+                {intelligenceStats.cardCommentsTitle || 'WITNESS TESTIMONIES'}
               </span>
               <MessageSquare size={16} className="text-[#8b0000]" />
             </div>
@@ -202,14 +193,14 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
               {displayComments} Notes
             </div>
             <p className="text-[11px] font-serif italic text-[#737373]">
-              Reader tips and review comments
+              {intelligenceStats.cardCommentsSubtitle || 'Reader tips and review comments'}
             </p>
           </div>
 
           <div className="bg-white border-2 border-black p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] space-y-1">
             <div className="flex items-center justify-between text-[#8b0000]">
               <span className="font-sans text-[10px] font-bold uppercase tracking-wider text-[#737373]">
-                READER TWIST ACCURACY
+                {intelligenceStats.cardAccuracyTitle || 'READER TWIST ACCURACY'}
               </span>
               <TrendingUp size={16} className="text-[#8b0000]" />
             </div>
@@ -217,7 +208,7 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
               {displayAccuracy}%
             </div>
             <p className="text-[11px] font-serif italic text-[#737373]">
-              Readers who solved before the reveal
+              {intelligenceStats.cardAccuracySubtitle || 'Readers who solved before the reveal'}
             </p>
           </div>
 
@@ -306,13 +297,16 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
                     <span>View Dossier</span>
                   </button>
 
-                  <button
-                    onClick={() => setEditingReview(r)}
-                    className="text-xs font-sans font-bold uppercase text-[#8b0000] hover:text-black flex items-center gap-1"
-                  >
-                    <Edit3 size={12} />
-                    <span>Edit Review</span>
-                  </button>
+                  {/* Gated edit button */}
+                  {isAdminUnlocked && (
+                    <button
+                      onClick={() => setEditingReview(r)}
+                      className="text-xs font-sans font-bold uppercase text-[#8b0000] hover:text-black flex items-center gap-1"
+                    >
+                      <Edit3 size={12} />
+                      <span>Edit Review</span>
+                    </button>
+                  )}
                 </div>
               </div>
             );
@@ -326,11 +320,11 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
           <div className="flex items-center gap-2">
             <Award size={18} className="text-[#8b0000]" />
             <h2 className="font-serif text-2xl font-black uppercase text-[#1a1a1a] tracking-tight">
-              Forensic Verdict Breakdown By Case File
+              {intelligenceStats.tableHeading || 'Forensic Verdict Breakdown By Case File'}
             </h2>
           </div>
           <span className="font-sans text-xs font-bold text-[#737373] uppercase">
-            {reviews.length} Active Records
+            {intelligenceStats.tableSubtitle || `${reviews.length} Active Records`}
           </span>
         </div>
 
@@ -339,14 +333,14 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
             <thead className="bg-black text-white uppercase text-[11px] font-bold tracking-wider">
               <tr>
                 <th className="p-3">Ref #</th>
-                <th className="p-3">Case Title & Author</th>
+                <th className="p-3">{intelligenceStats.tableColCaseFile || 'Case Title & Author'}</th>
                 <th className="p-3">Genre</th>
                 <th className="p-3 text-center">Score</th>
-                <th className="p-3 text-center">Endorsements</th>
-                <th className="p-3 text-center">Poll Votes</th>
+                <th className="p-3 text-center">{intelligenceStats.tableColEndorsements || 'Endorsements'}</th>
+                <th className="p-3 text-center">{intelligenceStats.tableColPollVotes || 'Poll Votes'}</th>
                 <th className="p-3 text-center">Solved Early %</th>
-                <th className="p-3 text-center">Notes</th>
-                <th className="p-3 text-right">Actions</th>
+                <th className="p-3 text-center">{intelligenceStats.tableColTheories || 'Notes'}</th>
+                <th className="p-3 text-right">{intelligenceStats.tableColStatus || 'Actions'}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-black divide-opacity-10">
@@ -396,12 +390,14 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
                     </td>
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => setEditingReview(r)}
-                          className="bg-black hover:bg-[#8b0000] text-white px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors"
-                        >
-                          Edit
-                        </button>
+                        {isAdminUnlocked && (
+                          <button
+                            onClick={() => setEditingReview(r)}
+                            className="bg-black hover:bg-[#8b0000] text-white px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors"
+                          >
+                            Edit
+                          </button>
+                        )}
                         <button
                           onClick={() => setSelectedReview(r)}
                           className="border border-black hover:bg-[#faf7f2] px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors"

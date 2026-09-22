@@ -49,22 +49,14 @@ export const ReadingTimeline: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {/* Edit Timeline Stats Button */}
-            {isAdminUnlocked ? (
+            {/* Edit Timeline Stats Button (strictly admin-only) */}
+            {isAdminUnlocked && (
               <button
                 onClick={() => setIsTimelineEditorOpen(true)}
                 className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
               >
                 <Edit3 size={13} />
                 <span>EDIT TIMELINE & STATS</span>
-              </button>
-            ) : (
-              <button
-                onClick={() => setIsAdminModalOpen(true)}
-                className="flex items-center gap-1.5 border border-black hover:bg-[#e8e2d8] text-black px-3 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-              >
-                <Edit3 size={13} />
-                <span>ADMIN EDIT STATS</span>
               </button>
             )}
 

@@ -93,17 +93,19 @@ export const CaseFilesGallery: React.FC = () => {
                       className="w-full h-full object-cover grayscale-[15%] contrast-[105%]"
                       referrerPolicy="no-referrer"
                     />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveReplaceReview(review);
-                      }}
-                      title="Replace Cover Photo"
-                      className="absolute inset-0 bg-black/60 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center text-white"
-                    >
-                      <Camera size={14} />
-                    </button>
+                    {isAdminUnlocked && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveReplaceReview(review);
+                        }}
+                        title="Replace Cover Photo"
+                        className="absolute inset-0 bg-black/60 opacity-0 group-hover/cover:opacity-100 transition-opacity flex items-center justify-center text-white"
+                      >
+                        <Camera size={14} />
+                      </button>
+                    )}
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -190,17 +192,19 @@ export const CaseFilesGallery: React.FC = () => {
                     <span>{likes}</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveReplaceReview(review);
-                    }}
-                    title="Quick Change Cover Image"
-                    className="p-1 text-[#4a4a4a] hover:text-[#8b0000] hover:bg-white border border-transparent hover:border-black transition-colors"
-                  >
-                    <Camera size={13} />
-                  </button>
+                  {isAdminUnlocked && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveReplaceReview(review);
+                      }}
+                      title="Quick Change Cover Image"
+                      className="p-1 text-[#4a4a4a] hover:text-[#8b0000] hover:bg-white border border-transparent hover:border-black transition-colors"
+                    >
+                      <Camera size={13} />
+                    </button>
+                  )}
 
                   {isAdminUnlocked && (
                     <button

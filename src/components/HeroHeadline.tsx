@@ -9,7 +9,8 @@ export const HeroHeadline: React.FC = () => {
     reviews, 
     stats, 
     heroConfig, 
-    setIsEditHeroModalOpen 
+    setIsEditHeroModalOpen,
+    isAdminUnlocked
   } = useJournal();
 
   const handleEnterArchive = () => {
@@ -44,15 +45,17 @@ export const HeroHeadline: React.FC = () => {
                   {heroConfig.dossierCode || 'Dossier #2026-B'}
                 </span>
               </div>
-              <button
-                id="btn-trigger-edit-hero"
-                onClick={() => setIsEditHeroModalOpen(true)}
-                title="Edit the front-page dispatch text & headline"
-                className="flex items-center gap-1 text-[10px] uppercase font-sans font-bold text-gray-500 hover:text-black border border-dashed border-gray-400 hover:border-black px-2 py-0.5 transition-colors bg-white"
-              >
-                <Edit3 size={11} className="text-[#8b0000]" />
-                <span>Edit Dispatch</span>
-              </button>
+              {isAdminUnlocked && (
+                <button
+                  id="btn-trigger-edit-hero"
+                  onClick={() => setIsEditHeroModalOpen(true)}
+                  title="Edit the front-page dispatch text & headline"
+                  className="flex items-center gap-1 text-[10px] uppercase font-sans font-bold text-gray-500 hover:text-black border border-dashed border-gray-400 hover:border-black px-2 py-0.5 transition-colors bg-white"
+                >
+                  <Edit3 size={11} className="text-[#8b0000]" />
+                  <span>Edit Dispatch</span>
+                </button>
+              )}
             </div>
 
             {/* Large Newspaper Headline */}
