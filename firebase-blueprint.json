@@ -1,0 +1,101 @@
+{
+  "entities": {
+    "JournalState": {
+      "title": "JournalState",
+      "description": "Snapshot of the reader journal configuration and state",
+      "type": "object",
+      "properties": {
+        "updatedAt": { "type": "string" },
+        "heroConfig": { "type": "object" },
+        "currentlyReading": { "type": "object" },
+        "stats": { "type": "object" },
+        "timelineStats": { "type": "object" },
+        "intelligenceStats": { "type": "object" },
+        "aboutConfig": { "type": "object" }
+      }
+    },
+    "BookReview": {
+      "title": "BookReview",
+      "description": "Criminal Case File book review and forensic marginalia",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseNumber": { "type": "string" },
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "genre": { "type": "string" },
+        "coverImage": { "type": "string" },
+        "rating": { "type": "number" },
+        "pages": { "type": "number" },
+        "dateRead": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "title", "author"]
+    },
+    "LibraryBook": {
+      "title": "LibraryBook",
+      "description": "The Library all-genre literature and reading dossiers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "catalogNumber": { "type": "string" },
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "genre": { "type": "string" },
+        "coverImage": { "type": "string" },
+        "rating": { "type": "number" }
+      },
+      "required": ["id", "title", "author"]
+    },
+    "UserTheory": {
+      "title": "UserTheory",
+      "description": "Reader submitted suspect theory for an active case",
+      "type": "object",
+      "properties": {
+        "reviewId": { "type": "string" },
+        "suspectName": { "type": "string" },
+        "reason": { "type": "string" },
+        "keyClue": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["reviewId", "suspectName", "reason"]
+    },
+    "WitnessComment": {
+      "title": "WitnessComment",
+      "description": "Reader comments and witness statements on case files",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "reviewId": { "type": "string" },
+        "witnessName": { "type": "string" },
+        "badge": { "type": "string" },
+        "comment": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "likes": { "type": "number" }
+      },
+      "required": ["id", "witnessName", "comment"]
+    }
+  },
+  "firestore": {
+    "/journal_state/{docId}": {
+      "schema": "JournalState",
+      "description": "Global reading journal state and settings"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "BookReview",
+      "description": "Individual case file dossiers"
+    },
+    "/library_books/{bookId}": {
+      "schema": "LibraryBook",
+      "description": "The Library books and reading dossiers"
+    },
+    "/user_theories/{theoryId}": {
+      "schema": "UserTheory",
+      "description": "Public user theories submitted by readers"
+    },
+    "/witness_comments/{commentId}": {
+      "schema": "WitnessComment",
+      "description": "Reader comments and witness statements"
+    }
+  }
+}

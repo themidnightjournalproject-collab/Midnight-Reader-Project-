@@ -95,7 +95,7 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-sans font-bold uppercase tracking-widest text-[#8b0000]">
             <BarChart2 size={15} />
-            <span>{intelligenceStats.bureauTitle || 'BUREAU OF READER METRICS & MEASURABLE ENGAGEMENT'}</span>
+            <span>{intelligenceStats.bureauTitle || 'COMMUNITY CORNER • READER REACTIONS'}</span>
           </div>
 
           {/* Edit button strictly visible to unlocked Admin */}
@@ -105,17 +105,17 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
               className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
             >
               <Edit3 size={13} />
-              <span>EDIT INTELLIGENCE & METRICS</span>
+              <span>EDIT READER REACTIONS</span>
             </button>
           )}
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black uppercase text-[#1a1a1a] tracking-tight font-serif">
-          {intelligenceStats.headline || 'Measurable Reader Results & Analytics'}
+          {intelligenceStats.headline || 'Reader Thoughts & Reactions'}
         </h1>
 
         <p className="font-serif italic text-base text-[#4a4a4a] leading-relaxed max-w-3xl">
-          {intelligenceStats.dispatchNote || 'Real-time measurement of reader interaction, post endorsements, interrogation poll verdicts, and witness testimonies across your entire reading journal.'}
+          {intelligenceStats.dispatchNote || 'A relaxed look at what fellow readers thought, how everyone voted on plot twists, and notes left along the margins.'}
         </p>
 
         {/* Featured Custom Highlight & Epigraph if present */}

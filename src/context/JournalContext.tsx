@@ -25,6 +25,8 @@ import {
   INITIAL_INTELLIGENCE_STATS,
   INITIAL_ABOUT_CONFIG
 } from '../data/initialData';
+import { db } from '../lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 export type ActiveView = 
   | 'home' 
@@ -556,14 +558,49 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
           ...payload,
         }),
       });
+
+      // Also sync to Firestore cloud database
+      try {
+        await setDoc(doc(db, 'journal_state', 'active'), {
+          ...payload,
+          updatedAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (fsErr) {
+        console.warn('Firestore cloud sync skipped/failed:', fsErr);
+      }
     } catch (e) {
       console.warn('Server sync skipped/failed (running in client-only mode or dev restart)', e);
     }
   }, [adminPasscode, reviews, nonFictionBooks, heroConfig, aboutConfig, currentlyReading, stats, timelineStats, timelineMilestones, intelligenceStats, postLikes, readerPollVotes, witnessComments, userTheories]);
 
-  // Initial fetch from server to get persistent server records
+  // Initial fetch from server and Firestore to get persistent records
   useEffect(() => {
     let isMounted = true;
+
+    // Fetch from Firestore
+    getDoc(doc(db, 'journal_state', 'active'))
+      .then((snap) => {
+        if (snap.exists() && isMounted) {
+          const data = snap.data();
+          if (data.reviews && Array.isArray(data.reviews) && data.reviews.length > 0) setReviews(data.reviews);
+          if (data.nonFictionBooks && Array.isArray(data.nonFictionBooks) && data.nonFictionBooks.length > 0) setNonFictionBooks(data.nonFictionBooks);
+          if (data.heroConfig) setHeroConfig(data.heroConfig);
+          if (data.aboutConfig) setAboutConfig(data.aboutConfig);
+          if (data.currentlyReading) setCurrentlyReading(data.currentlyReading);
+          if (data.stats) setStats(data.stats);
+          if (data.timelineStats) setTimelineStats(data.timelineStats);
+          if (data.timelineMilestones && Array.isArray(data.timelineMilestones)) setTimelineMilestones(data.timelineMilestones);
+          if (data.intelligenceStats) setIntelligenceStats(data.intelligenceStats);
+          if (data.postLikes) setPostLikes(data.postLikes);
+          if (data.readerPollVotes) setReaderPollVotes(data.readerPollVotes);
+          if (data.witnessComments) setWitnessComments(data.witnessComments);
+          if (data.userTheories) setUserTheories(data.userTheories);
+        }
+      })
+      .catch((err) => {
+        console.log('Firestore initial load skipped, falling back to local/server:', err);
+      });
+
     fetch('/api/state')
       .then((res) => {
         if (!res.ok) throw new Error('API state not ready');

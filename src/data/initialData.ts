@@ -65,10 +65,10 @@ export const INITIAL_TIMELINE_MILESTONES: TimelineMilestone[] = [
 ];
 
 export const INITIAL_INTELLIGENCE_STATS: IntelligenceStats = {
-  "bureauTitle": "BUREAU OF READER METRICS & MEASURABLE ENGAGEMENT",
-  "headline": "Measurable Reader Results & Analytics",
-  "dispatchNote": "Real-time measurement of reader interaction, post endorsements, interrogation poll verdicts, and witness testimonies across your entire reading journal.",
-  "kpiSectionTitle": "AUDITED FORENSIC ENGAGEMENT METRICS",
+  "bureauTitle": "COMMUNITY CORNER • READER REACTIONS",
+  "headline": "Reader Thoughts & Reactions",
+  "dispatchNote": "A relaxed look at what fellow readers thought, how everyone voted on plot twists, and notes left along the margins.",
+  "kpiSectionTitle": "COMMUNITY ACTIVITY & REACTIONS",
   "leaderboardTitle": "Top Engaged Thrillers Leaderboard",
   "breakdownTableTitle": "Forensic Verdict Breakdown By Case File",
   "testimoniesTitle": "Latest Reader Testimonies & Notes",
@@ -598,3 +598,4 @@ export const INITIAL_ABOUT_CONFIG: AboutConfig = {
   ],
   finalNote: "Filed from dorm room desk with three cold mugs of green tea."
 };
+

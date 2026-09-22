@@ -13,9 +13,46 @@ import {
   INITIAL_HERO_CONFIG,
   INITIAL_TIMELINE_STATS,
   INITIAL_TIMELINE_MILESTONES,
-  INITIAL_INTELLIGENCE_STATS,
-  INITIAL_ABOUT_CONFIG
+  INITIAL_INTELLIGENCE_STATS
 } from './src/data/initialData.ts';
+
+const DEFAULT_ABOUT_CONFIG = {
+  headerSubtitle: "THE STUDENT BEHIND THE LEDGER",
+  headerBadge: "CORRESPONDENT PROFILE",
+  pageTitle: "ABOUT THE CURATOR",
+  curatorPhoto: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80",
+  photoStamp: "DESK AT 2:15 AM",
+  classification: "Full-Time Student & Chronic Reader",
+  obsession: "Unreliable Narrators, Deep Ideas & Good Twists",
+  featuredQuote: "I started reading thrillers because I wanted to know what happened. I continued reading them because apparently I enjoy distrusting fictional strangers.",
+  bioParagraph1: "Welcome to The Midnight Reader. Between university deadlines, lectures, and caffeinated late-night cram sessions, this journal serves as my evidence room. Every book filed here is treated as an active case: forensic character breakdowns, timeline reconstructions, and unfiltered marginalia.",
+  bioParagraph2: "While psychological thrillers and locked-room mysteries remain my primary obsession, 'The Library' houses everything else that commands my attention—from cosmic science fiction and memoirs to cognitive psychology and philosophy. Reading is both an investigative pursuit and a sanctuary.",
+  bioParagraph3: "Readers are welcome to vote on plot twists, submit suspect theories, or browse the case file dossiers. Just remember the fundamental rule: never trust a narrator who insists they are telling the whole truth.",
+  rulesHeading: "MY 4 GOLDEN RULES OF READING INVESTIGATION",
+  rules: [
+    {
+      number: 1,
+      title: "RULE #1: TRUST NO NARRATOR",
+      description: "If the narrator repeatedly emphasizes their own innocence, sanity, or sobriety in chapter one, they did it."
+    },
+    {
+      number: 2,
+      title: "RULE #2: THE INCONSPICUOUS GARDENER RULE",
+      description: "Characters mentioned casually on page 42 who vanish until chapter 28 are never just innocent bystanders."
+    },
+    {
+      number: 3,
+      title: "RULE #3: THE ATTIC DEADBOLT CONSTANT",
+      description: "If a door in a Victorian estate is locked from the outside, do not wait for the climax to ask why."
+    },
+    {
+      number: 4,
+      title: "RULE #4: MULTI-GENRE CURIOSITY",
+      description: "A sharp mind reads across genres. Step outside the crime scene into philosophy, sci-fi, and essays to keep your deductions agile."
+    }
+  ],
+  finalNote: "Filed from dorm room desk with three cold mugs of green tea."
+};
 
 const PORT = process.env.RENDER && process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -63,7 +100,7 @@ function loadDatabase(): DatabaseSchema {
         timelineStats: parsed.timelineStats || INITIAL_TIMELINE_STATS,
         timelineMilestones: parsed.timelineMilestones || INITIAL_TIMELINE_MILESTONES,
         intelligenceStats: parsed.intelligenceStats || INITIAL_INTELLIGENCE_STATS,
-        aboutConfig: parsed.aboutConfig || INITIAL_ABOUT_CONFIG,
+        aboutConfig: parsed.aboutConfig || DEFAULT_ABOUT_CONFIG,
         postLikes: parsed.postLikes || {},
         readerPollVotes: parsed.readerPollVotes || {},
         witnessComments: parsed.witnessComments || {},
@@ -85,7 +122,7 @@ function loadDatabase(): DatabaseSchema {
     timelineStats: INITIAL_TIMELINE_STATS,
     timelineMilestones: INITIAL_TIMELINE_MILESTONES,
     intelligenceStats: INITIAL_INTELLIGENCE_STATS,
-    aboutConfig: INITIAL_ABOUT_CONFIG,
+    aboutConfig: DEFAULT_ABOUT_CONFIG,
     postLikes: {
       'case-014': 248,
       'case-013': 189,
@@ -154,7 +191,8 @@ function saveDatabase(db: DatabaseSchema) {
   HeroConfig,
   TimelineMilestone,
   TimelineStats,
-  IntelligenceStats
+  IntelligenceStats,
+  AboutConfig
 } from '../types';
 
 export const INITIAL_ADMIN_PASSCODE: string = ${JSON.stringify(db.adminPasscode || 'detective')};
@@ -174,6 +212,8 @@ export const INITIAL_STATS: ReadingStats = ${JSON.stringify(db.stats, null, 2)};
 export const INITIAL_REVIEWS: BookReview[] = ${JSON.stringify(db.reviews, null, 2)};
 
 export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(db.nonFictionBooks || INITIAL_NON_FICTION_BOOKS, null, 2)};
+
+export const INITIAL_ABOUT_CONFIG: AboutConfig = ${JSON.stringify(db.aboutConfig || DEFAULT_ABOUT_CONFIG, null, 2)};
 `;
       fs.writeFileSync(INITIAL_DATA_TS, tsContent, 'utf-8');
     }

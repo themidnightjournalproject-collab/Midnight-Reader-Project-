@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Reading journal content is public to view
+    match /journal_state/{docId} {
+      allow read, write: if true;
+    }
+    
+    match /reviews/{reviewId} {
+      allow read, write: if true;
+    }
+    
+    match /library_books/{bookId} {
+      allow read, write: if true;
+    }
+    
+    match /user_theories/{theoryId} {
+      allow read, write: if true;
+    }
+    
+    match /witness_comments/{commentId} {
+      allow read, write: if true;
+    }
+
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

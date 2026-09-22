@@ -38,10 +38,10 @@ export const IntelligenceEditorModal: React.FC = () => {
             <BarChart2 className="text-[#8b0000]" size={24} />
             <div>
               <span className="font-sans text-[10px] text-[#8b0000] uppercase font-bold tracking-widest block">
-                BUREAU OF READER INTELLIGENCE CONTROL
+                COMMUNITY CORNER & READER REACTIONS
               </span>
               <h3 className="text-2xl font-black text-[#1a1a1a] uppercase font-serif">
-                EDIT MEASURABLE IMPACT & TITLES
+                EDIT READER THOUGHTS & REACTIONS
               </h3>
             </div>
           </div>
@@ -118,13 +118,13 @@ export const IntelligenceEditorModal: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">
-                  Bureau Header / Eyebrow
+                  Corner Header / Eyebrow
                 </label>
                 <input
                   type="text"
                   value={formStats.bureauTitle || ''}
                   onChange={(e) => setFormStats({ ...formStats, bureauTitle: e.target.value })}
-                  placeholder="BUREAU OF READER METRICS & MEASURABLE ENGAGEMENT"
+                  placeholder="COMMUNITY CORNER • READER REACTIONS"
                   className="w-full bg-white border border-black p-2 text-xs"
                   required
                 />
@@ -138,7 +138,7 @@ export const IntelligenceEditorModal: React.FC = () => {
                   type="text"
                   value={formStats.headline || ''}
                   onChange={(e) => setFormStats({ ...formStats, headline: e.target.value })}
-                  placeholder="Measurable Reader Results & Analytics"
+                  placeholder="Reader Thoughts & Reactions"
                   className="w-full bg-white border border-black p-2 text-xs font-bold font-serif"
                   required
                 />
@@ -146,13 +146,13 @@ export const IntelligenceEditorModal: React.FC = () => {
 
               <div>
                 <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">
-                  Dispatch Note / Briefing
+                  Dispatch Note / Description
                 </label>
                 <textarea
                   value={formStats.dispatchNote || ''}
                   onChange={(e) => setFormStats({ ...formStats, dispatchNote: e.target.value })}
                   rows={3}
-                  placeholder="Summary description of reader interaction and intelligence..."
+                  placeholder="A relaxed look at what fellow readers thought, how everyone voted on plot twists, and notes left along the margins."
                   className="w-full bg-white border border-black p-2 text-xs"
                   required
                 />
@@ -529,7 +529,7 @@ export const IntelligenceEditorModal: React.FC = () => {
               type="submit"
               className="px-5 py-2 bg-black hover:bg-[#8b0000] text-white font-bold uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-colors"
             >
-              Save Intelligence Stats
+              Save Reader Reactions
             </button>
           </div>
         </form>

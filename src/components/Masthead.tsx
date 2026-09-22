@@ -128,7 +128,7 @@ export const Masthead: React.FC = () => {
               className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
             >
               <BarChart2 size={11} className="text-[#8b0000]" />
-              <span>Edit Impact & Titles</span>
+              <span>Edit Reader Reactions</span>
             </button>
             <button
               onClick={() => setIsEditAboutModalOpen(true)}
@@ -278,7 +278,7 @@ export const Masthead: React.FC = () => {
             }`}
           >
             <BarChart2 size={13} className="text-[#8b0000]" />
-            <span>Reader Intelligence</span>
+            <span>Reader Reactions</span>
           </button>
           <button
             id="nav-stats"

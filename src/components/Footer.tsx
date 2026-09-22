@@ -48,7 +48,7 @@ export const Footer: React.FC = () => {
                 onClick={() => { setSelectedReview(null); setActiveView('non-fiction'); }}
                 className="text-left hover:text-[#8b0000] hover:underline uppercase"
               >
-                • Research & Literature
+                • The Library
               </button>
               <button 
                 onClick={() => { setSelectedReview(null); setActiveView('currently-reading'); }}
@@ -72,7 +72,7 @@ export const Footer: React.FC = () => {
                 onClick={() => { setSelectedReview(null); setActiveView('analytics'); }}
                 className="text-left hover:text-[#8b0000] hover:underline uppercase flex items-center gap-1 font-bold text-[#8b0000]"
               >
-                • Reader Intel
+                • Reader Reactions
               </button>
               <button 
                 onClick={() => { setSelectedReview(null); setActiveView('stats'); }}
