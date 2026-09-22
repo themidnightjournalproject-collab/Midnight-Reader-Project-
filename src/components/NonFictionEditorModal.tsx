@@ -286,14 +286,14 @@ export const NonFictionEditorModal: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-xl font-black font-serif uppercase tracking-tight text-black">
-                  {isEditing ? `Edit Research Dossier: ${formData.catalogNumber || 'Field Entry'}` : 'Log New Research & Literature Dossier'}
+                  {isEditing ? `Edit Library Dossier: ${formData.catalogNumber || 'Volume Entry'}` : 'Log New Book to Library'}
                 </h2>
                 <span className="bg-[#8b0000] text-white text-[9px] font-mono px-2 py-0.5 uppercase tracking-widest font-bold">
                   Auto-Saves on Exit
                 </span>
               </div>
               <p className="text-[11px] font-sans text-gray-600 uppercase tracking-wider">
-                Literary Fiction, Sci-Fi/Fantasy, Non-Fiction, Philosophy, Memoirs & Multidisciplinary Studies
+                All-Genre Literature: Fiction, Sci-Fi/Fantasy, Non-Fiction, Philosophy, Memoirs & Multidisciplinary Studies
               </p>
             </div>
           </div>

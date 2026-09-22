@@ -173,20 +173,20 @@ export const ReadingJournalSection: React.FC = () => {
                 className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
               >
                 <PlusCircle size={13} />
-                <span>+ FILE THRILLER</span>
+                <span>+ FILE CASE</span>
               </button>
               <button
                 onClick={() => setIsNewNonFictionModalOpen(true)}
                 className="flex items-center gap-1.5 bg-[#3a3a3a] hover:bg-black text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
               >
                 <BookOpen size={13} />
-                <span>+ ADD NON-FICTION</span>
+                <span>+ ADD TO LIBRARY</span>
               </button>
             </div>
           )}
         </div>
 
-        {/* Master Category Toggle: All vs Thrillers vs Non-Fiction */}
+        {/* Master Category Toggle: All vs Case Files vs The Library */}
         <div className="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-black border-opacity-15">
           <button
             type="button"
@@ -215,7 +215,7 @@ export const ReadingJournalSection: React.FC = () => {
                 : 'bg-white text-black border border-black hover:bg-[#f5f2ed]'
             }`}
           >
-            Thrillers & Crime ({reviews.length})
+            Case Files & Mysteries ({reviews.length})
           </button>
 
           <button
@@ -230,7 +230,7 @@ export const ReadingJournalSection: React.FC = () => {
                 : 'bg-white text-black border border-black hover:bg-[#f5f2ed]'
             }`}
           >
-            Non-Fiction & Research ({nonFictionBooks.length})
+            The Library & Literature ({nonFictionBooks.length})
           </button>
         </div>
 

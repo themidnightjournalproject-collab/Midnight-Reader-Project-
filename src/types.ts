@@ -188,13 +188,24 @@ export interface CurrentlyReading {
   title: string;
   author: string;
   coverImage: string;
-  genre: Genre;
+  genre: string;
   currentPage: number;
   totalPages: number;
   startDate: string;
   currentTheory: string;
-  suspectsNoted: string[];
-  paranoiaLevel: string; // e.g. "Unreasonably High"
+  suspectsNoted?: string[];
+  paranoiaLevel?: string;
+  // Non-thriller parallel read:
+  showNonThriller?: boolean;
+  nonThrillerTitle?: string;
+  nonThrillerAuthor?: string;
+  nonThrillerGenre?: string;
+  nonThrillerCoverImage?: string;
+  nonThrillerCurrentPage?: number;
+  nonThrillerTotalPages?: number;
+  nonThrillerStartDate?: string;
+  nonThrillerThoughts?: string;
+  nonThrillerNotes?: string;
 }
 
 export interface ReadingStats {

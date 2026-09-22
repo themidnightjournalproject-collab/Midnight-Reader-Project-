@@ -14,6 +14,8 @@ export const Masthead: React.FC = () => {
     setIsIntelligenceEditorOpen,
     setIsEditAboutModalOpen,
     setIsTimelineEditorOpen,
+    setIsStatsEditorOpen,
+    setIsCurrentlyReadingModalOpen,
     setSelectedReview,
     setSelectedNonFictionBook,
     reviews,
@@ -101,13 +103,25 @@ export const Masthead: React.FC = () => {
               className="flex items-center gap-1 bg-[#3a3a3a] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
             >
               <PlusCircle size={12} />
-              <span>+ Log Research Dossier</span>
+              <span>+ Add Book to Library</span>
             </button>
             <button
               onClick={() => setIsEditHeroModalOpen(true)}
               className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
             >
               <span>Edit Dispatch</span>
+            </button>
+            <button
+              onClick={() => setIsStatsEditorOpen(true)}
+              className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
+            >
+              <span>Edit Vital Stats</span>
+            </button>
+            <button
+              onClick={() => setIsCurrentlyReadingModalOpen(true)}
+              className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
+            >
+              <span>Edit Current Reads</span>
             </button>
             <button
               onClick={() => setIsIntelligenceEditorOpen(true)}
@@ -219,7 +233,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            <span>Non-Fiction ({nonFictionBooks.length})</span>
+            <span>The Library ({nonFictionBooks.length})</span>
           </button>
           <button
             id="nav-currently-reading"

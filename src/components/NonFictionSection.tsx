@@ -87,21 +87,21 @@ export const NonFictionSection: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="bg-black text-white px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-widest">
-                Department of Ancillary Studies
+                The Curated Library
               </span>
               <span className="text-[11px] font-sans font-bold text-[#8b0000] tracking-wider uppercase">
-                Research & Literature Division
+                All-Genre Reading Dossiers
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black font-serif uppercase tracking-tight text-black">
-              Research & Literature Dossiers
+              The Library Archives
             </h2>
             <p className="text-xs sm:text-sm font-serif text-gray-700 mt-1 max-w-2xl">
-              Companion studies and broad reading files: literary fiction, speculative worlds, memoirs, philosophy, psychology, and multidisciplinary research.
+              Curated reading dossiers spanning all genres: literary fiction, sci-fi, fantasy, classics, memoirs, philosophy, psychology, essays, and multidisciplinary research.
             </p>
           </div>
 
-          {/* Quick Action to add non-fiction book - only for unlocked admin */}
+          {/* Quick Action to add book to library - only for unlocked admin */}
           {isAdminUnlocked && (
             <button
               id="btn-log-non-fiction"
@@ -109,7 +109,7 @@ export const NonFictionSection: React.FC = () => {
               className="flex items-center gap-2 bg-black hover:bg-[#8b0000] text-white px-5 py-2.5 text-xs font-sans font-bold uppercase tracking-widest transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
             >
               <Plus size={15} />
-              <span>Log Research Dossier</span>
+              <span>Add Book to Library</span>
             </button>
           )}
         </div>

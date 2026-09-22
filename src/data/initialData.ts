@@ -99,44 +99,6 @@ export const INITIAL_INTELLIGENCE_STATS: IntelligenceStats = {
   "featuredQuoteText": "“To read a thriller is to willingly enter into a contract of mutual paranoia with the author.”"
 };
 
-export const INITIAL_ABOUT_CONFIG: AboutConfig = {
-  "headerSubtitle": "CORRESPONDENT PROFILE",
-  "headerBadge": "THE STUDENT BEHIND THE LEDGER",
-  "pageTitle": "ABOUT THE CURATOR",
-  "curatorPhoto": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80",
-  "photoStamp": "DESK AT 2:15 AM",
-  "classification": "Full-Time Student",
-  "obsession": "Unreliable Narrators",
-  "featuredQuote": "“I started reading thrillers because I wanted to know what happened. I continued reading them because apparently I enjoy distrusting fictional strangers.”",
-  "bioParagraph1": "Hello! I'm a student who divides their waking hours between academic obligations and meticulously suspecting innocent fictional characters of capital murder.",
-  "bioParagraph2": "This blog is not a commercial book review portal or a highbrow literary magazine. It is my private case file archive—a place where I document plot twists, file wild theories before the climax, and lament the fact that I almost never guess the ending correctly despite having 400 pages of warning.",
-  "bioParagraph3": "When I'm not reading until my eyes water at 3:00 AM, you can find me analyzing red herrings, arguing with book characters about why they should not explore the dark cellar alone, and brewing excessive amounts of Earl Grey tea.",
-  "rulesHeading": "MY 4 GOLDEN RULES OF THRILLER INVESTIGATION",
-  "rules": [
-    {
-      "number": 1,
-      "title": "RULE #1:",
-      "description": "The character introduced in Chapter 3 who seems \"too helpful and harmless\" is definitely running the secret underground society."
-    },
-    {
-      "number": 2,
-      "title": "RULE #2:",
-      "description": "Never accept an invitation to a weekend housewarming party on an uninhabited island with no cell service."
-    },
-    {
-      "number": 3,
-      "title": "RULE #3:",
-      "description": "If a protagonist says \"I felt completely safe for the first time in years,\" start a 5-page countdown to a home invasion."
-    },
-    {
-      "number": 4,
-      "title": "RULE #4:",
-      "description": "Do not begin the final 50 pages of any locked-room mystery on a school night. You will not sleep."
-    }
-  ],
-  "finalNote": "“Feel free to submit your own theories on any case file. If you guess correctly, you get bragging rights. If you guess incorrectly, welcome to the club.”"
-};
-
 export const INITIAL_HERO_CONFIG: HeroConfig = {
   "headline": "“ANOTHER BOOK. ANOTHER SUSPECT.”",
   "dossierTag": "Dossier #2026-B",
@@ -163,7 +125,17 @@ export const INITIAL_CURRENTLY_READING: CurrentlyReading = {
     "Jules Phelps (Homeowner)",
     "Emma Carpenter (Reviewer)"
   ],
-  "paranoiaLevel": "Extremely High (Suspicious of everyone’s coffee order)"
+  "paranoiaLevel": "Extremely High (Suspicious of everyone’s coffee order)",
+  "showNonThriller": true,
+  "nonThrillerTitle": "Dark Matter",
+  "nonThrillerAuthor": "Blake Crouch",
+  "nonThrillerGenre": "Sci-Fi & Speculative Fiction",
+  "nonThrillerCoverImage": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
+  "nonThrillerCurrentPage": 184,
+  "nonThrillerTotalPages": 398,
+  "nonThrillerStartDate": "Feb 18, 2026",
+  "nonThrillerThoughts": "Reading this alongside my crime dispatches. The concept of infinite alternative lives based on microscopic decisions is gripping. Crouch creates genuine existential anxiety without any detective tropes.",
+  "nonThrillerNotes": "Explores regret, ambition, and identity through quantum mechanics. Highly recommended for when thriller suspects get overwhelming."
 };
 
 export const INITIAL_STATS: ReadingStats = {
@@ -588,3 +560,41 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = [
     ]
   }
 ];
+
+export const INITIAL_ABOUT_CONFIG: AboutConfig = {
+  headerSubtitle: "THE STUDENT BEHIND THE LEDGER",
+  headerBadge: "CORRESPONDENT PROFILE",
+  pageTitle: "ABOUT THE CURATOR",
+  curatorPhoto: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80",
+  photoStamp: "DESK AT 2:15 AM",
+  classification: "Full-Time Student & Chronic Reader",
+  obsession: "Unreliable Narrators, Deep Ideas & Good Twists",
+  featuredQuote: "I started reading thrillers because I wanted to know what happened. I continued reading them because apparently I enjoy distrusting fictional strangers.",
+  bioParagraph1: "Welcome to The Midnight Reader. Between university deadlines, lectures, and caffeinated late-night cram sessions, this journal serves as my evidence room. Every book filed here is treated as an active case: forensic character breakdowns, timeline reconstructions, and unfiltered marginalia.",
+  bioParagraph2: "While psychological thrillers and locked-room mysteries remain my primary obsession, 'The Library' houses everything else that commands my attention—from cosmic science fiction and memoirs to cognitive psychology and philosophy. Reading is both an investigative pursuit and a sanctuary.",
+  bioParagraph3: "Readers are welcome to vote on plot twists, submit suspect theories, or browse the case file dossiers. Just remember the fundamental rule: never trust a narrator who insists they are telling the whole truth.",
+  rulesHeading: "MY 4 GOLDEN RULES OF READING INVESTIGATION",
+  rules: [
+    {
+      number: 1,
+      title: "RULE #1: TRUST NO NARRATOR",
+      description: "If the narrator repeatedly emphasizes their own innocence, sanity, or sobriety in chapter one, they did it."
+    },
+    {
+      number: 2,
+      title: "RULE #2: THE INCONSPICUOUS GARDENER RULE",
+      description: "Characters mentioned casually on page 42 who vanish until chapter 28 are never just innocent bystanders."
+    },
+    {
+      number: 3,
+      title: "RULE #3: THE ATTIC DEADBOLT CONSTANT",
+      description: "If a door in a Victorian estate is locked from the outside, do not wait for the climax to ask why."
+    },
+    {
+      number: 4,
+      title: "RULE #4: MULTI-GENRE CURIOSITY",
+      description: "A sharp mind reads across genres. Step outside the crime scene into philosophy, sci-fi, and essays to keep your deductions agile."
+    }
+  ],
+  finalNote: "Filed from dorm room desk with three cold mugs of green tea."
+};

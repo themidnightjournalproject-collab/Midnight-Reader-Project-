@@ -10,6 +10,7 @@ export const HeroHeadline: React.FC = () => {
     stats, 
     heroConfig, 
     setIsEditHeroModalOpen,
+    setIsStatsEditorOpen,
     isAdminUnlocked
   } = useJournal();
 
@@ -98,7 +99,7 @@ export const HeroHeadline: React.FC = () => {
               onClick={() => setActiveView('non-fiction')}
               className="flex items-center gap-1.5 bg-[#f5f1e8] hover:bg-[#eae3d2] text-black border border-black px-3.5 py-2.5 text-xs font-sans font-bold uppercase tracking-wider transition-all cursor-pointer"
             >
-              <span>RESEARCH & LITERATURE</span>
+              <span>THE LIBRARY & BEYOND</span>
             </button>
           </div>
         </div>
@@ -111,9 +112,22 @@ export const HeroHeadline: React.FC = () => {
               <h3 className="bg-black text-white text-[10px] px-2 py-0.5 uppercase tracking-widest font-sans font-bold">
                 Vital Statistics
               </h3>
-              <span className="text-[10px] font-sans font-bold text-[#8b0000] uppercase tracking-wider">
-                Live Audit
-              </span>
+              <div className="flex items-center gap-2">
+                {isAdminUnlocked && (
+                  <button
+                    id="btn-edit-vital-stats"
+                    onClick={() => setIsStatsEditorOpen(true)}
+                    title="Edit Vital Reading Statistics"
+                    className="flex items-center gap-1 text-[10px] uppercase font-sans font-bold text-gray-600 hover:text-[#8b0000] border border-dashed border-gray-400 hover:border-black px-1.5 py-0.5 transition-colors bg-white cursor-pointer"
+                  >
+                    <Edit3 size={10} className="text-[#8b0000]" />
+                    <span>Edit Stats</span>
+                  </button>
+                )}
+                <span className="text-[10px] font-sans font-bold text-[#8b0000] uppercase tracking-wider">
+                  Live Audit
+                </span>
+              </div>
             </div>
 
             <div className="space-y-3 font-sans text-xs pt-1">

@@ -40,17 +40,13 @@ export const CaseFilesGallery: React.FC = () => {
               </span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1a1a1a] tracking-tight uppercase font-serif">
-              CRIMINAL CASE FILES ARCHIVE ({reviews.length})
+              CASE FILES ARCHIVE ({reviews.length})
             </h2>
           </div>
-
-          <span className="border border-black text-black font-mono uppercase text-xs py-0.5 px-2 font-bold rotate-[-1deg] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-            THRILLER CASES ONLY
-          </span>
         </div>
 
         <p className="font-serif text-base text-[#4a4a4a] italic mt-2 max-w-3xl">
-          Dedicated archives of thriller and mystery investigations. Inspect suspect lineups, vote on plot twists, endorse case dossiers, or open any case below for full critical dissection.
+          Dedicated case file archives across all genres, investigations, and literary dissections. Inspect evidence lineups, reader testimonies, or open any case below for full critical marginalia.
         </p>
       </div>
 

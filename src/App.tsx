@@ -48,9 +48,8 @@ const MainContent: React.FC = () => {
 
     case 'currently-reading':
       return (
-        <div className="space-y-6">
+        <div className="py-4">
           <CurrentlyReadingBanner />
-          <SuspectBoardGlobal />
         </div>
       );
 
