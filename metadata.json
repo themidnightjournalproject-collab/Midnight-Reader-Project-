@@ -1,0 +1,6 @@
+{
+  "name": "The Midnight Reader",
+  "description": "A student's vintage newspaper & detective case file reading journal for thrillers and mysteries.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
