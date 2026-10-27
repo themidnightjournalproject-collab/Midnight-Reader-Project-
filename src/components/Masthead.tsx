@@ -60,33 +60,7 @@ export const Masthead: React.FC = () => {
           <span>{currentDate}</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
-          <span className="hidden md:inline text-[#8b0000]">Classified: Case Archive</span>
-          <span className="hidden md:inline opacity-40">•</span>
-          
-          {/* GitHub Status & Sign-in */}
-          {isGitHubConnected ? (
-            <button
-              onClick={() => setIsGitHubModalOpen(true)}
-              className="flex items-center gap-1.5 text-[10px] font-mono border border-black bg-white px-2 py-0.5 hover:bg-[#faf7f2] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-colors"
-              title="GitHub Connected: Click to manage or backup"
-            >
-              <Github size={11} className="text-[#166534]" />
-              <span className="font-bold text-black truncate max-w-[120px]">@{githubUser?.username}</span>
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsGitHubModalOpen(true)}
-              className="flex items-center gap-1.5 text-[#1a1a1a] hover:text-[#8b0000] px-2 py-0.5 border border-black border-opacity-40 hover:border-opacity-100 transition-colors text-[10px] bg-white shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
-              title="Sign in with GitHub or connect Personal Access Token"
-            >
-              <Github size={11} />
-              <span>GitHub Sign In</span>
-            </button>
-          )}
-
-          <span className="hidden sm:inline opacity-40">•</span>
-
-          {/* Chief Investigator / Editor Access toggle */}
+          {/* Editorial Newspaper Header Info */}
           {isAdminUnlocked ? (
             <div className="flex items-center gap-2">
               <span className="bg-[#8b0000] text-white px-2 py-0.5 text-[10px] font-mono font-bold flex items-center gap-1 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
@@ -102,11 +76,10 @@ export const Masthead: React.FC = () => {
           ) : (
             <button
               onClick={() => setIsAdminModalOpen(true)}
-              className="flex items-center gap-1 text-[#4a4a4a] hover:text-[#8b0000] px-1.5 py-0.5 border border-black border-opacity-30 hover:border-opacity-100 transition-colors text-[10px] bg-white"
-              title="Chief Investigator / Owner Login to edit or add reviews"
+              className="text-[#8b0000] hover:text-black transition-colors cursor-pointer select-none"
+              title="Editorial Desk"
             >
-              <KeyRound size={11} className="text-[#8b0000]" />
-              <span>Editor Login</span>
+              Classified: Case Archive
             </button>
           )}
         </div>

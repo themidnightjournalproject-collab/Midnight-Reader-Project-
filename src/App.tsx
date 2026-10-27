@@ -90,33 +90,61 @@ const MainContent: React.FC = () => {
   }
 };
 
+function AppContent() {
+  const { setIsAdminModalOpen } = useJournal();
+
+  // Listen for secret keyboard combo (Ctrl+Alt+E or Cmd+Alt+E) or ?editor=true URL param
+  React.useEffect(() => {
+    // 1. Check URL parameters
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('editor') === '1' || params.get('admin') === '1' || params.has('secret')) {
+      setIsAdminModalOpen(true);
+    }
+
+    // 2. Secret keyboard listener for the blog owner
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'e' || e.key === 'E')) {
+        e.preventDefault();
+        setIsAdminModalOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setIsAdminModalOpen]);
+
+  return (
+    <div className="min-h-screen flex flex-col justify-between selection:bg-[#8b1e1e] selection:text-white">
+      <div>
+        <Masthead />
+        <main className="w-full">
+          <MainContent />
+        </main>
+      </div>
+
+      {/* Global Modals */}
+      <NewReviewModal />
+      <EditReviewModal />
+      <NonFictionEditorModal />
+      <EditHeroModal />
+      <StatsEditorModal />
+      <TimelineEditorModal />
+      <IntelligenceEditorModal />
+      <CurrentlyReadingModal />
+      <AboutEditorModal />
+      <OffTheRecordEditorModal />
+      <AdminAuthModal />
+      <GitHubAuthModal />
+
+      <Footer />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <JournalProvider>
-      <div className="min-h-screen flex flex-col justify-between selection:bg-[#8b1e1e] selection:text-white">
-        <div>
-          <Masthead />
-          <main className="w-full">
-            <MainContent />
-          </main>
-        </div>
-
-        {/* Global Modals */}
-        <NewReviewModal />
-        <EditReviewModal />
-        <NonFictionEditorModal />
-        <EditHeroModal />
-        <StatsEditorModal />
-        <TimelineEditorModal />
-        <IntelligenceEditorModal />
-        <CurrentlyReadingModal />
-        <AboutEditorModal />
-        <OffTheRecordEditorModal />
-        <AdminAuthModal />
-        <GitHubAuthModal />
-
-        <Footer />
-      </div>
+      <AppContent />
     </JournalProvider>
   );
 }

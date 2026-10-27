@@ -690,7 +690,6 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
         if (data.githubUser) {
           setGithubUser(data.githubUser);
-          setIsAdminUnlocked(true);
         }
         if (typeof data.isGitHubConfigured === 'boolean') {
           setIsGitHubConfigured(data.isGitHubConfigured);

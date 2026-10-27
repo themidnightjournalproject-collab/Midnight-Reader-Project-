@@ -117,21 +117,17 @@ export const Footer: React.FC = () => {
                     <span>Chief Investigator Settings</span>
                   </button>
                   <button
-                    onClick={resetToDefaults}
+                    onClick={lockAdmin}
                     className="inline-flex items-center gap-1 text-[11px] text-[#737373] hover:text-[#8b0000] underline font-mono"
                   >
-                    <RotateCcw size={12} />
-                    <span>Reset To Default Records</span>
+                    <Lock size={12} />
+                    <span>Lock Desk (Return to Visitor View)</span>
                   </button>
                 </>
               ) : (
-                <button
-                  onClick={() => setIsAdminModalOpen(true)}
-                  className="inline-flex items-center gap-1 text-[11px] text-[#4a4a4a] hover:text-[#8b0000] underline font-mono"
-                >
-                  <KeyRound size={12} />
-                  <span>Chief Investigator Login</span>
-                </button>
+                <span className="text-[11px] text-[#737373] font-mono italic">
+                  Read-only archival ledger. Dispatch updates curated by editorial desk.
+                </span>
               )}
             </div>
           </div>
@@ -140,7 +136,11 @@ export const Footer: React.FC = () => {
 
         {/* Bottom copyright line */}
         <div className="pt-6 flex flex-wrap items-center justify-between text-[11px] font-sans text-[#737373] gap-2">
-          <span className="uppercase tracking-wider">
+          <span 
+            onClick={() => setIsAdminModalOpen(true)}
+            className="uppercase tracking-wider cursor-default select-none"
+            title="The Midnight Reader"
+          >
             © {new Date().getFullYear()} THE MIDNIGHT READER • CASE ARCHIVE DEPT.
           </span>
           <span className="italic font-serif text-xs text-[#4a4a4a]">
