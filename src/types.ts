@@ -183,6 +183,18 @@ export interface HeroConfig {
   primaryButtonText: string;
   secondaryButtonText: string;
   quoteAttribution?: string;
+  // Global customizable site & section branding
+  siteTitle?: string; // "The Midnight Reader"
+  siteTagline?: string; // "A student's reading journal..."
+  newspaperVolume?: string; // "Vol. XXIV — No. 114"
+  classifiedTag?: string; // "Classified: Case Archive"
+  archivesSectionTitle?: string; // "Case File Archive"
+  archivesEyebrow?: string; // "Forensic Reviews & Crime Log"
+  currentReadsTitle?: string; // "Currently Investigating"
+  suspectBoardTitle?: string; // "Suspect Board"
+  timelineTitle?: string; // "Investigation Timeline"
+  statsTitle?: string; // "Vital Statistics"
+  aboutTitle?: string; // "About The Curator"
 }
 
 export interface CurrentlyReading {

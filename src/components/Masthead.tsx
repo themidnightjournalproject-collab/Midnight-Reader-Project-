@@ -27,7 +27,9 @@ export const Masthead: React.FC = () => {
     githubUser,
     isGitHubConnected,
     setIsGitHubModalOpen,
-    syncToGitHub
+    syncToGitHub,
+    heroConfig,
+    offTheRecordConfig
   } = useJournal();
 
   const [isQuickSyncing, setIsQuickSyncing] = useState(false);
@@ -55,7 +57,7 @@ export const Masthead: React.FC = () => {
       {/* Top Banner Bar - Editorial Newspaper Info & Editor Clearance status */}
       <div className="flex flex-wrap items-center justify-between text-[11px] font-sans uppercase tracking-[0.2em] font-bold text-[#1a1a1a] border-b-2 border-black pb-2 mb-3 gap-2">
         <div className="flex items-center gap-3 sm:gap-6">
-          <span>Vol. XXIV — No. 114</span>
+          <span>{heroConfig?.newspaperVolume || 'Vol. XXIV — No. 114'}</span>
           <span className="hidden sm:inline opacity-40">•</span>
           <span>{currentDate}</span>
         </div>
@@ -79,7 +81,7 @@ export const Masthead: React.FC = () => {
               className="text-[#8b0000] hover:text-black transition-colors cursor-pointer select-none"
               title="Editorial Desk"
             >
-              Classified: Case Archive
+              {heroConfig?.classifiedTag || 'Classified: Case Archive'}
             </button>
           )}
         </div>
@@ -221,11 +223,11 @@ export const Masthead: React.FC = () => {
           className="text-5xl sm:text-7xl md:text-8xl font-black uppercase text-[#1a1a1a] cursor-pointer hover:opacity-90 transition-opacity select-none font-serif tracking-tighter"
           style={{ letterSpacing: '-2px' }}
         >
-          The Midnight Reader
+          {heroConfig?.siteTitle || 'The Midnight Reader'}
         </h1>
         
         <p className="font-serif italic text-sm sm:text-base text-[#1a1a1a] opacity-80 mt-1 max-w-2xl mx-auto">
-          'A student's reading journal — mostly suspicious people, unreliable narrators, and terrible decisions.'
+          {heroConfig?.siteTagline || "'A student's reading journal — mostly suspicious people, unreliable narrators, and terrible decisions.'"}
         </p>
       </div>
 
@@ -253,7 +255,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            The Archives ({reviews.length + nonFictionBooks.length})
+            {heroConfig?.archivesSectionTitle || 'The Archives'} ({reviews.length + nonFictionBooks.length})
           </button>
           <button
             id="nav-casefiles"
@@ -275,7 +277,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            <span>Off the Record ({nonFictionBooks.length})</span>
+            <span>{offTheRecordConfig?.title || 'Off the Record'} ({nonFictionBooks.length})</span>
           </button>
           <button
             id="nav-currently-reading"
@@ -286,7 +288,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            Currently Reading
+            {heroConfig?.currentReadsTitle || 'Currently Reading'}
           </button>
           <button
             id="nav-suspect-board"
@@ -297,7 +299,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            Suspect Board
+            {heroConfig?.suspectBoardTitle || 'Suspect Board'}
           </button>
           <button
             id="nav-timeline"
@@ -308,7 +310,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            Timeline
+            {heroConfig?.timelineTitle || 'Timeline'}
           </button>
           <button
             id="nav-analytics"
@@ -320,7 +322,7 @@ export const Masthead: React.FC = () => {
             }`}
           >
             <BarChart2 size={13} className="text-[#8b0000]" />
-            <span>Reader Reactions</span>
+            <span>Interrogation Poll</span>
           </button>
           <button
             id="nav-stats"
@@ -331,7 +333,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            Stats
+            {heroConfig?.statsTitle || 'Stats'}
           </button>
           <button
             id="nav-about"
@@ -342,7 +344,7 @@ export const Masthead: React.FC = () => {
                 : 'hover:text-[#8b0000]'
             }`}
           >
-            About
+            {heroConfig?.aboutTitle || 'About'}
           </button>
         </nav>
 
