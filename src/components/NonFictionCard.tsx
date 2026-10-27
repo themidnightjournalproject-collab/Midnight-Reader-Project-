@@ -215,37 +215,46 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
           </div>
         </div>
 
-        {/* Mindset Scores Mini-Badge Bar */}
-        <div className="grid grid-cols-4 gap-1 p-2 bg-[#fcfaf2] border border-black text-center font-mono text-[10px] mb-3">
+        {/* Reader Scores Mini Bar (More compact & refined) */}
+        <div className="grid grid-cols-4 gap-1 py-1 px-1.5 bg-[#fcfaf2] border border-black text-center font-mono text-[9px] mb-3">
           <div>
-            <span className="text-[8px] text-gray-500 block uppercase">Readability</span>
+            <span className="text-[7.5px] text-gray-500 block uppercase">Pacing</span>
             <span className="font-bold text-black">{book.mindsetRatings?.readability || 5}/5</span>
           </div>
           <div>
-            <span className="text-[8px] text-gray-500 block uppercase">Utility</span>
+            <span className="text-[7.5px] text-gray-500 block uppercase">Takeaway</span>
             <span className="font-bold text-[#8b0000]">{book.mindsetRatings?.actionability || 4}/5</span>
           </div>
           <div>
-            <span className="text-[8px] text-gray-500 block uppercase">Impact</span>
+            <span className="text-[7.5px] text-gray-500 block uppercase">Depth</span>
             <span className="font-bold text-black">{book.mindsetRatings?.intellectualImpact || 5}/5</span>
           </div>
           <div>
-            <span className="text-[8px] text-gray-500 block uppercase">Originality</span>
+            <span className="text-[7.5px] text-gray-500 block uppercase">Freshness</span>
             <span className="font-bold text-black">{book.mindsetRatings?.originality || 4}/5</span>
           </div>
         </div>
 
-        {/* Key Takeaway snippet */}
-        {book.keyTakeaways && book.keyTakeaways.length > 0 && (
+        {/* Informal Personal Thoughts Snippet (if available) */}
+        {book.personalThoughts ? (
+          <div className="bg-[#fffdf8] p-2.5 border border-black border-dashed mb-3 text-xs">
+            <span className="font-sans font-bold uppercase text-[9px] text-[#8b0000] block mb-0.5">
+              Personal Thoughts (Informal Take):
+            </span>
+            <p className="font-serif italic text-gray-900 text-xs leading-snug line-clamp-2">
+              “{book.personalThoughts}”
+            </p>
+          </div>
+        ) : book.keyTakeaways && book.keyTakeaways.length > 0 ? (
           <div className="bg-[#fffef7] p-2.5 border border-dashed border-gray-400 mb-3 text-xs">
             <span className="font-sans font-bold uppercase text-[9px] text-[#8b0000] block mb-1">
-              Top Research Takeaway:
+              Top Takeaway:
             </span>
             <p className="font-serif text-gray-800 text-xs leading-snug line-clamp-2">
               • {book.keyTakeaways[0]}
             </p>
           </div>
-        )}
+        ) : null}
 
         {/* Quick Scratchpad Note Section */}
         {isQuickNoteOpen ? (

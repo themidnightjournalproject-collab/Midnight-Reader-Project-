@@ -20,7 +20,10 @@ import {
   Clock,
   Trash2,
   Copy,
-  Camera
+  Camera,
+  MessageSquareQuote,
+  Feather,
+  Sparkles
 } from 'lucide-react';
 
 interface NonFictionDetailModalProps {
@@ -261,39 +264,71 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               )}
             </div>
 
-            {/* Mindset Scores Radar / Metric Bars */}
-            <div className="bg-[#fffef7] p-4 border border-black">
-              <span className="block font-sans text-[10px] font-bold uppercase tracking-widest text-[#8b0000] mb-2.5">
-                Cognitive Impact & Utility Matrix
-              </span>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center font-sans">
-                <div className="p-2 bg-white border border-black">
-                  <span className="block text-[9px] uppercase font-bold text-gray-600">Readability</span>
-                  <span className="text-lg font-mono font-black text-black">{book.mindsetRatings?.readability || 5}/5</span>
+            {/* Compact Book Pulse / Score Ribbon (Made smaller & renamed from cognitive impact) */}
+            <div className="bg-[#faf9f5] px-3.5 py-2.5 border border-black">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="font-sans text-[9px] font-bold uppercase tracking-widest text-[#8b0000]">
+                  Reader Experience Scores
+                </span>
+                <span className="font-mono text-[9px] text-gray-500 uppercase">
+                  Field Benchmark
+                </span>
+              </div>
+              <div className="grid grid-cols-4 gap-2 text-center font-sans">
+                <div className="py-1 px-1.5 bg-white border border-black/40">
+                  <span className="block text-[8px] uppercase font-bold text-gray-500">Pacing</span>
+                  <span className="text-xs font-mono font-bold text-black">{book.mindsetRatings?.readability || 5}/5</span>
                 </div>
-                <div className="p-2 bg-white border border-black">
-                  <span className="block text-[9px] uppercase font-bold text-gray-600">Actionability</span>
-                  <span className="text-lg font-mono font-black text-black">{book.mindsetRatings?.actionability || 4}/5</span>
+                <div className="py-1 px-1.5 bg-white border border-black/40">
+                  <span className="block text-[8px] uppercase font-bold text-gray-500">Takeaway</span>
+                  <span className="text-xs font-mono font-bold text-black">{book.mindsetRatings?.actionability || 4}/5</span>
                 </div>
-                <div className="p-2 bg-white border border-black">
-                  <span className="block text-[9px] uppercase font-bold text-gray-600">Intellectual Impact</span>
-                  <span className="text-lg font-mono font-black text-[#8b0000]">{book.mindsetRatings?.intellectualImpact || 5}/5</span>
+                <div className="py-1 px-1.5 bg-white border border-black/40">
+                  <span className="block text-[8px] uppercase font-bold text-gray-500">Depth</span>
+                  <span className="text-xs font-mono font-bold text-[#8b0000]">{book.mindsetRatings?.intellectualImpact || 5}/5</span>
                 </div>
-                <div className="p-2 bg-white border border-black">
-                  <span className="block text-[9px] uppercase font-bold text-gray-600">Originality</span>
-                  <span className="text-lg font-mono font-black text-black">{book.mindsetRatings?.originality || 4}/5</span>
+                <div className="py-1 px-1.5 bg-white border border-black/40">
+                  <span className="block text-[8px] uppercase font-bold text-gray-500">Originality</span>
+                  <span className="text-xs font-mono font-bold text-black">{book.mindsetRatings?.originality || 4}/5</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
+        {/* Informal Review Space (Personal Thoughts & Unfiltered Reflections) */}
+        {(book.personalThoughts || book.readerReflections || isAdminUnlocked) && (
+          <div className="mb-6 bg-[#fffdf8] border-2 border-black p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative">
+            <div className="flex items-center justify-between border-b border-black pb-2 mb-3">
+              <div className="flex items-center gap-2">
+                <Feather size={16} className="text-[#8b0000]" />
+                <h3 className="font-serif text-lg font-bold uppercase tracking-tight text-black flex items-center gap-2">
+                  <span>Off The Record • Personal Thoughts & Casual Review</span>
+                </h3>
+              </div>
+              <span className="bg-[#8b0000] text-white text-[9px] font-mono font-bold uppercase px-2 py-0.5">
+                Informal Take
+              </span>
+            </div>
+
+            {book.personalThoughts || book.readerReflections ? (
+              <div className="p-4 bg-white border border-black border-dashed font-serif text-sm sm:text-base text-gray-900 leading-relaxed whitespace-pre-line italic">
+                “{book.personalThoughts || book.readerReflections}”
+              </div>
+            ) : (
+              <div className="p-4 bg-white border border-black border-dashed text-xs font-sans text-gray-500 italic">
+                No casual notes recorded yet. Click 'Edit Dossier' at the top to add your informal, unvarnished thoughts on this read!
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Deep Review Analysis */}
         <div className="mb-6">
           <div className="flex items-center gap-2 border-b border-black pb-2 mb-3">
             <Layers size={16} className="text-[#8b0000]" />
             <h3 className="font-serif text-lg font-bold uppercase tracking-tight text-black">
-              Field Analysis & Evaluation
+              Detailed Dossier Analysis & Breakdown
             </h3>
           </div>
           <div className="p-5 bg-white border border-black">

@@ -142,42 +142,42 @@ export const NonFictionSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Field Research Statistics Bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white p-4 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-center justify-between text-gray-500 mb-1">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider">Field Studies</span>
-            <BookOpen size={14} className="text-[#8b0000]" />
+      {/* Compact Reading Record Statistics Bar (Sleeker & Smaller) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div className="bg-white p-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between text-gray-500 mb-0.5">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider">Books Read</span>
+            <BookOpen size={13} className="text-[#8b0000]" />
           </div>
-          <span className="text-2xl font-black font-mono text-black">{totalBooks}</span>
-          <span className="text-[10px] font-sans text-gray-500 block uppercase">Recorded Volumes</span>
+          <span className="text-xl font-black font-mono text-black">{totalBooks}</span>
+          <span className="text-[9px] font-sans text-gray-500 block uppercase">Catalog Entries</span>
         </div>
 
-        <div className="bg-white p-4 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-center justify-between text-gray-500 mb-1">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider">Pages Analyzed</span>
-            <Layers size={14} className="text-[#8b0000]" />
+        <div className="bg-white p-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between text-gray-500 mb-0.5">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider">Pages Read</span>
+            <Layers size={13} className="text-[#8b0000]" />
           </div>
-          <span className="text-2xl font-black font-mono text-black">{totalPages.toLocaleString()}</span>
-          <span className="text-[10px] font-sans text-gray-500 block uppercase">Dense Documentation</span>
+          <span className="text-xl font-black font-mono text-black">{totalPages.toLocaleString()}</span>
+          <span className="text-[9px] font-sans text-gray-500 block uppercase">Total Pagecount</span>
         </div>
 
-        <div className="bg-white p-4 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-center justify-between text-gray-500 mb-1">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider">Key Takeaways</span>
-            <Lightbulb size={14} className="text-[#8b0000]" />
+        <div className="bg-white p-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between text-gray-500 mb-0.5">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider">Key Takeaways</span>
+            <Lightbulb size={13} className="text-[#8b0000]" />
           </div>
-          <span className="text-2xl font-black font-mono text-[#8b0000]">{totalTakeaways}</span>
-          <span className="text-[10px] font-sans text-gray-500 block uppercase">Applied Mental Models</span>
+          <span className="text-xl font-black font-mono text-[#8b0000]">{totalTakeaways}</span>
+          <span className="text-[9px] font-sans text-gray-500 block uppercase">Noted Insights</span>
         </div>
 
-        <div className="bg-white p-4 border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <div className="flex items-center justify-between text-gray-500 mb-1">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider">Average Impact</span>
-            <Brain size={14} className="text-[#8b0000]" />
+        <div className="bg-white p-3 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center justify-between text-gray-500 mb-0.5">
+            <span className="text-[9px] font-sans font-bold uppercase tracking-wider">Average Rating</span>
+            <Brain size={13} className="text-[#8b0000]" />
           </div>
-          <span className="text-2xl font-black font-mono text-black">{avgRating}/5.0</span>
-          <span className="text-[10px] font-sans text-gray-500 block uppercase">Rigorous Recommendation</span>
+          <span className="text-xl font-black font-mono text-black">{avgRating}/5.0</span>
+          <span className="text-[9px] font-sans text-gray-500 block uppercase">Overall Impression</span>
         </div>
       </div>
 

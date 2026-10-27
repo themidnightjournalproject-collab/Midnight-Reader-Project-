@@ -158,6 +158,7 @@ export interface NonFictionBook {
   summary: string;
   reviewText: string;
   fullReview?: string; // alias
+  personalThoughts?: string; // Informal, unvarnished reader reflections / informal review
   favoriteQuote?: string;
   favoriteQuotes?: string[];
   quoteContext?: string;
