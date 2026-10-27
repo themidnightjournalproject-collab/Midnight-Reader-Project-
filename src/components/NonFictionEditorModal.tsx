@@ -671,31 +671,15 @@ export const NonFictionEditorModal: React.FC = () => {
 
             <div>
               <label className="block font-bold uppercase text-[10px] text-gray-700 mb-1">
-                Formal Field Evaluation & Critical Analysis
+                Dissecting the Narrative • The Forensic Autopsy
               </label>
               <textarea
-                rows={4}
+                rows={5}
                 value={formData.fullReview}
                 onChange={(e) => setFormData({ ...formData, fullReview: e.target.value, reviewText: e.target.value })}
                 placeholder="Comprehensive analysis, critique, structural breakdown, and thematic evaluation..."
                 className="w-full bg-[#fcfaf2] border border-black p-2 font-serif text-xs leading-relaxed focus:ring-1 focus:ring-black"
                 required
-              />
-            </div>
-
-            <div className="pt-2 border-t border-black/20">
-              <div className="flex items-center justify-between mb-1">
-                <label className="block font-bold uppercase text-[10px] text-[#8b0000]">
-                  Off The Record: Personal Thoughts & Informal Review (Casual Take)
-                </label>
-                <span className="text-[9px] font-mono text-gray-500 uppercase">Optional • Highly Recommended</span>
-              </div>
-              <textarea
-                rows={3}
-                value={formData.personalThoughts || ''}
-                onChange={(e) => setFormData({ ...formData, personalThoughts: e.target.value, readerReflections: e.target.value })}
-                placeholder="Write your candid, conversational review here! (e.g. What you actually felt, reading vibes, unfiltered reaction, who you'd lend it to, memorable moments)..."
-                className="w-full bg-[#fffdf8] border-2 border-black border-dashed p-2.5 font-serif text-xs leading-relaxed focus:ring-1 focus:ring-[#8b0000] focus:border-solid"
               />
             </div>
           </div>

@@ -235,17 +235,8 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
           </div>
         </div>
 
-        {/* Informal Personal Thoughts Snippet (if available) */}
-        {book.personalThoughts ? (
-          <div className="bg-[#fffdf8] p-2.5 border border-black border-dashed mb-3 text-xs">
-            <span className="font-sans font-bold uppercase text-[9px] text-[#8b0000] block mb-0.5">
-              Personal Thoughts (Informal Take):
-            </span>
-            <p className="font-serif italic text-gray-900 text-xs leading-snug line-clamp-2">
-              “{book.personalThoughts}”
-            </p>
-          </div>
-        ) : book.keyTakeaways && book.keyTakeaways.length > 0 ? (
+        {/* Top Key Takeaway snippet */}
+        {book.keyTakeaways && book.keyTakeaways.length > 0 ? (
           <div className="bg-[#fffef7] p-2.5 border border-dashed border-gray-400 mb-3 text-xs">
             <span className="font-sans font-bold uppercase text-[9px] text-[#8b0000] block mb-1">
               Top Takeaway:

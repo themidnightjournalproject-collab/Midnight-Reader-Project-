@@ -103,10 +103,10 @@ export const InteractiveEngagement: React.FC<InteractiveEngagementProps> = ({ re
       <div className="flex flex-wrap items-center justify-between border-b-2 border-black pb-3 gap-3">
         <div>
           <span className="font-sans text-[11px] font-bold uppercase tracking-widest text-[#8b0000] block">
-            INTERACTIVE JURY & READER VERDICTS
+            JURY DELIBERATION & CASE VERDICTS
           </span>
           <h4 className="font-serif text-xl sm:text-2xl font-black uppercase text-[#1a1a1a] tracking-tight">
-            Reader Engagement & Interrogation Poll
+            Interrogation Poll
           </h4>
         </div>
 

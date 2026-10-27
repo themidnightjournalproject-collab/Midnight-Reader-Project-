@@ -296,42 +296,15 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
           </div>
         </div>
 
-        {/* Informal Review Space (Personal Thoughts & Unfiltered Reflections) */}
-        {(book.personalThoughts || book.readerReflections || isAdminUnlocked) && (
-          <div className="mb-6 bg-[#fffdf8] border-2 border-black p-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative">
-            <div className="flex items-center justify-between border-b border-black pb-2 mb-3">
-              <div className="flex items-center gap-2">
-                <Feather size={16} className="text-[#8b0000]" />
-                <h3 className="font-serif text-lg font-bold uppercase tracking-tight text-black flex items-center gap-2">
-                  <span>Off The Record • Personal Thoughts & Casual Review</span>
-                </h3>
-              </div>
-              <span className="bg-[#8b0000] text-white text-[9px] font-mono font-bold uppercase px-2 py-0.5">
-                Informal Take
-              </span>
-            </div>
-
-            {book.personalThoughts || book.readerReflections ? (
-              <div className="p-4 bg-white border border-black border-dashed font-serif text-sm sm:text-base text-gray-900 leading-relaxed whitespace-pre-line italic">
-                “{book.personalThoughts || book.readerReflections}”
-              </div>
-            ) : (
-              <div className="p-4 bg-white border border-black border-dashed text-xs font-sans text-gray-500 italic">
-                No casual notes recorded yet. Click 'Edit Dossier' at the top to add your informal, unvarnished thoughts on this read!
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Deep Review Analysis */}
+        {/* Main Review & Forensic Literary Analysis */}
         <div className="mb-6">
           <div className="flex items-center gap-2 border-b border-black pb-2 mb-3">
             <Layers size={16} className="text-[#8b0000]" />
-            <h3 className="font-serif text-lg font-bold uppercase tracking-tight text-black">
-              Detailed Dossier Analysis & Breakdown
+            <h3 className="font-serif text-lg font-bold uppercase tracking-tight text-black flex items-center gap-2">
+              <span>Dissecting the Narrative • The Forensic Autopsy</span>
             </h3>
           </div>
-          <div className="p-5 bg-white border border-black">
+          <div className="p-5 bg-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             <p className="font-serif text-sm sm:text-base text-gray-900 leading-relaxed whitespace-pre-line">
               {book.reviewText || book.fullReview}
             </p>
