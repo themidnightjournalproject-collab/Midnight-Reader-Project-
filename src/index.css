@@ -1,0 +1,607 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-paper: #f5f2ed;
+    --bg-paper-darker: #e8e2d8;
+    --bg-card: #ffffff;
+    --ink-black: #1a1a1a;
+    --ink-muted: #4a4a4a;
+    --ink-faint: #737373;
+    --accent-red: #8b0000;
+    --accent-red-hover: #700000;
+    --accent-sepia: #5c4328;
+    --border-paper: #d5cec2;
+    --border-frame: #e0dad0;
+    --border-dark: #1a1a1a;
+  }
+
+  body {
+    background-color: var(--bg-paper);
+    color: var(--ink-black);
+    font-family: 'Newsreader', 'Times New Roman', Georgia, serif;
+    background-image: 
+      radial-gradient(#d3c9b7 0.75px, transparent 0.75px),
+      radial-gradient(#e0d6c5 0.75px, #f5f2ed 0.75px);
+    background-size: 24px 24px;
+    background-position: 0 0, 12px 12px;
+    min-height: 100vh;
+  }
+}
+
+/* Typography Helpers */
+.font-headline {
+  font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
+}
+
+.font-masthead {
+  font-family: 'Cinzel', 'Times New Roman', 'Playfair Display', Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.font-editorial {
+  font-family: 'Newsreader', 'Times New Roman', Georgia, serif;
+}
+
+.font-typewriter {
+  font-family: 'Special Elite', 'Courier Prime', Courier, monospace;
+}
+
+.font-classified {
+  font-family: 'Courier Prime', Courier, monospace;
+}
+
+.font-marginalia {
+  font-family: 'Caveat', cursive;
+}
+
+/* Vintage Newspaper Borders */
+.border-double-thick {
+  border-bottom: 4px double #1a1a1a;
+}
+
+.border-double-top {
+  border-top: 4px double #1a1a1a;
+}
+
+.border-newspaper {
+  border-color: #d5cec2;
+}
+
+.border-dark-rule {
+  border-color: #1a1a1a;
+}
+
+/* Editorial Drop Caps */
+.drop-cap::first-letter {
+  font-family: 'Playfair Display', 'Times New Roman', Georgia, serif;
+  font-size: 3.5rem;
+  line-height: 0.85;
+  font-weight: 700;
+  float: left;
+  margin-right: 0.5rem;
+  margin-top: 0.2rem;
+  color: #8b0000;
+}
+
+/* Newspaper multi-column */
+.newspaper-columns {
+  column-count: 2;
+  column-gap: 2rem;
+  column-rule: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .newspaper-columns {
+    column-count: 1;
+    column-rule: none;
+  }
+}
+
+/* Vintage Stamps */
+.stamp {
+  display: inline-block;
+  text-transform: uppercase;
+  font-family: 'Special Elite', monospace;
+  font-weight: 700;
+  border: 2px solid;
+  border-radius: 2px;
+  padding: 0.2rem 0.6rem;
+  transform: rotate(-2deg);
+  letter-spacing: 0.12em;
+  opacity: 0.95;
+  user-select: none;
+}
+
+.stamp-red {
+  color: #ffffff;
+  background-color: #8b0000;
+  border-color: #8b0000;
+}
+
+.stamp-green {
+  color: #1b4d1b;
+  border-color: #1b4d1b;
+  background-color: #eaf3ea;
+}
+
+.stamp-black {
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+.stamp-sepia {
+  color: #5c4328;
+  border-color: #5c4328;
+  background-color: #f1ebd8;
+}
+
+/* Paper textures & Shadows */
+.paper-card {
+  background-color: #ffffff;
+  border: 1px solid #1a1a1a;
+  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.9);
+}
+
+.case-folder {
+  background-color: #fdfbf7;
+  border: 1px solid #1a1a1a;
+  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.9);
+}
+
+.pinned-note {
+  background-color: #fffef7;
+  border: 1px solid #1a1a1a;
+  box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.8);
+  position: relative;
+}
+
+.pinned-note::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle at 35% 35%, #b30000, #5a0000);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* Subtle clue connecting string */
+.clue-string {
+  stroke: #8b0000;
+  stroke-dasharray: 4,4;
+  stroke-width: 1.5;
+  opacity: 0.7;
+}
+
+/* Custom Scrollbar for vintage reading */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #e8e2d8;
+}
+::-webkit-scrollbar-thumb {
+  background: #a89f92;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8b0000;
+}
+
+/* ==========================================================================
+   PRINT MEDIA QUERY: TYPEWRITER-STYLE PHYSICAL DOCUMENT & DOSSIER LAYOUT
+   ========================================================================== */
+@media print {
+  /* Page configuration & margins */
+  @page {
+    margin: 1.25cm 1.5cm;
+    size: auto;
+  }
+
+  /* Reset colors, shadows, and print rendering */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  html,
+  body {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111111 !important;
+    font-family: 'Courier Prime', 'Special Elite', 'Courier New', Courier, monospace !important;
+    font-size: 10.5pt !important;
+    line-height: 1.55 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     1. HIDE ALL NAVIGATION, MODAL BUTTONS, AND INTERACTIVE CONTROLS
+     ------------------------------------------------------------------------ */
+  /* Main navigation, header links, and directory bars */
+  nav,
+  header nav,
+  .masthead-nav,
+  [id^="nav-"],
+  [role="navigation"],
+
+  /* All modal buttons, dialog buttons, action buttons, submit buttons */
+  button,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  .modal button,
+  [role="dialog"] button,
+  div[class*="fixed"] button,
+  div[class*="modal"] button,
+  .modal-close,
+  button[aria-label="Close"],
+
+  /* Modal backdrop overlays and non-document modal popups */
+  .fixed.inset-0:not(.print-dossier),
+  [role="dialog"] form,
+  .backdrop-blur-xs,
+  .backdrop-blur-sm,
+
+  /* Search bars, filters, and form inputs */
+  input[type="text"],
+  input[type="search"],
+  input[type="password"],
+  select,
+  textarea,
+  form,
+  .no-print,
+  [data-no-print],
+
+  /* Editorial admin ribbons, login badges, lock desk controls */
+  header .border-b-2.border-black:first-child,
+  header .bg-\[\#1a1a1a\],
+  .admin-ribbon,
+
+  /* Interactive steppers, tab buttons, jump-to buttons, and like buttons */
+  .investigation-stepper,
+  [id="section-evidence"] button,
+  [id="section-suspects"] button,
+  [id="section-review"] button,
+  [id="section-classified"] button,
+
+  /* Footer navigation links and interactive controls */
+  footer button,
+  footer .grid.grid-cols-2 {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. TYPEWRITER-STYLE DOCUMENT TYPOGRAPHY & HEADINGS
+     ------------------------------------------------------------------------ */
+  body,
+  p,
+  span,
+  li,
+  td,
+  th,
+  div,
+  label,
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Courier Prime', 'Special Elite', 'Courier New', Courier, monospace !important;
+    color: #111111 !important;
+  }
+
+  /* Headings: Clean bold typewriter styling with page-break protection */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Courier Prime', 'Special Elite', Courier, monospace !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #111111 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  h1 {
+    font-size: 20pt !important;
+    line-height: 1.2 !important;
+    border-bottom: 2px solid #111111 !important;
+    padding-bottom: 4pt !important;
+    margin-bottom: 8pt !important;
+    font-weight: 700 !important;
+  }
+
+  h2 {
+    font-size: 15pt !important;
+    line-height: 1.25 !important;
+    border-bottom: 1px solid #111111 !important;
+    padding-bottom: 3pt !important;
+    margin-top: 12pt !important;
+    margin-bottom: 6pt !important;
+    font-weight: 700 !important;
+  }
+
+  h3 {
+    font-size: 12pt !important;
+    line-height: 1.3 !important;
+    margin-top: 10pt !important;
+    margin-bottom: 4pt !important;
+    font-weight: 700 !important;
+  }
+
+  h4 {
+    font-size: 10.5pt !important;
+    font-weight: 700 !important;
+    margin-top: 8pt !important;
+    margin-bottom: 2pt !important;
+  }
+
+  /* Typewriter paragraph spacing and orphans/widows handling */
+  p {
+    margin-bottom: 8pt !important;
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ------------------------------------------------------------------------
+     3. CLEAN DOCUMENT CANVAS & CONTAINERS
+     ------------------------------------------------------------------------ */
+  main,
+  article,
+  section,
+  #reading-journal-section {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  /* Remove angled rotations and playful tilts so physical sheets print squarely */
+  *,
+  .rotate-\[-1deg\],
+  .rotate-\[-2deg\],
+  .rotate-1,
+  .rotate-2,
+  .group {
+    transform: none !important;
+  }
+
+  /* Page Break Hygiene */
+  article,
+  section,
+  .case-folder,
+  .paper-card,
+  .pinned-note,
+  blockquote,
+  table,
+  tr,
+  figure {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ------------------------------------------------------------------------
+     4. MASTHEAD PRINT PRESENTATION
+     ------------------------------------------------------------------------ */
+  header {
+    max-width: 100% !important;
+    padding: 0 0 8pt 0 !important;
+    margin-bottom: 14pt !important;
+    border-bottom: 2px double #111111 !important;
+    text-align: center !important;
+  }
+
+  header h1 {
+    font-size: 24pt !important;
+    letter-spacing: 0.08em !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  header p {
+    font-size: 9.5pt !important;
+    font-style: italic !important;
+    margin-top: 3pt !important;
+    color: #333333 !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     5. CASE FILES & DOSSIERS FORMATTING (CaseFileFullView & CaseFilesGallery)
+     ------------------------------------------------------------------------ */
+  /* Main Case Dossier Container */
+  article > div.bg-white.border-2.border-black,
+  .case-folder,
+  .paper-card {
+    background: #ffffff !important;
+    border: 1px solid #111111 !important;
+    box-shadow: none !important;
+    padding: 14pt !important;
+    margin-bottom: 16pt !important;
+  }
+
+  /* Header Blotter divider */
+  article .border-b-2.border-black {
+    border-bottom: 1px solid #111111 !important;
+    padding-bottom: 6pt !important;
+    margin-bottom: 10pt !important;
+  }
+
+  /* Typewriter stamps & classified tags */
+  .stamp,
+  .stamp-red,
+  .stamp-black,
+  .stamp-green,
+  .stamp-sepia,
+  span[class*="bg-\[\#8b0000\]"],
+  span[class*="bg-black"],
+  span[class*="bg-\[\#1a1a1a\]"],
+  span[class*="bg-\[\#e8e2d8\]"] {
+    background: transparent !important;
+    color: #111111 !important;
+    border: 1px solid #111111 !important;
+    border-radius: 0 !important;
+    font-family: 'Special Elite', 'Courier Prime', monospace !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.08em !important;
+    padding: 1pt 5pt !important;
+    font-size: 8pt !important;
+    text-transform: uppercase !important;
+    box-shadow: none !important;
+    display: inline-block !important;
+  }
+
+  /* Dossier Cover Photos / Evidence Items */
+  article img,
+  .case-folder img,
+  .paper-card img {
+    max-width: 140px !important;
+    max-height: 190px !important;
+    object-fit: cover !important;
+    filter: grayscale(100%) contrast(120%) !important;
+    border: 1px solid #111111 !important;
+    padding: 2pt !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  /* Metric cards & Forensic score boxes */
+  .grid-cols-2.sm\:grid-cols-4 > div,
+  .grid-cols-2.md\:grid-cols-4 > div,
+  [class*="bg-\[\#f5f2ed\]"][class*="border"] {
+    background: #ffffff !important;
+    border: 1px solid #222222 !important;
+    box-shadow: none !important;
+    padding: 4pt 6pt !important;
+  }
+
+  /* Memorandum Quotes & Lead Quotes */
+  blockquote,
+  .bg-\[\#e8e2d8\].border-l-4,
+  .pinned-note {
+    background: #fafafa !important;
+    border: 1px solid #111111 !important;
+    border-left: 4px solid #111111 !important;
+    box-shadow: none !important;
+    padding: 8pt 12pt !important;
+    margin: 8pt 0 !important;
+    font-style: italic !important;
+  }
+
+  .pinned-note::before {
+    display: none !important;
+  }
+
+  /* Multi-column Editorial Review converted to clean typewriter document */
+  .newspaper-columns {
+    column-count: 2 !important;
+    column-gap: 2rem !important;
+    column-rule: 1px dashed #cccccc !important;
+    text-align: justify !important;
+    font-size: 10pt !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Typewriter Drop Caps */
+  .drop-cap::first-letter {
+    font-family: 'Special Elite', 'Courier Prime', Courier, monospace !important;
+    font-size: 2.2rem !important;
+    line-height: 0.9 !important;
+    float: left !important;
+    margin-right: 0.35rem !important;
+    margin-top: 0.1rem !important;
+    color: #111111 !important;
+    font-weight: 700 !important;
+  }
+
+  /* Marginalia scribblings printed as typed investigator notes */
+  .font-marginalia {
+    font-family: 'Courier Prime', monospace !important;
+    font-size: 9.5pt !important;
+    font-style: italic !important;
+    color: #222222 !important;
+  }
+
+  /* Evidence Clue Board & Suspect Sections */
+  #section-evidence,
+  #section-suspects,
+  #section-review,
+  #section-classified {
+    background: #ffffff !important;
+    border: 1px solid #111111 !important;
+    box-shadow: none !important;
+    padding: 10pt 12pt !important;
+    margin-top: 12pt !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ------------------------------------------------------------------------
+     6. READING JOURNAL SECTION (THE ARCHIVES & ENTRIES REGISTER)
+     ------------------------------------------------------------------------ */
+  /* Flow archive entries cleanly down physical pages */
+  .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3,
+  .grid.grid-cols-1.md\:grid-cols-2 {
+    display: block !important;
+  }
+
+  /* Journal card as typed register index card */
+  .case-folder,
+  .paper-card,
+  article.bg-white,
+  div[class*="case-folder"] {
+    background: #ffffff !important;
+    border: 1px solid #111111 !important;
+    box-shadow: none !important;
+    padding: 10pt 12pt !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Divider rules */
+  .border-dotted,
+  .border-dashed {
+    border-color: #333333 !important;
+  }
+
+  /* Clean up links in print */
+  a,
+  a:visited {
+    color: #111111 !important;
+    text-decoration: none !important;
+  }
+
+  a[href^="http"]::after {
+    content: "" !important;
+  }
+
+  /* Clean up footer to show only the colophon notes */
+  footer {
+    border-top: 1px dashed #111111 !important;
+    background: transparent !important;
+    margin-top: 2rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  footer .col-span-4,
+  footer .md\:col-span-4,
+  footer .md\:col-span-3 {
+    display: none !important;
+  }
+}
+
+
