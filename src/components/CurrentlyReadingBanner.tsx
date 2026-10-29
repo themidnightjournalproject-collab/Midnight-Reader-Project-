@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
-import { Edit3, Camera, BookOpen, Bookmark, Sparkles } from 'lucide-react';
+import { Edit3, Camera, BookOpen, Bookmark, Sparkles, PlusCircle } from 'lucide-react';
 import { QuickImageModal } from './modals/QuickImageModal';
 
 export const CurrentlyReadingBanner: React.FC = () => {
@@ -48,15 +48,26 @@ export const CurrentlyReadingBanner: React.FC = () => {
           </div>
 
           {isAdminUnlocked && (
-            <button
-              id="btn-edit-currently-reading"
-              onClick={() => setIsCurrentlyReadingModalOpen(true)}
-              className="flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#4a4a4a] hover:text-[#8b0000] hover:underline cursor-pointer"
-              title="Update reading progress, thoughts, or parallel book"
-            >
-              <Edit3 size={12} />
-              <span>Update Current Reads</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                id="btn-add-currently-reading"
+                onClick={() => setIsCurrentlyReadingModalOpen(true)}
+                className="flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider bg-black hover:bg-[#8b0000] text-white px-3 py-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer"
+                title="Add or change currently reading books"
+              >
+                <PlusCircle size={13} />
+                <span>+ Add to Current Reads</span>
+              </button>
+              <button
+                id="btn-edit-currently-reading"
+                onClick={() => setIsCurrentlyReadingModalOpen(true)}
+                className="flex items-center gap-1.5 text-xs font-sans font-bold uppercase tracking-wider text-[#4a4a4a] hover:text-[#8b0000] hover:underline cursor-pointer"
+                title="Update reading progress, thoughts, or parallel book"
+              >
+                <Edit3 size={12} />
+                <span>Update Progress</span>
+              </button>
+            </div>
           )}
         </div>
 

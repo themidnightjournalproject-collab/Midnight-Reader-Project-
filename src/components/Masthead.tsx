@@ -144,6 +144,13 @@ export const Masthead: React.FC = () => {
               <span>+ Add to Off the Record</span>
             </button>
             <button
+              onClick={() => setIsCurrentlyReadingModalOpen(true)}
+              className="flex items-center gap-1 bg-[#8b0000] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors shadow-[1px_1px_0px_0px_rgba(255,255,255,0.3)]"
+            >
+              <PlusCircle size={12} />
+              <span>+ Add to Current Reads</span>
+            </button>
+            <button
               onClick={() => setIsEditOffTheRecordModalOpen(true)}
               className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors"
             >
