@@ -24,6 +24,8 @@ import { IntelligenceEditorModal } from './components/modals/IntelligenceEditorM
 import { CurrentlyReadingModal } from './components/modals/CurrentlyReadingModal';
 import { AboutEditorModal } from './components/modals/AboutEditorModal';
 import { OffTheRecordEditorModal } from './components/modals/OffTheRecordEditorModal';
+import { AddFileModal } from './components/modals/AddFileModal';
+import { CompleteAndArchiveModal } from './components/modals/CompleteAndArchiveModal';
 import { AdminAuthModal } from './components/modals/AdminAuthModal';
 import { GitHubAuthModal } from './components/modals/GitHubAuthModal';
 import { Footer } from './components/Footer';
@@ -133,6 +135,8 @@ function AppContent() {
       <CurrentlyReadingModal />
       <AboutEditorModal />
       <OffTheRecordEditorModal />
+      <AddFileModal />
+      <CompleteAndArchiveModal />
       <AdminAuthModal />
       <GitHubAuthModal />
 

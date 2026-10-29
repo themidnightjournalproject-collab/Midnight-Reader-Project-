@@ -197,6 +197,54 @@ export interface HeroConfig {
   aboutTitle?: string; // "About The Curator"
 }
 
+export interface CurrentlyReadingBook {
+  id: string;
+  title: string;
+  author: string;
+  coverImage: string;
+  genre: string;
+  category?: 'thriller' | 'non-fiction' | 'other';
+  currentPage: number;
+  totalPages: number;
+  startDate?: string;
+  currentTheory?: string;
+  thoughts?: string;
+  notes?: string;
+  suspectsNoted?: string[];
+  paranoiaLevel?: string;
+}
+
+export interface CompletingBookTarget {
+  bookType: 'primary' | 'companion' | 'additional';
+  additionalBookId?: string;
+  title: string;
+  author: string;
+  genre: string;
+  coverImage: string;
+  totalPages: number;
+  currentPage: number;
+  notes?: string;
+  startDate?: string;
+}
+
+export interface ArchiveCurrentBookParams {
+  bookType: 'primary' | 'companion' | 'additional';
+  additionalBookId?: string;
+  targetArchive: 'case' | 'offTheRecord';
+  title: string;
+  author: string;
+  genre: string;
+  coverImage: string;
+  pages: number;
+  rating: number;
+  dateFinished?: string;
+  reviewText?: string;
+  summary?: string;
+  whatIThought?: string;
+  whatActuallyHappened?: string;
+  readingFormat?: string;
+}
+
 export interface CurrentlyReading {
   title: string;
   author: string;
@@ -219,6 +267,8 @@ export interface CurrentlyReading {
   nonThrillerStartDate?: string;
   nonThrillerThoughts?: string;
   nonThrillerNotes?: string;
+  // Multiple books / additional current reads:
+  additionalBooks?: CurrentlyReadingBook[];
 }
 
 export interface ReadingStats {

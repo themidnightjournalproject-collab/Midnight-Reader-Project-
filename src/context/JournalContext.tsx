@@ -13,7 +13,10 @@ import {
   IntelligenceStats,
   AboutConfig,
   OffTheRecordConfig,
-  GitHubUser
+  GitHubUser,
+  CurrentlyReadingBook,
+  CompletingBookTarget,
+  ArchiveCurrentBookParams
 } from '../types';
 import { 
   INITIAL_REVIEWS, 
@@ -75,6 +78,9 @@ interface JournalContextType {
   isCurrentlyReadingModalOpen: boolean;
   isEditHeroModalOpen: boolean;
   isEditAboutModalOpen: boolean;
+  isAddFileModalOpen: boolean;
+  isCompleteBookModalOpen: boolean;
+  completingBookTarget: CompletingBookTarget | null;
   editingReview: BookReview | null;
   editingNonFictionBook: NonFictionBook | null;
   
@@ -159,6 +165,13 @@ interface JournalContextType {
   setIsEditAboutModalOpen: (open: boolean) => void;
   isEditOffTheRecordModalOpen: boolean;
   setIsEditOffTheRecordModalOpen: (open: boolean) => void;
+  setIsAddFileModalOpen: (open: boolean) => void;
+  setIsCompleteBookModalOpen: (open: boolean) => void;
+  setCompletingBookTarget: (target: CompletingBookTarget | null) => void;
+  openCompleteAndArchive: (target: CompletingBookTarget) => void;
+  archiveCurrentBook: (params: ArchiveCurrentBookParams) => void;
+  addBookToCurrentReads: (book: Omit<CurrentlyReadingBook, 'id'>) => void;
+  removeBookFromCurrentReads: (id: string) => void;
   
   // Interactivity Actions
   toggleLikePost: (reviewId: string) => void;
@@ -473,6 +486,9 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [isEditHeroModalOpen, setIsEditHeroModalOpen] = useState(false);
   const [isEditAboutModalOpen, setIsEditAboutModalOpen] = useState(false);
   const [isEditOffTheRecordModalOpen, setIsEditOffTheRecordModalOpen] = useState(false);
+  const [isAddFileModalOpen, setIsAddFileModalOpen] = useState(false);
+  const [isCompleteBookModalOpen, setIsCompleteBookModalOpen] = useState(false);
+  const [completingBookTarget, setCompletingBookTarget] = useState<CompletingBookTarget | null>(null);
   const [editingReview, setEditingReview] = useState<BookReview | null>(null);
   const [editingNonFictionBook, setEditingNonFictionBook] = useState<NonFictionBook | null>(null);
 
@@ -1112,6 +1128,176 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     syncWithServer({ currentlyReading: updated });
   };
 
+  const addBookToCurrentReads = (book: Omit<CurrentlyReadingBook, 'id'>) => {
+    const newBook: CurrentlyReadingBook = {
+      ...book,
+      id: `cr-book-${Date.now()}`,
+    };
+    const currentAdditional = currentlyReading.additionalBooks || [];
+    const updated = {
+      ...currentlyReading,
+      additionalBooks: [...currentAdditional, newBook],
+    };
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const removeBookFromCurrentReads = (id: string) => {
+    const currentAdditional = currentlyReading.additionalBooks || [];
+    const updated = {
+      ...currentlyReading,
+      additionalBooks: currentAdditional.filter((b) => b.id !== id),
+    };
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const openCompleteAndArchive = (target: CompletingBookTarget) => {
+    setCompletingBookTarget(target);
+    setIsCompleteBookModalOpen(true);
+  };
+
+  const archiveCurrentBook = (params: ArchiveCurrentBookParams) => {
+    const today = params.dateFinished || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    const currentYear = new Date().getFullYear();
+
+    if (params.targetArchive === 'case') {
+      const nextNum = String(reviews.length + 1).padStart(3, '0');
+      const newReview: BookReview = {
+        id: `case-${nextNum}`,
+        caseNumber: nextNum,
+        title: params.title.trim(),
+        author: params.author.trim(),
+        coverImage: params.coverImage || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80',
+        genre: (params.genre as Genre) || 'Psychological Thriller',
+        dateRead: today,
+        dateFinished: today,
+        yearRead: currentYear,
+        pages: Number(params.pages) || 300,
+        rating: Number(params.rating) || 5,
+        status: 'CLOSED',
+        readingFormat: (params.readingFormat as any) || 'Paperback',
+        leadQuote: `“Case solved upon completion of the investigation.”`,
+        summary: params.summary?.trim() || `Investigation concluded and dossier filed into the central archives.`,
+        reviewText: params.reviewText?.trim() || params.whatIThought?.trim() || 'Thoroughly engaging case with sharp narrative tension.',
+        whatIThought: params.whatIThought?.trim() || '',
+        whatActuallyHappened: params.whatActuallyHappened?.trim() || '',
+        favoriteMoment: 'The climax and conclusion of the investigation.',
+        finalVerdict: params.summary?.trim() || 'A thoroughly satisfying case.',
+        paranoiaRating: 4,
+        twistsCount: 2,
+        unreliableNarratorRating: 4,
+        spoilerEvidence: params.whatActuallyHappened?.trim() || 'Classified case details filed upon reading completion.',
+        evidenceBullets: ['Book marked complete from the active investigation desk.'],
+        marginaliaNotes: ['Filed directly from active investigation into the archives.'],
+        suspects: [],
+        clues: [],
+        likes: 1,
+      };
+      const updatedReviews = [newReview, ...reviews];
+      setReviews(updatedReviews);
+
+      const updatedStats = {
+        ...stats,
+        booksRead: (stats.booksRead || 0) + 1,
+        thrillersRead: (stats.thrillersRead || 0) + 1,
+        totalPagesRead: (stats.totalPagesRead || 0) + (Number(params.pages) || 0),
+      };
+      setStats(updatedStats);
+      syncWithServer({ reviews: updatedReviews, stats: updatedStats });
+    } else {
+      // Off the Record
+      const nextCatNum = `NF-${String(nonFictionBooks.length + 1).padStart(3, '0')}`;
+      const newNonFiction: NonFictionBook = {
+        id: `nf-${nextCatNum.toLowerCase()}-${Date.now()}`,
+        catalogNumber: nextCatNum,
+        title: params.title.trim(),
+        author: params.author.trim(),
+        coverImage: params.coverImage || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80',
+        genre: (params.genre as any) || 'Other Literature',
+        dateStarted: today,
+        dateFinished: today,
+        dateLogged: today,
+        yearRead: currentYear,
+        pages: Number(params.pages) || 300,
+        rating: Number(params.rating) || 5,
+        status: 'COMPLETED',
+        readingFormat: (params.readingFormat as any) || 'Paperback',
+        oneSentenceTakeaway: params.summary?.trim() || params.reviewText?.trim() || 'Completed reading and filed in personal research records.',
+        summary: params.summary?.trim() || 'Field study concluded and added to off-the-record dossiers.',
+        reviewText: params.reviewText?.trim() || '',
+        personalThoughts: params.whatIThought?.trim() || params.reviewText?.trim() || '',
+        keyTakeaways: ['Book marked complete and safely archived.'],
+        mindsetRatings: { readability: 5, actionability: 4, intellectualImpact: 5, originality: 4 },
+        likes: 1,
+      };
+      const updatedNonFiction = [newNonFiction, ...nonFictionBooks];
+      setNonFictionBooks(updatedNonFiction);
+
+      const updatedStats = {
+        ...stats,
+        booksRead: (stats.booksRead || 0) + 1,
+        totalPagesRead: (stats.totalPagesRead || 0) + (Number(params.pages) || 0),
+      };
+      setStats(updatedStats);
+      syncWithServer({ nonFictionBooks: updatedNonFiction, stats: updatedStats });
+    }
+
+    // Remove from currently reading
+    let updatedCR = { ...currentlyReading };
+    if (params.bookType === 'primary') {
+      if (updatedCR.additionalBooks && updatedCR.additionalBooks.length > 0) {
+        const [nextPrimary, ...remaining] = updatedCR.additionalBooks;
+        updatedCR = {
+          ...updatedCR,
+          title: nextPrimary.title,
+          author: nextPrimary.author,
+          coverImage: nextPrimary.coverImage,
+          genre: nextPrimary.genre,
+          currentPage: nextPrimary.currentPage,
+          totalPages: nextPrimary.totalPages,
+          startDate: nextPrimary.startDate || today,
+          currentTheory: nextPrimary.currentTheory || nextPrimary.notes || 'Recently initiated investigation.',
+          suspectsNoted: nextPrimary.suspectsNoted || [],
+          paranoiaLevel: nextPrimary.paranoiaLevel || 'Elevated',
+          additionalBooks: remaining,
+        };
+      } else {
+        updatedCR = {
+          ...updatedCR,
+          title: '',
+          author: '',
+          currentPage: 0,
+          totalPages: 0,
+          currentTheory: 'Desk clear. Select or add the next volume under investigation.',
+          suspectsNoted: [],
+        };
+      }
+    } else if (params.bookType === 'companion') {
+      updatedCR = {
+        ...updatedCR,
+        showNonThriller: false,
+        nonThrillerTitle: '',
+        nonThrillerAuthor: '',
+        nonThrillerGenre: '',
+        nonThrillerThoughts: '',
+        nonThrillerNotes: '',
+        nonThrillerCurrentPage: 0,
+        nonThrillerTotalPages: 0,
+      };
+    } else if (params.bookType === 'additional' && params.additionalBookId) {
+      updatedCR = {
+        ...updatedCR,
+        additionalBooks: (updatedCR.additionalBooks || []).filter((b) => b.id !== params.additionalBookId),
+      };
+    }
+
+    setCurrentlyReading(updatedCR);
+    syncWithServer({ currentlyReading: updatedCR });
+    setIsCompleteBookModalOpen(false);
+    setCompletingBookTarget(null);
+  };
+
   const updateStats = (st: Partial<ReadingStats>) => {
     const updated = { ...stats, ...st };
     setStats(updated);
@@ -1667,6 +1853,16 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         setIsCurrentlyReadingModalOpen,
         setIsEditHeroModalOpen,
         setIsEditAboutModalOpen,
+        isAddFileModalOpen,
+        setIsAddFileModalOpen,
+        isCompleteBookModalOpen,
+        setIsCompleteBookModalOpen,
+        completingBookTarget,
+        setCompletingBookTarget,
+        openCompleteAndArchive,
+        archiveCurrentBook,
+        addBookToCurrentReads,
+        removeBookFromCurrentReads,
         toggleLikePost,
         voteReaderPoll,
         addWitnessComment,

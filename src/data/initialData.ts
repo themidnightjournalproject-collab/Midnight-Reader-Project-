@@ -108,18 +108,7 @@ export const INITIAL_HERO_CONFIG: HeroConfig = {
   "bioParagraph2": "This space functions as my personal reading journal crossed with a vintage police blotter. Here, every domestic dispute is a potential felony, every housekeeper has an ulterior motive, and every charming husband is guilty until proven deceased.",
   "primaryButtonText": "ENTER THE ARCHIVE",
   "secondaryButtonText": "EXAMINE CASE DOSSIER",
-  "quoteAttribution": "Chief Student Investigator",
-  "siteTitle": "The Midnight Reader",
-  "siteTagline": "A student's reading journal — mostly suspicious people, unreliable narrators, and terrible decisions.",
-  "newspaperVolume": "Vol. XXIV — No. 114",
-  "classifiedTag": "Classified: Case Archive",
-  "archivesSectionTitle": "The Archives",
-  "archivesEyebrow": "Case Dispatch Ledger",
-  "currentReadsTitle": "Currently Reading",
-  "suspectBoardTitle": "Suspect Board",
-  "timelineTitle": "Reading Timeline",
-  "statsTitle": "Vital Stats",
-  "aboutTitle": "About The Curator"
+  "quoteAttribution": "Chief Student Investigator"
 };
 
 export const INITIAL_CURRENTLY_READING: CurrentlyReading = {

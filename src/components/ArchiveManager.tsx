@@ -43,6 +43,9 @@ export const ArchiveManager: React.FC = () => {
     deleteReview, 
     duplicateReview,
     setIsNewReviewModalOpen,
+    setIsNewNonFictionModalOpen,
+    setIsCurrentlyReadingModalOpen,
+    setIsAddFileModalOpen,
     setActiveView,
     postLikes,
     witnessComments,
@@ -137,21 +140,37 @@ export const ArchiveManager: React.FC = () => {
             <span>CENTRAL ARCHIVE & DOSSIER LOCKER</span>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveView('backup-sync')}
-              className="flex items-center gap-1.5 bg-white hover:bg-[#faf7f2] text-[#1a1a1a] border-2 border-black px-3 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+              className="flex items-center gap-1.5 bg-white hover:bg-[#faf7f2] text-[#1a1a1a] border-2 border-black px-3 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
             >
               <Download size={13} />
-              <span>EXPORT / REDEPLOY SYNC</span>
+              <span>SYNC</span>
             </button>
 
             <button
               onClick={() => setIsNewReviewModalOpen(true)}
-              className="flex items-center gap-1.5 bg-[#8b0000] hover:bg-black text-white px-3.5 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+              className="flex items-center gap-1.5 bg-[#8b0000] hover:bg-black text-white px-3 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
             >
-              <PlusCircle size={14} />
-              <span>+ FILE NEW CASE</span>
+              <PlusCircle size={13} />
+              <span>+ FILE CASE</span>
+            </button>
+
+            <button
+              onClick={() => setIsNewNonFictionModalOpen(true)}
+              className="flex items-center gap-1.5 bg-[#3a3a3a] hover:bg-black text-white px-3 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+            >
+              <BookOpen size={13} />
+              <span>+ OFF THE RECORD</span>
+            </button>
+
+            <button
+              onClick={() => setIsCurrentlyReadingModalOpen(true)}
+              className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+            >
+              <PlusCircle size={13} />
+              <span>+ CURRENT READS</span>
             </button>
           </div>
         </div>

@@ -49,6 +49,7 @@ export const ReadingJournalSection: React.FC = () => {
     updateNonFictionBook,
     setIsNewReviewModalOpen,
     setIsNewNonFictionModalOpen,
+    setIsCurrentlyReadingModalOpen,
     setEditingNonFictionBook,
     isAdminUnlocked,
     postLikes,
@@ -181,17 +182,24 @@ export const ReadingJournalSection: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setIsNewReviewModalOpen(true)}
-                className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+                className="flex items-center gap-1.5 bg-black hover:bg-[#8b0000] text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
               >
                 <PlusCircle size={13} />
                 <span>+ FILE CASE</span>
               </button>
               <button
                 onClick={() => setIsNewNonFictionModalOpen(true)}
-                className="flex items-center gap-1.5 bg-[#3a3a3a] hover:bg-black text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+                className="flex items-center gap-1.5 bg-[#3a3a3a] hover:bg-black text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
               >
                 <BookOpen size={13} />
                 <span>+ ADD TO OFF THE RECORD</span>
+              </button>
+              <button
+                onClick={() => setIsCurrentlyReadingModalOpen(true)}
+                className="flex items-center gap-1.5 bg-[#8b0000] hover:bg-black text-white px-3.5 py-1.5 text-xs font-sans uppercase tracking-wider font-bold transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+              >
+                <PlusCircle size={13} />
+                <span>+ ADD TO CURRENT READS</span>
               </button>
             </div>
           )}

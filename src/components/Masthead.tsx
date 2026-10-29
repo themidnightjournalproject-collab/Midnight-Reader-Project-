@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
-import { Search, PlusCircle, Lock, Unlock, KeyRound, FolderLock, Database, BarChart2, Github, CloudUpload, CheckCircle2 } from 'lucide-react';
+import { Search, PlusCircle, Lock, Unlock, KeyRound, FolderLock, Database, BarChart2, Github, CloudUpload, CheckCircle2, ChevronDown } from 'lucide-react';
 
 export const Masthead: React.FC = () => {
   const { 
@@ -8,6 +8,7 @@ export const Masthead: React.FC = () => {
     setActiveView, 
     searchQuery, 
     setSearchQuery, 
+    setIsAddFileModalOpen,
     setIsNewReviewModalOpen,
     setIsNewNonFictionModalOpen,
     setIsEditHeroModalOpen,
@@ -394,15 +395,43 @@ export const Masthead: React.FC = () => {
 
           {/* New Review Entry Button - ONLY shown if admin unlocked */}
           {isAdminUnlocked && (
-            <button
-              id="btn-file-case"
-              onClick={() => setIsNewReviewModalOpen(true)}
-              className="flex items-center gap-1 bg-[#1a1a1a] hover:bg-[#8b0000] text-white px-3 py-1 text-xs font-sans font-bold uppercase tracking-wider transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
-              title="Add a new book review and suspect dossier"
-            >
-              <PlusCircle size={13} />
-              <span className="hidden sm:inline">File Case</span>
-            </button>
+            <div className="relative group">
+              <button
+                id="btn-add-file"
+                onClick={() => setIsAddFileModalOpen(true)}
+                className="flex items-center gap-1.5 bg-[#8b0000] hover:bg-black text-white px-3 py-1 text-xs font-sans font-bold uppercase tracking-wider transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
+                title="Add a new file: Case Review, Off the Record, or Current Read"
+              >
+                <PlusCircle size={13} />
+                <span>+ Add File</span>
+                <ChevronDown size={11} className="hidden sm:inline" />
+              </button>
+
+              {/* Quick hover dropdown for direct 1-click filing */}
+              <div className="absolute right-0 top-full mt-1 w-56 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] py-1 hidden group-hover:block z-50">
+                <button
+                  onClick={() => setIsNewReviewModalOpen(true)}
+                  className="w-full text-left px-3 py-1.5 text-[11px] font-sans font-bold uppercase hover:bg-[#8b0000] hover:text-white flex items-center gap-2 transition-colors cursor-pointer"
+                >
+                  <PlusCircle size={12} className="text-[#8b0000] group-hover:text-white" />
+                  <span>+ File Crime Case</span>
+                </button>
+                <button
+                  onClick={() => setIsNewNonFictionModalOpen(true)}
+                  className="w-full text-left px-3 py-1.5 text-[11px] font-sans font-bold uppercase hover:bg-black hover:text-white flex items-center gap-2 transition-colors cursor-pointer border-t border-gray-100"
+                >
+                  <PlusCircle size={12} />
+                  <span>+ Add to Off the Record</span>
+                </button>
+                <button
+                  onClick={() => setIsCurrentlyReadingModalOpen(true)}
+                  className="w-full text-left px-3 py-1.5 text-[11px] font-sans font-bold uppercase hover:bg-[#166534] hover:text-white flex items-center gap-2 transition-colors cursor-pointer border-t border-gray-100"
+                >
+                  <PlusCircle size={12} className="text-[#166534]" />
+                  <span>+ Add to Current Reads</span>
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
