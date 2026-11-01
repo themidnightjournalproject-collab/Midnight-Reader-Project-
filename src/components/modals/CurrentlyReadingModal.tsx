@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useJournal } from '../../context/JournalContext';
 import { CurrentlyReading, CurrentlyReadingBook } from '../../types';
-import { BookOpen, Sparkles, Bookmark, PlusCircle, CheckCircle, Trash2, ArrowRight } from 'lucide-react';
+import { 
+  BookOpen, 
+  Sparkles, 
+  Bookmark, 
+  PlusCircle, 
+  CheckCircle, 
+  Trash2, 
+  Edit3, 
+  ArrowUpCircle, 
+  ArrowRightCircle, 
+  ArrowDownCircle,
+  Save,
+  X
+} from 'lucide-react';
 import { ImageUploader } from '../common/ImageUploader';
 
 const GENRE_SUGGESTIONS = [
@@ -25,14 +38,24 @@ export const CurrentlyReadingModal: React.FC = () => {
     updateCurrentlyReading, 
     addBookToCurrentReads,
     removeBookFromCurrentReads,
+    updateAdditionalBook,
+    moveAdditionalToPrimary,
+    moveAdditionalToCompanion,
+    movePrimaryToAdditional,
+    moveCompanionToAdditional,
     openCompleteAndArchive,
     isCurrentlyReadingModalOpen, 
-    setIsCurrentlyReadingModalOpen 
+    setIsCurrentlyReadingModalOpen,
+    editingAdditionalBookId,
+    setEditingAdditionalBookId,
   } = useJournal();
 
   const [form, setForm] = useState<CurrentlyReading>({ ...currentlyReading });
   const [suspectInput, setSuspectInput] = useState<string>(currentlyReading.suspectsNoted?.join(', ') || '');
   const [activeTab, setActiveTab] = useState<'primary' | 'nonThriller' | 'addBook' | 'manage'>('primary');
+
+  // Currently editing an existing additional book
+  const [editingBookData, setEditingBookData] = useState<CurrentlyReadingBook | null>(null);
 
   // State for adding a brand new book to Current Reads
   const [newBookTitle, setNewBookTitle] = useState('');
@@ -53,8 +76,19 @@ export const CurrentlyReadingModal: React.FC = () => {
         additionalBooks: currentlyReading.additionalBooks || [],
       });
       setSuspectInput(currentlyReading.suspectsNoted?.join(', ') || '');
+
+      if (editingAdditionalBookId) {
+        const found = (currentlyReading.additionalBooks || []).find((b) => b.id === editingAdditionalBookId);
+        if (found) {
+          setEditingBookData({ ...found });
+          setActiveTab('manage');
+        }
+      }
+    } else {
+      setEditingBookData(null);
+      setEditingAdditionalBookId(null);
     }
-  }, [isCurrentlyReadingModalOpen, currentlyReading]);
+  }, [isCurrentlyReadingModalOpen, currentlyReading, editingAdditionalBookId, setEditingAdditionalBookId]);
 
   if (!isCurrentlyReadingModalOpen) return null;
 
@@ -97,7 +131,28 @@ export const CurrentlyReadingModal: React.FC = () => {
     setActiveTab('manage');
   };
 
-  const additionalCount = form.additionalBooks?.length || 0;
+  const handleSaveEditedBook = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBookData) return;
+
+    updateAdditionalBook(editingBookData.id, {
+      title: editingBookData.title.trim(),
+      author: editingBookData.author.trim(),
+      genre: editingBookData.genre,
+      coverImage: editingBookData.coverImage,
+      currentPage: Number(editingBookData.currentPage) || 1,
+      totalPages: Number(editingBookData.totalPages) || 300,
+      startDate: editingBookData.startDate,
+      currentTheory: editingBookData.currentTheory || '',
+      thoughts: editingBookData.thoughts || editingBookData.currentTheory || '',
+      notes: editingBookData.notes || '',
+    });
+
+    setEditingBookData(null);
+    setEditingAdditionalBookId(null);
+  };
+
+  const additionalCount = (currentlyReading.additionalBooks || []).length;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4 overflow-y-auto backdrop-blur-xs">
@@ -118,7 +173,11 @@ export const CurrentlyReadingModal: React.FC = () => {
           </div>
 
           <button
-            onClick={() => setIsCurrentlyReadingModalOpen(false)}
+            onClick={() => {
+              setIsCurrentlyReadingModalOpen(false);
+              setEditingBookData(null);
+              setEditingAdditionalBookId(null);
+            }}
             className="p-1 hover:bg-[#e8e2d8] text-black font-sans font-bold text-lg cursor-pointer"
           >
             ✕
@@ -129,9 +188,12 @@ export const CurrentlyReadingModal: React.FC = () => {
         <div className="flex border-b border-black mb-5 gap-1.5 font-sans text-xs overflow-x-auto pb-1">
           <button
             type="button"
-            onClick={() => setActiveTab('primary')}
+            onClick={() => {
+              setActiveTab('primary');
+              setEditingBookData(null);
+            }}
             className={`px-3 py-2 font-bold uppercase transition-colors border-t border-l border-r border-black cursor-pointer whitespace-nowrap ${
-              activeTab === 'primary'
+              activeTab === 'primary' && !editingBookData
                 ? 'bg-black text-white'
                 : 'bg-[#f5f2ed] text-[#4a4a4a] hover:bg-white'
             }`}
@@ -141,9 +203,12 @@ export const CurrentlyReadingModal: React.FC = () => {
           
           <button
             type="button"
-            onClick={() => setActiveTab('nonThriller')}
+            onClick={() => {
+              setActiveTab('nonThriller');
+              setEditingBookData(null);
+            }}
             className={`px-3 py-2 font-bold uppercase transition-colors border-t border-l border-r border-black flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
-              activeTab === 'nonThriller'
+              activeTab === 'nonThriller' && !editingBookData
                 ? 'bg-[#8b0000] text-white'
                 : 'bg-[#f5f2ed] text-[#4a4a4a] hover:bg-white'
             }`}
@@ -154,9 +219,12 @@ export const CurrentlyReadingModal: React.FC = () => {
 
           <button
             type="button"
-            onClick={() => setActiveTab('addBook')}
+            onClick={() => {
+              setActiveTab('addBook');
+              setEditingBookData(null);
+            }}
             className={`px-3 py-2 font-bold uppercase transition-colors border-t border-l border-r border-black flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
-              activeTab === 'addBook'
+              activeTab === 'addBook' && !editingBookData
                 ? 'bg-[#166534] text-white'
                 : 'bg-[#e9f2eb] text-[#166534] hover:bg-white border-green-700'
             }`}
@@ -165,19 +233,18 @@ export const CurrentlyReadingModal: React.FC = () => {
             <span>+ Add Another Book</span>
           </button>
 
-          {additionalCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setActiveTab('manage')}
-              className={`px-3 py-2 font-bold uppercase transition-colors border-t border-l border-r border-black cursor-pointer whitespace-nowrap ${
-                activeTab === 'manage'
-                  ? 'bg-[#222] text-white'
-                  : 'bg-[#f5f2ed] text-[#4a4a4a] hover:bg-white'
-              }`}
-            >
-              Additional Books ({additionalCount})
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => setActiveTab('manage')}
+            className={`px-3 py-2 font-bold uppercase transition-colors border-t border-l border-r border-black flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+              activeTab === 'manage'
+                ? 'bg-[#222] text-white'
+                : 'bg-[#f5f2ed] text-[#4a4a4a] hover:bg-white'
+            }`}
+          >
+            <Edit3 size={12} />
+            <span>Additional Books ({additionalCount})</span>
+          </button>
         </div>
 
         {/* TAB 1: Primary Current Read */}
@@ -195,26 +262,40 @@ export const CurrentlyReadingModal: React.FC = () => {
                     Move "{form.title}" directly to the Archive and clear it from active reading.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    openCompleteAndArchive({
-                      bookType: 'primary',
-                      title: form.title,
-                      author: form.author,
-                      genre: form.genre,
-                      coverImage: form.coverImage,
-                      totalPages: form.totalPages,
-                      currentPage: form.currentPage,
-                      notes: form.currentTheory,
-                      startDate: form.startDate,
-                    });
-                  }}
-                  className="bg-[#166534] hover:bg-black text-white px-3 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <CheckCircle size={14} />
-                  <span>Move to Archive</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      movePrimaryToAdditional();
+                      setActiveTab('manage');
+                    }}
+                    className="bg-white hover:bg-gray-100 text-black border border-black px-2.5 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Rotate this primary book into additional reads"
+                  >
+                    <ArrowDownCircle size={13} />
+                    <span>Demote to Parallel Reads</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openCompleteAndArchive({
+                        bookType: 'primary',
+                        title: form.title,
+                        author: form.author,
+                        genre: form.genre,
+                        coverImage: form.coverImage,
+                        totalPages: form.totalPages,
+                        currentPage: form.currentPage,
+                        notes: form.currentTheory,
+                        startDate: form.startDate,
+                      });
+                    }}
+                    className="bg-[#166534] hover:bg-black text-white px-3 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle size={14} />
+                    <span>Move to Archive</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -344,26 +425,40 @@ export const CurrentlyReadingModal: React.FC = () => {
                     Move "{form.nonThrillerTitle}" to Off the Record or the Archive ledger.
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    openCompleteAndArchive({
-                      bookType: 'companion',
-                      title: form.nonThrillerTitle || '',
-                      author: form.nonThrillerAuthor || '',
-                      genre: form.nonThrillerGenre || 'Other Literature',
-                      coverImage: form.nonThrillerCoverImage || '',
-                      totalPages: form.nonThrillerTotalPages || form.nonThrillerCurrentPage || 0,
-                      currentPage: form.nonThrillerCurrentPage || 0,
-                      notes: form.nonThrillerThoughts || form.nonThrillerNotes || '',
-                      startDate: form.nonThrillerStartDate,
-                    });
-                  }}
-                  className="bg-[#166534] hover:bg-black text-white px-3 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  <CheckCircle size={14} />
-                  <span>Move to Archive</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      moveCompanionToAdditional();
+                      setActiveTab('manage');
+                    }}
+                    className="bg-white hover:bg-gray-100 text-black border border-black px-2.5 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer"
+                    title="Rotate companion read down into additional reads"
+                  >
+                    <ArrowDownCircle size={13} />
+                    <span>Demote to Parallel Reads</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openCompleteAndArchive({
+                        bookType: 'companion',
+                        title: form.nonThrillerTitle || '',
+                        author: form.nonThrillerAuthor || '',
+                        genre: form.nonThrillerGenre || 'Other Literature',
+                        coverImage: form.nonThrillerCoverImage || '',
+                        totalPages: form.nonThrillerTotalPages || form.nonThrillerCurrentPage || 0,
+                        currentPage: form.nonThrillerCurrentPage || 0,
+                        notes: form.nonThrillerThoughts || form.nonThrillerNotes || '',
+                        startDate: form.nonThrillerStartDate,
+                      });
+                    }}
+                    className="bg-[#166534] hover:bg-black text-white px-3 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle size={14} />
+                    <span>Move to Archive</span>
+                  </button>
+                </div>
               </div>
             )}
 
@@ -499,7 +594,7 @@ export const CurrentlyReadingModal: React.FC = () => {
                 Add an additional ongoing volume to your Current Reads
               </span>
               <p className="text-[11px] text-[#2c3e2e] font-serif">
-                Track multiple books at once. Each book appears in your active reading desk with its own progress bar and direct option to move to the archive upon completion.
+                Track multiple books at once. Each book appears in your active reading desk with its own progress bar and direct options to edit, move to primary/companion, or archive upon completion.
               </p>
             </div>
 
@@ -616,99 +711,343 @@ export const CurrentlyReadingModal: React.FC = () => {
           </form>
         )}
 
-        {/* TAB 4: Manage Additional Books */}
+        {/* TAB 4: Manage & Edit Additional Books */}
         {activeTab === 'manage' && (
           <div className="space-y-4 text-xs font-sans">
-            <div className="flex items-center justify-between border-b pb-2">
-              <span className="font-bold uppercase text-[11px] text-gray-700">
-                Additional Books Under Active Investigation ({additionalCount})
-              </span>
-              <button
-                type="button"
-                onClick={() => setActiveTab('addBook')}
-                className="text-[11px] font-bold text-[#166534] hover:underline flex items-center gap-1"
-              >
-                <PlusCircle size={12} />
-                <span>Add Another Book</span>
-              </button>
-            </div>
+            
+            {/* SUB-VIEW A: Editing a specific additional book */}
+            {editingBookData ? (
+              <form onSubmit={handleSaveEditedBook} className="space-y-4 border-2 border-black p-4 bg-[#fcfaf2] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center justify-between border-b pb-2 border-black">
+                  <div className="flex items-center gap-2">
+                    <Edit3 size={15} className="text-[#8b0000]" />
+                    <span className="font-bold uppercase text-xs text-black">
+                      EDITING ADDITIONAL BOOK: {editingBookData.title || 'Untitled'}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingBookData(null);
+                      setEditingAdditionalBookId(null);
+                    }}
+                    className="text-gray-500 hover:text-black font-bold text-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    <X size={13} />
+                    <span>Cancel Edit</span>
+                  </button>
+                </div>
 
-            {(!form.additionalBooks || form.additionalBooks.length === 0) ? (
-              <p className="font-serif italic text-gray-500 py-6 text-center">
-                No additional books currently added. Click "+ Add Another Book" above to track another volume!
-              </p>
+                {/* Quick Promotion Toolbar inside Edit Form */}
+                <div className="bg-white border border-black p-2.5 flex flex-wrap items-center justify-between gap-2 shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-700">
+                    Quick Promotion Desk:
+                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // First save current fields if changed, then promote
+                        updateAdditionalBook(editingBookData.id, editingBookData);
+                        moveAdditionalToPrimary(editingBookData.id);
+                        setEditingBookData(null);
+                        setEditingAdditionalBookId(null);
+                        setActiveTab('primary');
+                      }}
+                      className="bg-black hover:bg-[#8b0000] text-white px-2.5 py-1 text-[11px] font-bold uppercase flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Promote this book to Primary Investigation"
+                    >
+                      <ArrowUpCircle size={13} />
+                      <span>Promote to Primary Read</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateAdditionalBook(editingBookData.id, editingBookData);
+                        moveAdditionalToCompanion(editingBookData.id);
+                        setEditingBookData(null);
+                        setEditingAdditionalBookId(null);
+                        setActiveTab('nonThriller');
+                      }}
+                      className="bg-[#8b0000] hover:bg-black text-white px-2.5 py-1 text-[11px] font-bold uppercase flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Promote this book to Companion / Non-Thriller Read"
+                    >
+                      <ArrowRightCircle size={13} />
+                      <span>Promote to Companion Read</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Book Title *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingBookData.title}
+                      onChange={(e) => setEditingBookData({ ...editingBookData, title: e.target.value })}
+                      className="w-full bg-white border border-black p-2 text-xs font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Author *</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingBookData.author}
+                      onChange={(e) => setEditingBookData({ ...editingBookData, author: e.target.value })}
+                      className="w-full bg-white border border-black p-2 text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Genre / Category</label>
+                    <input
+                      type="text"
+                      list="edit-genre-list"
+                      value={editingBookData.genre}
+                      onChange={(e) => setEditingBookData({ ...editingBookData, genre: e.target.value })}
+                      className="w-full bg-white border border-black p-2 text-xs"
+                    />
+                    <datalist id="edit-genre-list">
+                      {GENRE_SUGGESTIONS.map((g) => (
+                        <option key={g} value={g} />
+                      ))}
+                    </datalist>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Date Started</label>
+                    <input
+                      type="text"
+                      value={editingBookData.startDate || ''}
+                      onChange={(e) => setEditingBookData({ ...editingBookData, startDate: e.target.value })}
+                      className="w-full bg-white border border-black p-2 text-xs"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Current Page</label>
+                    <input
+                      type="number"
+                      value={editingBookData.currentPage}
+                      onChange={(e) => setEditingBookData({ ...editingBookData, currentPage: Number(e.target.value) })}
+                      className="w-full bg-white border border-black p-2 text-xs font-bold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Total Pages *</label>
+                    <input
+                      type="number"
+                      required
+                      value={editingBookData.totalPages}
+                      onChange={(e) => setEditingBookData({ ...editingBookData, totalPages: Number(e.target.value) })}
+                      className="w-full bg-white border border-black p-2 text-xs font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <ImageUploader
+                    label="Book Cover Photo"
+                    value={editingBookData.coverImage}
+                    onChange={(newUrl) => setEditingBookData({ ...editingBookData, coverImage: newUrl })}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">
+                    Theories, Thoughts & Marginalia
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={editingBookData.currentTheory || editingBookData.thoughts || ''}
+                    onChange={(e) => setEditingBookData({ ...editingBookData, currentTheory: e.target.value, thoughts: e.target.value })}
+                    className="w-full bg-white border border-black p-2 text-xs font-serif"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-black">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingBookData(null);
+                      setEditingAdditionalBookId(null);
+                    }}
+                    className="px-4 py-2 text-[#4a4a4a] hover:text-black uppercase font-bold text-xs cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-black hover:bg-[#8b0000] text-white px-6 py-2 uppercase font-bold text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Save size={14} />
+                    <span>Save Book Details</span>
+                  </button>
+                </div>
+              </form>
             ) : (
-              <div className="space-y-3">
-                {form.additionalBooks.map((b) => {
-                  const pct = Math.min(100, Math.round(((b.currentPage || 0) / (b.totalPages || 1)) * 100));
-                  return (
-                    <div key={b.id} className="bg-[#fcfaf2] border-2 border-black p-3.5 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={b.coverImage}
-                          alt={b.title}
-                          className="w-12 h-18 object-cover border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] shrink-0"
-                          referrerPolicy="no-referrer"
-                        />
-                        <div>
-                          <span className="text-[9px] font-mono uppercase bg-[#8b0000] text-white px-1.5 py-0.5 font-bold">
-                            {b.genre || 'BOOK'}
-                          </span>
-                          <h4 className="font-serif font-black text-sm sm:text-base text-black uppercase mt-0.5">
-                            {b.title}
-                          </h4>
-                          <p className="font-serif italic text-xs text-gray-600">
-                            By {b.author}
-                          </p>
-                          <p className="text-[11px] font-mono text-gray-700 mt-1">
-                            Page {b.currentPage} of {b.totalPages} ({pct}%)
-                          </p>
+              /* SUB-VIEW B: Listing all additional books */
+              <>
+                <div className="flex items-center justify-between border-b pb-2">
+                  <span className="font-bold uppercase text-[11px] text-gray-700">
+                    Additional Books Under Active Investigation ({additionalCount})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('addBook')}
+                    className="text-[11px] font-bold text-[#166534] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <PlusCircle size={12} />
+                    <span>+ Add Another Book</span>
+                  </button>
+                </div>
+
+                {(!currentlyReading.additionalBooks || currentlyReading.additionalBooks.length === 0) ? (
+                  <div className="bg-[#fcfaf2] border-2 border-black p-8 text-center space-y-3">
+                    <p className="font-serif italic text-gray-600 text-sm">
+                      No additional books currently added to this desk.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('addBook')}
+                      className="bg-black hover:bg-[#8b0000] text-white px-4 py-2 text-xs font-bold uppercase transition-colors"
+                    >
+                      + Add a Book Now
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {currentlyReading.additionalBooks.map((b) => {
+                      const pct = Math.min(100, Math.round(((b.currentPage || 0) / (b.totalPages || 1)) * 100));
+                      return (
+                        <div key={b.id} className="bg-[#fcfaf2] border-2 border-black p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] space-y-3">
+                          <div className="flex items-start justify-between gap-3 flex-wrap sm:flex-nowrap">
+                            <div className="flex items-start gap-3">
+                              <img
+                                src={b.coverImage}
+                                alt={b.title}
+                                className="w-14 h-20 object-cover border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] shrink-0"
+                                referrerPolicy="no-referrer"
+                              />
+                              <div>
+                                <span className="text-[9px] font-mono uppercase bg-[#8b0000] text-white px-1.5 py-0.5 font-bold">
+                                  {b.genre || 'BOOK'}
+                                </span>
+                                <h4 className="font-serif font-black text-base text-black uppercase mt-0.5">
+                                  {b.title}
+                                </h4>
+                                <p className="font-serif italic text-xs text-gray-600">
+                                  By {b.author}
+                                </p>
+                                <p className="text-[11px] font-mono text-gray-700 mt-1">
+                                  Page {b.currentPage} of {b.totalPages} ({pct}%)
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Actions toolbar */}
+                            <div className="flex flex-wrap items-center gap-2">
+                              {/* Edit Button */}
+                              <button
+                                type="button"
+                                onClick={() => setEditingBookData({ ...b })}
+                                className="bg-white hover:bg-black hover:text-white text-black border border-black px-2.5 py-1 text-[11px] font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                                title="Edit title, author, pages, cover, or notes"
+                              >
+                                <Edit3 size={12} />
+                                <span>Edit</span>
+                              </button>
+
+                              {/* Move to Primary */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  moveAdditionalToPrimary(b.id);
+                                  setActiveTab('primary');
+                                }}
+                                className="bg-black hover:bg-[#8b0000] text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                                title="Set this book as your Primary Read (swaps or saves previous primary to additional)"
+                              >
+                                <ArrowUpCircle size={12} />
+                                <span>Make Primary</span>
+                              </button>
+
+                              {/* Move to Companion */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  moveAdditionalToCompanion(b.id);
+                                  setActiveTab('nonThriller');
+                                }}
+                                className="bg-[#8b0000] hover:bg-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                                title="Set this book as your Companion Read"
+                              >
+                                <ArrowRightCircle size={12} />
+                                <span>Make Companion</span>
+                              </button>
+
+                              {/* Move to Archive */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  openCompleteAndArchive({
+                                    bookType: 'additional',
+                                    additionalBookId: b.id,
+                                    title: b.title,
+                                    author: b.author,
+                                    genre: b.genre,
+                                    coverImage: b.coverImage,
+                                    totalPages: b.totalPages,
+                                    currentPage: b.currentPage,
+                                    notes: b.currentTheory || b.thoughts || b.notes || '',
+                                    startDate: b.startDate,
+                                  });
+                                }}
+                                className="bg-[#166534] hover:bg-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                                title="Mark complete and file in Archive"
+                              >
+                                <CheckCircle size={12} />
+                                <span>Archive</span>
+                              </button>
+
+                              {/* Delete */}
+                              <button
+                                type="button"
+                                onClick={() => removeBookFromCurrentReads(b.id)}
+                                className="p-1.5 text-gray-500 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-300 transition-colors cursor-pointer"
+                                title="Remove from Current Reads"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {(b.currentTheory || b.thoughts || b.notes) && (
+                            <div className="bg-[#fffef7] border-l-2 border-[#8b0000] p-2 text-xs font-serif italic text-gray-800">
+                              “{b.currentTheory || b.thoughts || b.notes}”
+                            </div>
+                          )}
                         </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            openCompleteAndArchive({
-                              bookType: 'additional',
-                              additionalBookId: b.id,
-                              title: b.title,
-                              author: b.author,
-                              genre: b.genre,
-                              coverImage: b.coverImage,
-                              totalPages: b.totalPages,
-                              currentPage: b.currentPage,
-                              notes: b.currentTheory || b.thoughts || b.notes || '',
-                              startDate: b.startDate,
-                            });
-                          }}
-                          className="bg-[#166534] hover:bg-black text-white px-3 py-1.5 text-xs font-bold uppercase transition-colors flex items-center gap-1 cursor-pointer shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
-                          title="Mark complete and file in Archive"
-                        >
-                          <CheckCircle size={13} />
-                          <span>Complete & Archive</span>
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => removeBookFromCurrentReads(b.id)}
-                          className="p-1.5 text-gray-500 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-300 transition-colors cursor-pointer"
-                          title="Remove from Current Reads"
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </>
             )}
 
             <div className="flex justify-end pt-4 border-t border-black">
               <button
                 type="button"
-                onClick={() => setIsCurrentlyReadingModalOpen(false)}
+                onClick={() => {
+                  setIsCurrentlyReadingModalOpen(false);
+                  setEditingBookData(null);
+                  setEditingAdditionalBookId(null);
+                }}
                 className="bg-black text-white px-5 py-2 uppercase font-bold text-xs"
               >
                 Done

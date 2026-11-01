@@ -172,6 +172,14 @@ interface JournalContextType {
   archiveCurrentBook: (params: ArchiveCurrentBookParams) => void;
   addBookToCurrentReads: (book: Omit<CurrentlyReadingBook, 'id'>) => void;
   removeBookFromCurrentReads: (id: string) => void;
+  updateAdditionalBook: (id: string, updated: Partial<CurrentlyReadingBook>) => void;
+  moveAdditionalToPrimary: (id: string) => void;
+  moveAdditionalToCompanion: (id: string) => void;
+  movePrimaryToAdditional: () => void;
+  moveCompanionToAdditional: () => void;
+  openEditAdditionalBook: (id: string) => void;
+  editingAdditionalBookId: string | null;
+  setEditingAdditionalBookId: (id: string | null) => void;
   
   // Interactivity Actions
   toggleLikePost: (reviewId: string) => void;
@@ -491,6 +499,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [completingBookTarget, setCompletingBookTarget] = useState<CompletingBookTarget | null>(null);
   const [editingReview, setEditingReview] = useState<BookReview | null>(null);
   const [editingNonFictionBook, setEditingNonFictionBook] = useState<NonFictionBook | null>(null);
+  const [editingAdditionalBookId, setEditingAdditionalBookId] = useState<string | null>(null);
 
   // Chief Investigator / Admin Editor clearance (starts locked on every fresh tab/window open)
   const [isAdminUnlocked, setIsAdminUnlocked] = useState<boolean>(() => {
@@ -1150,6 +1159,173 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     setCurrentlyReading(updated);
     syncWithServer({ currentlyReading: updated });
+  };
+
+  const updateAdditionalBook = (id: string, updatedFields: Partial<CurrentlyReadingBook>) => {
+    const currentAdditional = currentlyReading.additionalBooks || [];
+    const updatedBooks = currentAdditional.map((b) => (b.id === id ? { ...b, ...updatedFields } : b));
+    const updated = {
+      ...currentlyReading,
+      additionalBooks: updatedBooks,
+    };
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const moveAdditionalToPrimary = (id: string) => {
+    const currentAdditional = currentlyReading.additionalBooks || [];
+    const targetBook = currentAdditional.find((b) => b.id === id);
+    if (!targetBook) return;
+
+    // Remaining additional books (excluding the target book)
+    let remainingAdditional = currentAdditional.filter((b) => b.id !== id);
+
+    // If current primary has a title, convert it into an additional book so nothing is lost
+    if (currentlyReading.title && currentlyReading.title.trim().length > 0) {
+      const oldPrimaryAsAdditional: CurrentlyReadingBook = {
+        id: `cr-book-demoted-${Date.now()}`,
+        title: currentlyReading.title,
+        author: currentlyReading.author,
+        genre: currentlyReading.genre,
+        category: 'thriller',
+        coverImage: currentlyReading.coverImage,
+        currentPage: currentlyReading.currentPage || 1,
+        totalPages: currentlyReading.totalPages || 300,
+        startDate: currentlyReading.startDate || '',
+        currentTheory: currentlyReading.currentTheory || '',
+        thoughts: currentlyReading.currentTheory || '',
+        suspectsNoted: currentlyReading.suspectsNoted || [],
+        paranoiaLevel: currentlyReading.paranoiaLevel || 'Elevated',
+      };
+      remainingAdditional = [oldPrimaryAsAdditional, ...remainingAdditional];
+    }
+
+    const updated: CurrentlyReading = {
+      ...currentlyReading,
+      title: targetBook.title,
+      author: targetBook.author,
+      genre: targetBook.genre,
+      coverImage: targetBook.coverImage,
+      currentPage: targetBook.currentPage,
+      totalPages: targetBook.totalPages,
+      startDate: targetBook.startDate || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      currentTheory: targetBook.currentTheory || targetBook.thoughts || 'Investigation in progress.',
+      suspectsNoted: targetBook.suspectsNoted || [],
+      paranoiaLevel: targetBook.paranoiaLevel || 'Elevated',
+      additionalBooks: remainingAdditional,
+    };
+
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const moveAdditionalToCompanion = (id: string) => {
+    const currentAdditional = currentlyReading.additionalBooks || [];
+    const targetBook = currentAdditional.find((b) => b.id === id);
+    if (!targetBook) return;
+
+    // Remaining additional books (excluding the target book)
+    let remainingAdditional = currentAdditional.filter((b) => b.id !== id);
+
+    // If current companion has a title and showNonThriller is true, convert it into an additional book
+    if (currentlyReading.nonThrillerTitle && currentlyReading.nonThrillerTitle.trim().length > 0 && (currentlyReading.showNonThriller ?? true)) {
+      const oldCompanionAsAdditional: CurrentlyReadingBook = {
+        id: `cr-book-companion-demoted-${Date.now()}`,
+        title: currentlyReading.nonThrillerTitle,
+        author: currentlyReading.nonThrillerAuthor || '',
+        genre: currentlyReading.nonThrillerGenre || 'Other Literature',
+        category: 'non-fiction',
+        coverImage: currentlyReading.nonThrillerCoverImage || '',
+        currentPage: currentlyReading.nonThrillerCurrentPage || 1,
+        totalPages: currentlyReading.nonThrillerTotalPages || 300,
+        startDate: currentlyReading.nonThrillerStartDate || '',
+        thoughts: currentlyReading.nonThrillerThoughts || '',
+        notes: currentlyReading.nonThrillerNotes || '',
+      };
+      remainingAdditional = [oldCompanionAsAdditional, ...remainingAdditional];
+    }
+
+    const updated: CurrentlyReading = {
+      ...currentlyReading,
+      showNonThriller: true,
+      nonThrillerTitle: targetBook.title,
+      nonThrillerAuthor: targetBook.author,
+      nonThrillerGenre: targetBook.genre,
+      nonThrillerCoverImage: targetBook.coverImage,
+      nonThrillerCurrentPage: targetBook.currentPage,
+      nonThrillerTotalPages: targetBook.totalPages,
+      nonThrillerStartDate: targetBook.startDate || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      nonThrillerThoughts: targetBook.thoughts || targetBook.currentTheory || '',
+      nonThrillerNotes: targetBook.notes || '',
+      additionalBooks: remainingAdditional,
+    };
+
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const movePrimaryToAdditional = () => {
+    if (!currentlyReading.title || currentlyReading.title.trim().length === 0) return;
+    const oldPrimaryAsAdditional: CurrentlyReadingBook = {
+      id: `cr-book-primary-moved-${Date.now()}`,
+      title: currentlyReading.title,
+      author: currentlyReading.author,
+      genre: currentlyReading.genre,
+      category: 'thriller',
+      coverImage: currentlyReading.coverImage,
+      currentPage: currentlyReading.currentPage || 1,
+      totalPages: currentlyReading.totalPages || 300,
+      startDate: currentlyReading.startDate || '',
+      currentTheory: currentlyReading.currentTheory || '',
+      thoughts: currentlyReading.currentTheory || '',
+      suspectsNoted: currentlyReading.suspectsNoted || [],
+      paranoiaLevel: currentlyReading.paranoiaLevel || 'Elevated',
+    };
+    const updated: CurrentlyReading = {
+      ...currentlyReading,
+      title: '',
+      author: '',
+      currentPage: 0,
+      totalPages: 0,
+      currentTheory: 'Desk clear. Select or promote a book to primary investigation.',
+      additionalBooks: [oldPrimaryAsAdditional, ...(currentlyReading.additionalBooks || [])],
+    };
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const moveCompanionToAdditional = () => {
+    if (!currentlyReading.nonThrillerTitle || currentlyReading.nonThrillerTitle.trim().length === 0) return;
+    const oldCompanionAsAdditional: CurrentlyReadingBook = {
+      id: `cr-book-comp-moved-${Date.now()}`,
+      title: currentlyReading.nonThrillerTitle,
+      author: currentlyReading.nonThrillerAuthor || '',
+      genre: currentlyReading.nonThrillerGenre || 'Other Literature',
+      category: 'non-fiction',
+      coverImage: currentlyReading.nonThrillerCoverImage || '',
+      currentPage: currentlyReading.nonThrillerCurrentPage || 1,
+      totalPages: currentlyReading.nonThrillerTotalPages || 300,
+      startDate: currentlyReading.nonThrillerStartDate || '',
+      thoughts: currentlyReading.nonThrillerThoughts || '',
+      notes: currentlyReading.nonThrillerNotes || '',
+    };
+    const updated: CurrentlyReading = {
+      ...currentlyReading,
+      nonThrillerTitle: '',
+      nonThrillerAuthor: '',
+      nonThrillerCurrentPage: 0,
+      nonThrillerTotalPages: 0,
+      nonThrillerThoughts: '',
+      nonThrillerNotes: '',
+      additionalBooks: [oldCompanionAsAdditional, ...(currentlyReading.additionalBooks || [])],
+    };
+    setCurrentlyReading(updated);
+    syncWithServer({ currentlyReading: updated });
+  };
+
+  const openEditAdditionalBook = (id: string) => {
+    setEditingAdditionalBookId(id);
+    setIsCurrentlyReadingModalOpen(true);
   };
 
   const openCompleteAndArchive = (target: CompletingBookTarget) => {
@@ -1863,6 +2039,14 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         archiveCurrentBook,
         addBookToCurrentReads,
         removeBookFromCurrentReads,
+        updateAdditionalBook,
+        moveAdditionalToPrimary,
+        moveAdditionalToCompanion,
+        movePrimaryToAdditional,
+        moveCompanionToAdditional,
+        openEditAdditionalBook,
+        editingAdditionalBookId,
+        setEditingAdditionalBookId,
         toggleLikePost,
         voteReaderPoll,
         addWitnessComment,

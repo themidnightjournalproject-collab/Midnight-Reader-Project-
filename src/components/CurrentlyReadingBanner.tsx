@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
-import { Edit3, Camera, BookOpen, Bookmark, Sparkles, PlusCircle, CheckCircle, Trash2 } from 'lucide-react';
+import { Edit3, Camera, BookOpen, Bookmark, Sparkles, PlusCircle, CheckCircle, Trash2, ArrowUpCircle, ArrowRightCircle } from 'lucide-react';
 import { QuickImageModal } from './modals/QuickImageModal';
 
 export const CurrentlyReadingBanner: React.FC = () => {
@@ -10,6 +10,9 @@ export const CurrentlyReadingBanner: React.FC = () => {
     setIsCurrentlyReadingModalOpen, 
     openCompleteAndArchive,
     removeBookFromCurrentReads,
+    moveAdditionalToPrimary,
+    moveAdditionalToCompanion,
+    openEditAdditionalBook,
     isAdminUnlocked 
   } = useJournal();
   
@@ -471,38 +474,72 @@ export const CurrentlyReadingBanner: React.FC = () => {
                   )}
 
                   {isAdminUnlocked && (
-                    <div className="flex items-center justify-between pt-2 border-t border-black/20 text-xs">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          openCompleteAndArchive({
-                            bookType: 'additional',
-                            additionalBookId: b.id,
-                            title: b.title,
-                            author: b.author,
-                            genre: b.genre,
-                            coverImage: b.coverImage,
-                            totalPages: b.totalPages,
-                            currentPage: b.currentPage,
-                            notes: b.currentTheory || b.thoughts || b.notes || '',
-                            startDate: b.startDate,
-                          });
-                        }}
-                        className="bg-[#166534] hover:bg-black text-white px-2.5 py-1 font-sans font-bold uppercase text-[11px] flex items-center gap-1 cursor-pointer transition-colors"
-                        title="Mark complete and move to Archive"
-                      >
-                        <CheckCircle size={12} />
-                        <span>Move to Archive</span>
-                      </button>
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-black/20 text-xs">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => openEditAdditionalBook(b.id)}
+                          className="bg-white hover:bg-black hover:text-white text-black border border-black px-2 py-1 font-sans font-bold uppercase text-[10px] flex items-center gap-1 cursor-pointer transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                          title="Edit book details, page progress, or thoughts"
+                        >
+                          <Edit3 size={11} />
+                          <span>Edit</span>
+                        </button>
 
-                      <button
-                        type="button"
-                        onClick={() => removeBookFromCurrentReads(b.id)}
-                        className="text-gray-400 hover:text-red-700 p-1 cursor-pointer"
-                        title="Remove from desk"
-                      >
-                        <Trash2 size={13} />
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => moveAdditionalToPrimary(b.id)}
+                          className="bg-black hover:bg-[#8b0000] text-white px-2 py-1 font-sans font-bold uppercase text-[10px] flex items-center gap-1 cursor-pointer transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                          title="Make this book your Primary Read under active investigation"
+                        >
+                          <ArrowUpCircle size={11} />
+                          <span>Make Primary</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => moveAdditionalToCompanion(b.id)}
+                          className="bg-[#8b0000] hover:bg-black text-white px-2 py-1 font-sans font-bold uppercase text-[10px] flex items-center gap-1 cursor-pointer transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                          title="Make this book your Companion / Non-Thriller Read"
+                        >
+                          <ArrowRightCircle size={11} />
+                          <span>Make Companion</span>
+                        </button>
+                      </div>
+
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            openCompleteAndArchive({
+                              bookType: 'additional',
+                              additionalBookId: b.id,
+                              title: b.title,
+                              author: b.author,
+                              genre: b.genre,
+                              coverImage: b.coverImage,
+                              totalPages: b.totalPages,
+                              currentPage: b.currentPage,
+                              notes: b.currentTheory || b.thoughts || b.notes || '',
+                              startDate: b.startDate,
+                            });
+                          }}
+                          className="bg-[#166534] hover:bg-black text-white px-2 py-1 font-sans font-bold uppercase text-[10px] flex items-center gap-1 cursor-pointer transition-colors shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                          title="Mark complete and move to Archive"
+                        >
+                          <CheckCircle size={11} />
+                          <span>Archive</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => removeBookFromCurrentReads(b.id)}
+                          className="text-gray-400 hover:text-red-700 p-1 cursor-pointer"
+                          title="Remove from desk"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
