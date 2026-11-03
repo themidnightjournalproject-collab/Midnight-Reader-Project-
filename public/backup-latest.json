@@ -1,118 +1,8 @@
 {
-  "version": 1,
-  "exportedAt": "2026-09-22T02:29:09.052Z",
-  "heroConfig": {
-    "headline": "“ANOTHER BOOK. ANOTHER SUSPECT.”",
-    "dossierTag": "Dossier #2026-B",
-    "leadBadge": "Lead Story • Case Dispatch",
-    "bioParagraph1": "Welcome to my private archive. I am a student who began reading thrillers under the innocent premise of wanting to know what happened next. I continued reading them because, apparently, I enjoy distrusting fictional strangers in locked rooms at 2:00 AM while ignoring my homework.",
-    "bioParagraph2": "This space functions as my personal reading journal crossed with a vintage police blotter. Here, every domestic dispute is a potential felony, every housekeeper has an ulterior motive, and every charming husband is guilty until proven deceased.",
-    "primaryButtonText": "ENTER THE ARCHIVE",
-    "secondaryButtonText": "EXAMINE CASE DOSSIER",
-    "quoteAttribution": "Chief Student Investigator"
-  },
-  "currentlyReading": {
-    "title": "The Last Word",
-    "author": "Taylor Adams",
-    "coverImage": "/covers/the-last-word.jpg",
-    "genre": "Psychological Thriller",
-    "currentPage": 51,
-    "totalPages": 337,
-    "startDate": "Feb 12, 2026",
-    "currentTheory": "H.G. Kane is way too invested in Emma’s review. Either there’s something personal behind his reaction, or he’s hiding something much bigger.",
-    "suspectsNoted": [
-      "H.G. Kane (Author)",
-      "Deek (Neighbour)",
-      "Jules Phelps (Homeowner)",
-      "Emma Carpenter (Reviewer)"
-    ],
-    "paranoiaLevel": "Extremely High (Suspicious of everyone’s coffee order)"
-  },
-  "stats": {
-    "year": 2026,
-    "booksRead": 20,
-    "thrillersRead": 17,
-    "favoriteBook": "Dark Matter by Blake Crouch",
-    "averageRating": 4.4,
-    "longestBook": "The Outsider by Stephen King",
-    "longestBookPages": 620,
-    "suspectsAccused": 50,
-    "correctGuesses": 8,
-    "unnecessaryParanoia": 100,
-    "cupsOfTeaDrank": 142,
-    "plotTwistsExperienced": 38,
-    "totalPagesRead": 6420,
-    "readingStreakDays": 74,
-    "favoriteTrope": "Locked-Room Mystery & Unreliable Narrator",
-    "fastestSolve": "The Silent Patient (Guessed culprit on p. 82)",
-    "customStat1Label": "MIDNIGHT SLEEP DEFICIT",
-    "customStat1Value": "38 Late-Night Hours",
-    "customStat2Label": "RED HERRINGS FOOLED",
-    "customStat2Value": "29 Deceptions"
-  },
-  "timelineStats": {
-    "archiveSpan": "2024 – 2026 Archive",
-    "readingPace": "3.2 Days per Investigation",
-    "fastestInvestigation": "The Silent Patient (18 Hours)",
-    "longestCaseFile": "The Outsider (620 Pages)",
-    "coldCasesSolved": "14 Dossiers Closed",
-    "historicalLedgerNote": "Every classified dispatch logged chronologically since the first late-night thriller mystery was opened.",
-    "customTimelineStat1Label": "NIGHT OWL DISPATCHES",
-    "customTimelineStat1Value": "88% Read Past Midnight",
-    "customTimelineStat2Label": "READING STREAK RECORD",
-    "customTimelineStat2Value": "74 Consecutive Days"
-  },
-  "timelineMilestones": [
-    {
-      "id": "ms-01",
-      "year": 2026,
-      "date": "Feb 2026",
-      "title": "The 2026 Investigation Ledger Opened",
-      "description": "Inauguration of the comprehensive dispatch archive with unified psychological thrillers and field research dossiers.",
-      "badgeText": "Current Chapter",
-      "highlightType": "breakthrough"
-    },
-    {
-      "id": "ms-02",
-      "year": 2025,
-      "date": "Nov 2025",
-      "title": "Case #001 Closed: The Housemaid",
-      "description": "Completed Freida McFadden's dual-perspective thriller; recorded record-high engagement and shock factor.",
-      "badgeText": "Milestone Solve",
-      "highlightType": "breakthrough"
-    },
-    {
-      "id": "ms-03",
-      "year": 2025,
-      "date": "Aug 2025",
-      "title": "50th Suspect Interrogation Logged",
-      "description": "Crossed 50 formal suspect accusations across domestic thrillers, locked-room puzzles, and psychological dramas.",
-      "badgeText": "Archive Record",
-      "highlightType": "record"
-    },
-    {
-      "id": "ms-04",
-      "year": 2024,
-      "date": "Jan 2024",
-      "title": "The Midnight Reader Desk Established",
-      "description": "Initial creation of the crime blotter reading journal after an infamous all-nighter with Gone Girl.",
-      "badgeText": "Foundational Origin",
-      "highlightType": "general"
-    }
-  ],
-  "intelligenceStats": {
-    "bureauTitle": "BUREAU OF READER METRICS & MEASURABLE ENGAGEMENT",
-    "headline": "Measurable Reader Results & Analytics",
-    "dispatchNote": "Real-time measurement of reader interaction, post endorsements, interrogation poll verdicts, and witness testimonies across your entire reading journal.",
-    "overrideLikes": null,
-    "overridePollVotes": null,
-    "overrideComments": null,
-    "overrideAccuracy": null,
-    "customHighlightLabel": "DETECTIVE CONFIDENCE INDEX",
-    "customHighlightValue": "94.2% High Alert",
-    "featuredQuoteAuthor": "Chief Student Investigator",
-    "featuredQuoteText": "“To read a thriller is to willingly enter into a contract of mutual paranoia with the author.”"
-  },
+  "exportedAt": "2026-11-03T11:14:39.710Z",
+  "curator": "The Midnight Reader",
+  "reviewsCount": 4,
+  "nonFictionCount": 2,
   "reviews": [
     {
       "caseNumber": "002",
@@ -368,6 +258,159 @@
         "sawItComingMidway": 0,
         "jawDroppedEnding": 0
       }
+    },
+    {
+      "id": "case-003",
+      "caseNumber": "003",
+      "title": "The Last Word",
+      "author": "Taylor Adams",
+      "coverImage": "/covers/the-last-word.jpg",
+      "genre": "Psychological Thriller",
+      "dateRead": "Feb 2026",
+      "dateStarted": "Feb 12, 2026",
+      "yearRead": 2026,
+      "pages": 337,
+      "currentPage": 51,
+      "rating": 4,
+      "status": "Active",
+      "readingFormat": "Hardcover",
+      "correctGuess": false,
+      "leadQuote": "“People don't write bad reviews because they hated the book. They write them because they wanted to be heard.”",
+      "summary": "Emma Carpenter lives in an isolated beach house with only her dog for company. After posting a negative review of a poorly written horror novel, she finds herself locked in a deadly online feud with the author — who is now outside the house.",
+      "reviewText": "Currently 51 pages into Taylor Adams' locked-environment thriller. The pacing is already suffocating: a secluded coastal home, a raging winter storm, and an author who takes 1-star reviews personally. Actively tracking whether H.G. Kane is physically on the premises or if Emma's paranoia is creating ghosts in the dark.",
+      "whatIThought": "The author is already outside the door. Too many details in his emails match Emma's actual room layout.",
+      "whatActuallyHappened": "Investigation in progress. Suspect clues being collected as chapters unlock.",
+      "favoriteMoment": "The chilling email sent at 2:04 AM describing the color of Emma's porch light.",
+      "finalVerdict": "Active case file. High tension, trapped setting.",
+      "paranoiaRating": 5,
+      "twistsCount": 1,
+      "unreliableNarratorRating": 4,
+      "evidenceBullets": [
+        "Hostile online author tracking reviewer IP address",
+        "Secluded beach house with dead phone line in storm",
+        "Footprints spotted near ocean-facing porch"
+      ],
+      "suspects": [
+        {
+          "id": "s-lw-1",
+          "name": "H.G. Kane",
+          "role": "The Vengeful Novelist",
+          "motive": "Obsessed with punishing a 1-star online book review",
+          "opportunity": "HIGH",
+          "alibi": "Unverified online IP location",
+          "suspicionLevel": 5,
+          "clues": [
+            "Sent threatening late-night messages quoting Emma's house details"
+          ],
+          "isActualCulprit": false,
+          "revealNotes": ""
+        },
+        {
+          "id": "s-lw-2",
+          "name": "Deek",
+          "role": "The Neighbor",
+          "motive": "Lives down the road, knows the house floorplan",
+          "opportunity": "HIGH",
+          "alibi": "Claims to be repairing storm shutters",
+          "suspicionLevel": 3,
+          "clues": [
+            "Seen driving past the driveway after midnight"
+          ],
+          "isActualCulprit": false,
+          "revealNotes": ""
+        }
+      ],
+      "clues": [
+        {
+          "id": "c-lw-1",
+          "title": "The 2:04 AM Email",
+          "summary": "Direct message describing Emma's living room curtains.",
+          "detailedAnalysis": "Proves the sender has line of sight to the living room window.",
+          "pageDiscovered": 38,
+          "importance": "CRUCIAL"
+        }
+      ],
+      "spoilerEvidence": "Investigation ongoing — spoiler archive locked until final chapter verification.",
+      "recommendedFor": "Fans of No Exit, Ruth Ware, and snowed-in psychological survival",
+      "tropes": [
+        "Isolated Setting",
+        "Author as Suspect",
+        "Cat-and-Mouse",
+        "Survival Suspense"
+      ],
+      "atmosphereRating": 5,
+      "pacingRating": 5,
+      "twistExecutionRating": 4,
+      "likes": 42
+    },
+    {
+      "id": "case-004",
+      "caseNumber": "004",
+      "title": "The Housemaid's Secret",
+      "author": "Freida McFadden",
+      "coverImage": "/covers/the-housmaid-s-secret.jpg",
+      "genre": "Domestic Thriller",
+      "dateRead": "Unresolved Dossier",
+      "dateStarted": "Oct 15, 2025",
+      "yearRead": 2025,
+      "pages": 336,
+      "currentPage": 180,
+      "rating": 3,
+      "status": "Cold Case",
+      "readingFormat": "Paperback",
+      "correctGuess": false,
+      "leadQuote": "“Don't go into the guest bedroom, Millie. Whatever you hear behind that door, ignore it.”",
+      "summary": "Millie takes on a new cleaning client in a luxurious penthouse. Blood stains in the bathroom and whispered cries from a locked room lead to an unsolved investigation that hit a dead end midway.",
+      "reviewText": "Investigation frozen at chapter 22. Suspect timelines became hopelessly contradictory and contradictory alibis derailed the interrogation. Logged as an official cold case until further forensic evidence surfaces.",
+      "whatIThought": "The husband was holding his wife hostage in the guest suite.",
+      "whatActuallyHappened": "Case cold. Conflicting accounts left the culprit unconfirmed.",
+      "favoriteMoment": "The discovery of blood-stained towels hidden inside the penthouse dryer.",
+      "finalVerdict": "Archived as Cold Case. Needs re-interrogation.",
+      "paranoiaRating": 4,
+      "twistsCount": 2,
+      "unreliableNarratorRating": 5,
+      "evidenceBullets": [
+        "Locked guest bedroom with muffled cries at 3:00 AM",
+        "Scrubbed bleach stains on master bath Carrera marble",
+        "Anomalous phone calls from an unlisted Manhattan exchange"
+      ],
+      "suspects": [
+        {
+          "id": "s-hms-1",
+          "name": "Douglas Garrick",
+          "role": "The Penthouse Executive",
+          "motive": "Covering up domestic violence or kidnapping",
+          "opportunity": "MAXIMUM",
+          "alibi": "Claims his wife is bedridden with severe illness",
+          "suspicionLevel": 4,
+          "clues": [
+            "Forbids anyone from approaching the guest bedroom hallway"
+          ],
+          "isActualCulprit": false,
+          "revealNotes": ""
+        }
+      ],
+      "clues": [
+        {
+          "id": "c-hms-1",
+          "title": "Bleached Hand Towels",
+          "summary": "Faint iron stains remaining along the hem of white Egyptian cotton.",
+          "detailedAnalysis": "Indicates attempt to sterilize an unexpected injury inside the penthouse.",
+          "pageDiscovered": 92,
+          "importance": "CRUCIAL"
+        }
+      ],
+      "spoilerEvidence": "Case archived in deep storage pending forensic reappraisal.",
+      "recommendedFor": "Fans of Freida McFadden and domestic deceit",
+      "tropes": [
+        "Locked Room",
+        "Unreliable Narrator",
+        "Dual Timeline"
+      ],
+      "atmosphereRating": 4,
+      "pacingRating": 4,
+      "twistExecutionRating": 3,
+      "likes": 29
     }
   ],
   "nonFictionBooks": [
@@ -511,8 +554,254 @@
       ]
     }
   ],
-  "postLikes": {},
-  "readerPollVotes": {},
-  "witnessComments": {},
+  "heroConfig": {
+    "headline": "“ANOTHER BOOK. ANOTHER SUSPECT.”",
+    "dossierTag": "Dossier #2026-B",
+    "leadBadge": "Lead Story • Case Dispatch",
+    "bioParagraph1": "Welcome to my private archive. I am a student who began reading thrillers under the innocent premise of wanting to know what happened next. I continued reading them because, apparently, I enjoy distrusting fictional strangers in locked rooms at 2:00 AM while ignoring my homework.",
+    "bioParagraph2": "This space functions as my personal reading journal crossed with a vintage police blotter. Here, every domestic dispute is a potential felony, every housekeeper has an ulterior motive, and every charming husband is guilty until proven deceased.",
+    "primaryButtonText": "ENTER THE ARCHIVE",
+    "secondaryButtonText": "EXAMINE CASE DOSSIER",
+    "quoteAttribution": "Chief Student Investigator"
+  },
+  "currentlyReading": {
+    "title": "The Last Word",
+    "author": "Taylor Adams",
+    "coverImage": "/covers/the-last-word.jpg",
+    "genre": "Psychological Thriller",
+    "currentPage": 51,
+    "totalPages": 337,
+    "startDate": "Feb 12, 2026",
+    "currentTheory": "H.G. Kane is way too invested in Emma’s review. Either there’s something personal behind his reaction, or he’s hiding something much bigger.",
+    "suspectsNoted": [
+      "H.G. Kane (Author)",
+      "Deek (Neighbour)",
+      "Jules Phelps (Homeowner)",
+      "Emma Carpenter (Reviewer)"
+    ],
+    "paranoiaLevel": "Extremely High (Suspicious of everyone’s coffee order)",
+    "showNonThriller": true,
+    "nonThrillerTitle": "Dark Matter",
+    "nonThrillerAuthor": "Blake Crouch",
+    "nonThrillerGenre": "Sci-Fi & Speculative Fiction",
+    "nonThrillerCoverImage": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
+    "nonThrillerCurrentPage": 184,
+    "nonThrillerTotalPages": 398,
+    "nonThrillerStartDate": "Feb 18, 2026",
+    "nonThrillerThoughts": "Reading this alongside my crime dispatches. The concept of infinite alternative lives based on microscopic decisions is gripping. Crouch creates genuine existential anxiety without any detective tropes.",
+    "nonThrillerNotes": "Explores regret, ambition, and identity through quantum mechanics. Highly recommended for when thriller suspects get overwhelming."
+  },
+  "stats": {
+    "year": 2026,
+    "booksRead": 20,
+    "thrillersRead": 17,
+    "favoriteBook": "Dark Matter by Blake Crouch",
+    "averageRating": 4.4,
+    "longestBook": "The Outsider by Stephen King",
+    "longestBookPages": 620,
+    "suspectsAccused": 50,
+    "correctGuesses": 8,
+    "unnecessaryParanoia": 100,
+    "cupsOfTeaDrank": 142,
+    "plotTwistsExperienced": 38,
+    "totalPagesRead": 6420,
+    "readingStreakDays": 74,
+    "favoriteTrope": "Locked-Room Mystery & Unreliable Narrator",
+    "fastestSolve": "The Silent Patient (Guessed culprit on p. 82)",
+    "customStat1Label": "MIDNIGHT SLEEP DEFICIT",
+    "customStat1Value": "38 Late-Night Hours",
+    "customStat2Label": "RED HERRINGS FOOLED",
+    "customStat2Value": "29 Deceptions"
+  },
+  "timelineStats": {
+    "archiveSpan": "2024 – 2026 Archive",
+    "readingPace": "3.2 Days per Investigation",
+    "fastestInvestigation": "The Silent Patient (18 Hours)",
+    "longestCaseFile": "The Outsider (620 Pages)",
+    "coldCasesSolved": "14 Dossiers Closed",
+    "historicalLedgerNote": "Every classified dispatch logged chronologically since the first late-night thriller mystery was opened.",
+    "customTimelineStat1Label": "NIGHT OWL DISPATCHES",
+    "customTimelineStat1Value": "88% Read Past Midnight",
+    "customTimelineStat2Label": "READING STREAK RECORD",
+    "customTimelineStat2Value": "74 Consecutive Days"
+  },
+  "timelineMilestones": [
+    {
+      "id": "ms-01",
+      "year": 2026,
+      "date": "Feb 2026",
+      "title": "The 2026 Investigation Ledger Opened",
+      "description": "Inauguration of the comprehensive dispatch archive with unified psychological thrillers and field research dossiers.",
+      "badgeText": "Current Chapter",
+      "highlightType": "breakthrough"
+    },
+    {
+      "id": "ms-02",
+      "year": 2025,
+      "date": "Nov 2025",
+      "title": "Case #001 Closed: The Housemaid",
+      "description": "Completed Freida McFadden's dual-perspective thriller; recorded record-high engagement and shock factor.",
+      "badgeText": "Milestone Solve",
+      "highlightType": "breakthrough"
+    },
+    {
+      "id": "ms-03",
+      "year": 2025,
+      "date": "Aug 2025",
+      "title": "50th Suspect Interrogation Logged",
+      "description": "Crossed 50 formal suspect accusations across domestic thrillers, locked-room puzzles, and psychological dramas.",
+      "badgeText": "Archive Record",
+      "highlightType": "record"
+    },
+    {
+      "id": "ms-04",
+      "year": 2024,
+      "date": "Jan 2024",
+      "title": "The Midnight Reader Desk Established",
+      "description": "Initial creation of the crime blotter reading journal after an infamous all-nighter with Gone Girl.",
+      "badgeText": "Foundational Origin",
+      "highlightType": "general"
+    }
+  ],
+  "intelligenceStats": {
+    "bureauTitle": "COMMUNITY CORNER • READER REACTIONS",
+    "headline": "Reader Thoughts & Reactions",
+    "dispatchNote": "A relaxed look at what fellow readers thought, how everyone voted on plot twists, and notes left along the margins.",
+    "kpiSectionTitle": "COMMUNITY ACTIVITY & REACTIONS",
+    "leaderboardTitle": "Top Engaged Thrillers Leaderboard",
+    "breakdownTableTitle": "Forensic Verdict Breakdown By Case File",
+    "testimoniesTitle": "Latest Reader Testimonies & Notes",
+    "card1Title": "TOTAL CASE ENDORSEMENTS",
+    "card1Subtitle": "Active reader upvotes logged",
+    "card2Title": "INTERROGATION POLLS",
+    "card2Subtitle": "Verdict choices cast by visitors",
+    "card3Title": "WITNESS TESTIMONIES",
+    "card3Subtitle": "Reader tips and review comments",
+    "card4Title": "READER TWIST ACCURACY",
+    "card4Subtitle": "Readers who solved before the reveal",
+    "tableColRef": "Ref #",
+    "tableColTitle": "Case Title & Author",
+    "tableColGenre": "Genre",
+    "tableColScore": "Score",
+    "tableColEndorsements": "Endorsements",
+    "tableColPollVotes": "Poll Votes",
+    "tableColSolved": "Solved Early %",
+    "tableColNotes": "Notes",
+    "tableColActions": "Actions",
+    "overrideLikes": null,
+    "overridePollVotes": null,
+    "overrideComments": null,
+    "overrideAccuracy": null,
+    "customHighlightLabel": "DETECTIVE CONFIDENCE INDEX",
+    "customHighlightValue": "94.2% High Alert",
+    "featuredQuoteAuthor": "Chief Student Investigator",
+    "featuredQuoteText": "“To read a thriller is to willingly enter into a contract of mutual paranoia with the author.”"
+  },
+  "aboutConfig": {
+    "headerSubtitle": "THE STUDENT BEHIND THE LEDGER",
+    "headerBadge": "CORRESPONDENT PROFILE",
+    "pageTitle": "ABOUT THE CURATOR",
+    "curatorPhoto": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80",
+    "photoStamp": "DESK AT 2:15 AM",
+    "classification": "Full-Time Student & Chronic Reader",
+    "obsession": "Unreliable Narrators, Deep Ideas & Good Twists",
+    "featuredQuote": "I started reading thrillers because I wanted to know what happened. I continued reading them because apparently I enjoy distrusting fictional strangers.",
+    "bioParagraph1": "Welcome to The Midnight Reader. Between university deadlines, lectures, and caffeinated late-night cram sessions, this journal serves as my evidence room. Every book filed here is treated as an active case: forensic character breakdowns, timeline reconstructions, and unfiltered marginalia.",
+    "bioParagraph2": "While psychological thrillers and locked-room mysteries remain my primary obsession, 'The Library' houses everything else that commands my attention—from cosmic science fiction and memoirs to cognitive psychology and philosophy. Reading is both an investigative pursuit and a sanctuary.",
+    "bioParagraph3": "Readers are welcome to vote on plot twists, submit suspect theories, or browse the case file dossiers. Just remember the fundamental rule: never trust a narrator who insists they are telling the whole truth.",
+    "rulesHeading": "MY 4 GOLDEN RULES OF READING INVESTIGATION",
+    "rules": [
+      {
+        "number": 1,
+        "title": "RULE #1: TRUST NO NARRATOR",
+        "description": "If the narrator repeatedly emphasizes their own innocence, sanity, or sobriety in chapter one, they did it."
+      },
+      {
+        "number": 2,
+        "title": "RULE #2: THE INCONSPICUOUS GARDENER RULE",
+        "description": "Characters mentioned casually on page 42 who vanish until chapter 28 are never just innocent bystanders."
+      },
+      {
+        "number": 3,
+        "title": "RULE #3: THE ATTIC DEADBOLT CONSTANT",
+        "description": "If a door in a Victorian estate is locked from the outside, do not wait for the climax to ask why."
+      },
+      {
+        "number": 4,
+        "title": "RULE #4: MULTI-GENRE CURIOSITY",
+        "description": "A sharp mind reads across genres. Step outside the crime scene into philosophy, sci-fi, and essays to keep your deductions agile."
+      }
+    ],
+    "finalNote": "Filed from dorm room desk with three cold mugs of green tea."
+  },
+  "offTheRecordConfig": {
+    "badge": "UNREDACTED DOSSIERS • OFF THE RECORD",
+    "eyebrow": "LITERATURE, PHILOSOPHY & UNCLASSIFIED READS",
+    "title": "OFF THE RECORDS",
+    "introduction": "Everything logged outside the crime scene perimeter. An unredacted personal shelf of literary fiction, late-night philosophy, cosmic sci-fi, psychology, and unclassified thoughts—read strictly off the record."
+  },
+  "postLikes": {
+    "case-014": 248,
+    "case-013": 189,
+    "case-012": 312,
+    "case-011": 145,
+    "case-010": 276,
+    "case-009": 198,
+    "case-008": 167,
+    "case-007": 289,
+    "case-006": 214,
+    "case-005": 178,
+    "case-004": 203,
+    "case-003": 341,
+    "case-002": 290,
+    "case-001": 182
+  },
+  "readerPollVotes": {
+    "case-014": {
+      "option_a": 142,
+      "option_b": 64,
+      "option_c": 29
+    },
+    "case-013": {
+      "option_a": 88,
+      "option_b": 194,
+      "option_c": 41
+    },
+    "case-012": {
+      "option_a": 210,
+      "option_b": 45,
+      "option_c": 82
+    },
+    "case-010": {
+      "option_a": 175,
+      "option_b": 91,
+      "option_c": 33
+    },
+    "case-003": {
+      "option_a": 230,
+      "option_b": 115,
+      "option_c": 44
+    }
+  },
+  "witnessComments": {
+    "case-014": [
+      {
+        "id": "wit-001",
+        "witnessName": "Detective Morgan (Reader)",
+        "badge": "VERIFIED WITNESS",
+        "comment": "I suspected Andrew the entire time! When the attic door locked, my heart dropped into my stomach. 5/5 stars.",
+        "timestamp": "Nov 05, 2025 at 01:22 AM",
+        "likes": 42
+      },
+      {
+        "id": "wit-002",
+        "witnessName": "Agent Cooper",
+        "badge": "FORENSIC OBSERVER",
+        "comment": "Nina Winchester is one of the most calculated characters in modern thriller literature. Brilliant breakdown!",
+        "timestamp": "Nov 06, 2025 at 04:15 PM",
+        "likes": 19
+      }
+    ]
+  },
   "userTheories": []
 }
