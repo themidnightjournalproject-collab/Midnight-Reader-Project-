@@ -65,6 +65,12 @@ export const AboutMeSection: React.FC = () => {
                   alt="Detective reading desk at midnight"
                   className="w-48 sm:w-56 h-60 object-cover grayscale-[30%] contrast-[115%]"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (!target.src.includes('/covers/curator-photo.jpg')) {
+                      target.src = '/covers/curator-photo.jpg';
+                    }
+                  }}
                 />
 
                 {/* Hover overlay to change image - ONLY for unlocked admin */}

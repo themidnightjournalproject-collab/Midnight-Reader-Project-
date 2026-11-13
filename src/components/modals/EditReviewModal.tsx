@@ -16,7 +16,9 @@ import {
   Sparkles,
   Search,
   ThumbsUp,
-  BarChart3
+  BarChart3,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { ImageUploader } from '../common/ImageUploader';
 
@@ -45,10 +47,20 @@ export const EditReviewModal: React.FC = () => {
     deleteReview, 
     setSelectedReview,
     customThrillerTropes,
-    addCustomThrillerTrope
+    addCustomThrillerTrope,
+    removeCustomThrillerTrope,
+    archiveGenres,
+    addArchiveGenre,
+    removeArchiveGenre,
+    allAlbumNames
   } = useJournal();
 
   const [activeTab, setActiveTab] = useState<'basic' | 'review' | 'evidence' | 'suspects' | 'spoilers' | 'metrics'>('basic');
+  const [isAddingNewGenre, setIsAddingNewGenre] = useState(false);
+  const [newGenreInput, setNewGenreInput] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Case File Identification & Basic Info
   const [caseNumber, setCaseNumber] = useState('001');
@@ -65,6 +77,8 @@ export const EditReviewModal: React.FC = () => {
   const [status, setStatus] = useState<string>('CLOSED');
   const [readingFormat, setReadingFormat] = useState<'Paperback' | 'Hardcover' | 'Audiobook' | 'E-Reader'>('Paperback');
   const [correctGuess, setCorrectGuess] = useState<boolean>(true);
+  const [seriesName, setSeriesName] = useState('');
+  const [seriesOrder, setSeriesOrder] = useState<string>('');
 
   // Editorial Review
   const [leadQuote, setLeadQuote] = useState('');
@@ -123,6 +137,8 @@ export const EditReviewModal: React.FC = () => {
       setStatus(editingReview.status || 'CLOSED');
       setReadingFormat(editingReview.readingFormat || 'Paperback');
       setCorrectGuess(editingReview.correctGuess ?? true);
+      setSeriesName(editingReview.seriesName || '');
+      setSeriesOrder(editingReview.seriesOrder ? String(editingReview.seriesOrder) : '');
 
       setLeadQuote(editingReview.leadQuote || '');
       setSummary(editingReview.summary || '');
@@ -263,67 +279,88 @@ export const EditReviewModal: React.FC = () => {
     setClues(clues.filter((_, i) => i !== idx));
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !author.trim()) {
       alert('Please specify at least a Book Title and Author.');
       return;
     }
 
+    setIsSaving(true);
+    setErrorMessage(null);
+
     const cleanCaseNumber = caseNumber.trim() || editingReview.caseNumber || '001';
 
-    updateReview(editingReview.id, {
-      caseNumber: cleanCaseNumber,
-      title: title.trim(),
-      author: author.trim(),
-      coverImage: coverImage.trim(),
-      genre,
-      dateRead: dateRead.trim() || editingReview.dateRead,
-      dateStarted: dateStarted.trim(),
-      dateFinished: dateFinished.trim(),
-      yearRead: Number(yearRead) || new Date().getFullYear(),
-      pages: Number(pages) || 300,
-      rating: Number(rating) || 5,
-      status: status as any,
-      readingFormat,
-      correctGuess,
-      leadQuote: leadQuote.trim(),
-      summary: summary.trim(),
-      reviewText: reviewText.trim(),
-      whatIThought: whatIThought.trim(),
-      whatActuallyHappened: whatActuallyHappened.trim(),
-      favoriteMoment: favoriteMoment.trim(),
-      finalVerdict: finalVerdict.trim(),
-      recommendedFor: recommendedFor.trim(),
-      tropes: selectedTropes,
-      atmosphereRating: Number(atmosphereRating),
-      pacingRating: Number(pacingRating),
-      twistExecutionRating: Number(twistRating),
-      paranoiaRating: Number(paranoiaRating),
-      unreliableNarratorRating: Number(unreliableRating),
-      twistsCount: Number(twistsCount),
-      evidenceBullets: evidenceBullets.filter(b => b.trim() !== ''),
-      marginaliaNotes: marginaliaNotes.filter(m => m.trim() !== ''),
-      suspects: suspects.filter(s => s.name.trim() !== ''),
-      clues: clues.filter(c => c.title.trim() !== ''),
-      spoilerEvidence: spoilerEvidence.trim(),
-      spoilerCulpritReveal: spoilerCulpritReveal.trim(),
-      likes: Number(likesCount) || 1,
-      readerPollVotes: {
-        solvedBeforeTwist: Number(pollSolvedBeforeTwist) || 0,
-        fooledCompletely: Number(pollFooledCompletely) || 0,
-        sawItComingMidway: Number(pollSawItComingMidway) || 0,
-        jawDroppedEnding: Number(pollJawDroppedEnding) || 0,
-      }
-    });
+    try {
+      await updateReview(editingReview.id, {
+        caseNumber: cleanCaseNumber,
+        title: title.trim(),
+        author: author.trim(),
+        coverImage: coverImage.trim(),
+        genre,
+        dateRead: dateRead.trim() || editingReview.dateRead,
+        dateStarted: dateStarted.trim(),
+        dateFinished: dateFinished.trim(),
+        yearRead: Number(yearRead) || new Date().getFullYear(),
+        pages: Number(pages) || 300,
+        rating: Number(rating) || 5,
+        status: status as any,
+        readingFormat,
+        correctGuess,
+        seriesName: seriesName.trim() || undefined,
+        seriesOrder: seriesName.trim() && seriesOrder ? Number(seriesOrder) : undefined,
+        leadQuote: leadQuote.trim(),
+        summary: summary.trim(),
+        reviewText: reviewText.trim(),
+        whatIThought: whatIThought.trim(),
+        whatActuallyHappened: whatActuallyHappened.trim(),
+        favoriteMoment: favoriteMoment.trim(),
+        finalVerdict: finalVerdict.trim(),
+        recommendedFor: recommendedFor.trim(),
+        tropes: selectedTropes,
+        atmosphereRating: Number(atmosphereRating),
+        pacingRating: Number(pacingRating),
+        twistExecutionRating: Number(twistRating),
+        paranoiaRating: Number(paranoiaRating),
+        unreliableNarratorRating: Number(unreliableRating),
+        twistsCount: Number(twistsCount),
+        evidenceBullets: evidenceBullets.filter(b => b.trim() !== ''),
+        marginaliaNotes: marginaliaNotes.filter(m => m.trim() !== ''),
+        suspects: suspects.filter(s => s.name.trim() !== ''),
+        clues: clues.filter(c => c.title.trim() !== ''),
+        spoilerEvidence: spoilerEvidence.trim(),
+        spoilerCulpritReveal: spoilerCulpritReveal.trim(),
+        likes: Number(likesCount) || 1,
+        readerPollVotes: {
+          solvedBeforeTwist: Number(pollSolvedBeforeTwist) || 0,
+          fooledCompletely: Number(pollFooledCompletely) || 0,
+          sawItComingMidway: Number(pollSawItComingMidway) || 0,
+          jawDroppedEnding: Number(pollJawDroppedEnding) || 0,
+        }
+      });
 
-    setEditingReview(null);
+      setEditingReview(null);
+    } catch (err: any) {
+      console.error('Failed to update case file:', err);
+      setErrorMessage(err?.message || 'Failed to save changes to Firestore. Please check your connection and try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm(`Are you sure you want to permanently delete Case #${editingReview.caseNumber}: "${editingReview.title}"? This cannot be undone.`)) {
-      deleteReview(editingReview.id);
-      setEditingReview(null);
+      setIsDeleting(true);
+      setErrorMessage(null);
+      try {
+        await deleteReview(editingReview.id);
+        setEditingReview(null);
+      } catch (err: any) {
+        console.error('Failed to delete review:', err);
+        setErrorMessage(err?.message || 'Failed to delete case file. Please retry.');
+      } finally {
+        setIsDeleting(false);
+      }
     }
   };
 
@@ -355,6 +392,23 @@ export const EditReviewModal: React.FC = () => {
             ✕
           </button>
         </div>
+
+        {/* Sync / Save Error Notification */}
+        {errorMessage && (
+          <div className="mb-4 bg-[#8b0000]/10 border-2 border-[#8b0000] p-3 text-xs text-[#8b0000] flex items-center justify-between font-sans">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setErrorMessage(null)}
+              className="font-bold underline uppercase ml-2 text-[10px]"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         {/* Tab Navigation */}
         <div className="flex border-b-2 border-black gap-1 mb-5 overflow-x-auto pb-1 text-xs">
@@ -505,21 +559,97 @@ export const EditReviewModal: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">Genre</label>
-                  <select
-                    value={genre}
-                    onChange={(e) => setGenre(e.target.value as Genre)}
-                    className="w-full bg-white border border-black p-2 text-xs text-[#1a1a1a] focus:outline-none"
-                  >
-                    <option value="Psychological Thriller">Psychological Thriller</option>
-                    <option value="Murder Mystery">Murder Mystery</option>
-                    <option value="Domestic Thriller">Domestic Thriller</option>
-                    <option value="Locked Room Mystery">Locked Room Mystery</option>
-                    <option value="Gothic Thriller">Gothic Thriller</option>
-                    <option value="Legal Thriller">Legal Thriller</option>
-                    <option value="Crime & Police Procedural">Crime & Police Procedural</option>
-                    <option value="Cozy Mystery">Cozy Mystery</option>
-                  </select>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[#1a1a1a] font-bold uppercase text-[10px]">Genre</label>
+                    {!isAddingNewGenre && (
+                      <button
+                        type="button"
+                        onClick={() => setIsAddingNewGenre(true)}
+                        className="text-[10px] text-[#8b0000] hover:text-black font-bold uppercase tracking-wider underline cursor-pointer"
+                      >
+                        + Add Genre
+                      </button>
+                    )}
+                  </div>
+                  {!isAddingNewGenre ? (
+                    <div className="flex items-center gap-1.5">
+                      <select
+                        value={genre}
+                        onChange={(e) => setGenre(e.target.value as Genre)}
+                        className="w-full bg-white border border-black p-2 text-xs text-[#1a1a1a] focus:outline-none"
+                      >
+                        {Array.from(new Set([genre, ...archiveGenres])).filter(Boolean).map((g) => (
+                          <option key={g} value={g}>{g}</option>
+                        ))}
+                      </select>
+                      {archiveGenres.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`Delete genre "${genre}" from archive genres?`)) {
+                              removeArchiveGenre(genre);
+                              const remaining = archiveGenres.filter((g) => g !== genre);
+                              if (remaining.length > 0) {
+                                setGenre(remaining[0] as Genre);
+                              }
+                            }
+                          }}
+                          title={`Remove "${genre}" from genres list`}
+                          className="p-2 border border-black bg-white hover:bg-red-50 hover:text-red-600 text-gray-500 transition-colors cursor-pointer"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1.5 bg-white border border-black p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                      <input
+                        type="text"
+                        autoFocus
+                        value={newGenreInput}
+                        onChange={(e) => setNewGenreInput(e.target.value)}
+                        placeholder="Type custom genre..."
+                        className="w-full p-1 text-xs border border-gray-300 focus:outline-none"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const clean = newGenreInput.trim();
+                            if (clean) {
+                              addArchiveGenre(clean);
+                              setGenre(clean as Genre);
+                              setNewGenreInput('');
+                              setIsAddingNewGenre(false);
+                            }
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const clean = newGenreInput.trim();
+                          if (clean) {
+                            addArchiveGenre(clean);
+                            setGenre(clean as Genre);
+                            setNewGenreInput('');
+                            setIsAddingNewGenre(false);
+                          }
+                        }}
+                        className="px-2.5 py-1 bg-[#8b0000] text-white text-[10px] font-bold uppercase hover:bg-black transition-colors"
+                      >
+                        Add
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsAddingNewGenre(false);
+                          setNewGenreInput('');
+                        }}
+                        className="px-1 text-gray-500 hover:text-black text-xs font-bold"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -529,10 +659,13 @@ export const EditReviewModal: React.FC = () => {
                     onChange={(e) => setStatus(e.target.value)}
                     className="w-full bg-white border border-black p-2 text-xs font-bold text-[#1a1a1a] focus:outline-none"
                   >
+                    <option value="Active">Active (Under Investigation / In Progress)</option>
+                    <option value="Cold Case">Cold Case (Unsolved / Shelved)</option>
+                    <option value="Solved">Solved (Case Closed / Solved)</option>
                     <option value="CLOSED">CLOSED (Case Solved)</option>
                     <option value="UNDER INVESTIGATION">UNDER INVESTIGATION (Active Reading)</option>
                     <option value="COLD CASE">COLD CASE (Unsolved Mystery)</option>
-                    <option value="HIGH CONFIDENCE GUESS">HIGH CONFIDENCE GUESS</option>
+                    <option value="HIGH CONFIDENCE GUESS">HIGH CONFIDENCE GUESS (Solved)</option>
                   </select>
                 </div>
 
@@ -600,6 +733,40 @@ export const EditReviewModal: React.FC = () => {
                     value={yearRead}
                     onChange={(e) => setYearRead(Number(e.target.value))}
                     className="w-full bg-white border border-black p-2 text-xs text-[#1a1a1a] focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[#8b0000] font-bold mb-1 uppercase text-[10px]">
+                    Book Album / Series (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={seriesName}
+                    onChange={(e) => setSeriesName(e.target.value)}
+                    list="edit-review-series-list"
+                    placeholder="e.g. The Housemaid (leave blank if standalone)"
+                    className="w-full bg-white border border-black p-2 text-xs font-serif font-bold text-[#1a1a1a] focus:outline-none"
+                  />
+                  <datalist id="edit-review-series-list">
+                    {allAlbumNames.map((s) => (
+                      <option key={s} value={s} />
+                    ))}
+                  </datalist>
+                </div>
+
+                <div>
+                  <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">
+                    Order # in Album
+                  </label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={seriesOrder}
+                    onChange={(e) => setSeriesOrder(e.target.value)}
+                    placeholder="e.g. 1, 2, 3..."
+                    disabled={!seriesName.trim()}
+                    className="w-full bg-white border border-black p-2 text-xs font-mono text-[#1a1a1a] focus:outline-none disabled:bg-gray-100 disabled:opacity-60"
                   />
                 </div>
 
@@ -800,25 +967,87 @@ export const EditReviewModal: React.FC = () => {
 
               {/* Tropes & Custom Tags */}
               <div className="space-y-2 bg-white p-3 border border-black">
-                <label className="block text-[#1a1a1a] font-bold uppercase text-[10px]">
-                  Key Thriller Tropes & Elements:
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-[#1a1a1a] font-bold uppercase text-[10px]">
+                    Key Thriller Tropes & Elements:
+                  </label>
+                  <span className="text-[10px] font-mono text-gray-500">
+                    {selectedTropes.length} Selected
+                  </span>
+                </div>
+
+                {/* Assigned Tropes with Remove (×) Button */}
+                {selectedTropes.length > 0 && (
+                  <div className="bg-[#faf7f2] border border-black p-2 mb-2">
+                    <span className="block text-[10px] font-bold uppercase tracking-wider text-black mb-1.5">
+                      Assigned to this Case File (Click × to remove):
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedTropes.map((trope) => (
+                        <span
+                          key={trope}
+                          className="inline-flex items-center gap-1.5 bg-[#8b0000] text-white text-[10px] font-sans font-bold px-2 py-0.5 border border-black"
+                        >
+                          <span>{trope}</span>
+                          <button
+                            type="button"
+                            onClick={() => toggleTrope(trope)}
+                            title={`Remove "${trope}" from this case file`}
+                            className="text-white hover:text-black hover:bg-white/80 rounded-full w-3.5 h-3.5 inline-flex items-center justify-center font-bold text-xs cursor-pointer"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-600">
+                  Select or Toggle Tropes:
+                </span>
+
                 <div className="flex flex-wrap gap-1.5 mb-2">
                   {Array.from(new Set([...COMMON_TROPES, ...(customThrillerTropes || []), ...selectedTropes])).map((trope) => {
                     const isSelected = selectedTropes.includes(trope);
+                    const isCustom = (customThrillerTropes || []).includes(trope);
                     return (
-                      <button
+                      <div
                         key={trope}
-                        type="button"
-                        onClick={() => toggleTrope(trope)}
-                        className={`px-2.5 py-1 text-[11px] font-sans font-bold border transition-all ${
+                        className={`inline-flex items-center border transition-all ${
                           isSelected
                             ? 'bg-[#8b0000] text-white border-black'
                             : 'bg-[#faf9f5] text-[#1a1a1a] border-black border-opacity-30 hover:border-black'
                         }`}
                       >
-                        {isSelected ? '✓ ' : '+ '}{trope}
-                      </button>
+                        <button
+                          type="button"
+                          onClick={() => toggleTrope(trope)}
+                          className="px-2.5 py-1 text-[11px] font-sans font-bold cursor-pointer"
+                        >
+                          {isSelected ? '✓ ' : '+ '}{trope}
+                        </button>
+                        {isCustom && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (window.confirm(`Delete custom trope "${trope}" from saved tropes?`)) {
+                                removeCustomThrillerTrope(trope);
+                                if (isSelected) {
+                                  toggleTrope(trope);
+                                }
+                              }
+                            }}
+                            title={`Delete custom trope "${trope}" from suggestions`}
+                            className={`px-1.5 py-1 text-xs font-bold border-l cursor-pointer ${
+                              isSelected ? 'border-red-900 hover:text-black hover:bg-white/40' : 'border-gray-300 hover:text-red-700 hover:bg-red-50'
+                            }`}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
                     );
                   })}
                 </div>
@@ -1579,25 +1808,29 @@ export const EditReviewModal: React.FC = () => {
             <button
               type="button"
               onClick={handleDelete}
-              className="flex items-center gap-1.5 text-[#8b0000] hover:bg-[#ffefef] px-3.5 py-2 border-2 border-[#8b0000] text-xs font-sans font-bold uppercase transition-colors"
+              disabled={isDeleting || isSaving}
+              className="flex items-center gap-1.5 text-[#8b0000] hover:bg-[#ffefef] px-3.5 py-2 border-2 border-[#8b0000] text-xs font-sans font-bold uppercase transition-colors disabled:opacity-50"
             >
-              <Trash2 size={13} />
-              <span>Delete This Case File</span>
+              {isDeleting ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
+              <span>{isDeleting ? 'Deleting...' : 'Delete This Case File'}</span>
             </button>
 
             <div className="flex items-center gap-3">
               <button
                 type="button"
+                disabled={isDeleting || isSaving}
                 onClick={() => setEditingReview(null)}
-                className="px-4 py-2 border-2 border-black text-xs font-sans font-bold uppercase hover:bg-[#faf7f2] transition-colors"
+                className="px-4 py-2 border-2 border-black text-xs font-sans font-bold uppercase hover:bg-[#faf7f2] transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="bg-[#8b0000] hover:bg-black text-white px-6 py-2.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+                disabled={isDeleting || isSaving}
+                className="bg-[#8b0000] hover:bg-black text-white px-6 py-2.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none flex items-center gap-2 disabled:opacity-50"
               >
-                SAVE ALL CASE DOSSIER CHANGES
+                {isSaving && <Loader2 size={14} className="animate-spin" />}
+                <span>{isSaving ? 'PERSISTING TO FIRESTORE...' : 'SAVE ALL CASE DOSSIER CHANGES'}</span>
               </button>
             </div>
           </div>

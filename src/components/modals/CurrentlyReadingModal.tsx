@@ -16,6 +16,7 @@ import {
   X
 } from 'lucide-react';
 import { ImageUploader } from '../common/ImageUploader';
+import { BookCoverImage } from '../common/BookCoverImage';
 
 const GENRE_SUGGESTIONS = [
   'Psychological Thriller',
@@ -928,11 +929,13 @@ export const CurrentlyReadingModal: React.FC = () => {
                         <div key={b.id} className="bg-[#fcfaf2] border-2 border-black p-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] space-y-3">
                           <div className="flex items-start justify-between gap-3 flex-wrap sm:flex-nowrap">
                             <div className="flex items-start gap-3">
-                              <img
+                              <BookCoverImage
                                 src={b.coverImage}
+                                title={b.title}
+                                author={b.author}
+                                genre={b.genre}
                                 alt={b.title}
                                 className="w-14 h-20 object-cover border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] shrink-0"
-                                referrerPolicy="no-referrer"
                               />
                               <div>
                                 <span className="text-[9px] font-mono uppercase bg-[#8b0000] text-white px-1.5 py-0.5 font-bold">

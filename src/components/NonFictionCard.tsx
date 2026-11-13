@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
 import { NonFictionBook } from '../types';
 import { QuickImageModal } from './modals/QuickImageModal';
+import { BookCoverImage } from './common/BookCoverImage';
 import { 
   Heart, 
   BookOpen, 
@@ -12,7 +13,8 @@ import {
   CheckCircle2, 
   Plus, 
   Check,
-  Camera
+  Camera,
+  Layers
 } from 'lucide-react';
 
 interface NonFictionCardProps {
@@ -28,6 +30,7 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
     updateNonFictionBook,
     toggleLikeNonFictionBook,
     addNonFictionScratchpadNote,
+    openAlbumByName,
     isAdminUnlocked
   } = useJournal();
 
@@ -117,10 +120,12 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
               onClick={() => onOpenDetail(book)}
               className="aspect-[2/3] bg-black border border-black overflow-hidden relative cursor-pointer group/img"
             >
-              <img
+              <BookCoverImage
                 src={book.coverImage || book.coverUrl}
+                title={book.title}
+                author={book.author}
+                genre={book.genre}
                 alt={book.title}
-                referrerPolicy="no-referrer"
                 className="w-full h-full object-cover grayscale contrast-115 group-hover/img:grayscale-0 transition-all duration-300"
               />
               <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity text-white text-[10px] font-bold font-sans uppercase tracking-wider">
@@ -169,6 +174,24 @@ export const NonFictionCard: React.FC<NonFictionCardProps> = ({ book, onOpenDeta
             >
               {book.title}
             </h3>
+
+            {book.seriesName && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openAlbumByName(book.seriesName!);
+                }}
+                title="Open this book album"
+                className="inline-flex items-center gap-1 mb-1.5 px-2 py-0.5 bg-[#f5f2ed] hover:bg-black hover:text-white border border-black text-[9px] font-mono font-bold uppercase tracking-wider text-[#1a1a1a] transition-colors w-fit cursor-pointer"
+              >
+                <Layers size={10} className="text-[#8b0000]" />
+                <span>
+                  {book.seriesName}
+                  {book.seriesOrder ? ` · Book ${book.seriesOrder}` : ''}
+                </span>
+              </button>
+            )}
 
             <p className="font-mono text-[11px] text-gray-600 font-semibold mb-2">
               By {book.author}

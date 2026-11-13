@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useJournal } from '../context/JournalContext';
 import { Genre, CaseStatus, BookReview } from '../types';
+import { BookCoverImage } from './common/BookCoverImage';
 import { 
   FolderLock, 
   Search, 
@@ -13,7 +14,12 @@ import {
   Heart, 
   SlidersHorizontal,
   ArrowUpDown,
-  Download
+  Download,
+  RefreshCw,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2,
+  CloudCheck
 } from 'lucide-react';
 
 const GENRES: (Genre | 'All')[] = [
@@ -50,13 +56,26 @@ export const ArchiveManager: React.FC = () => {
     postLikes,
     witnessComments,
     isAdminUnlocked,
-    setIsAdminModalOpen
+    setIsAdminModalOpen,
+    archiveGenres,
+    addArchiveGenre,
+    removeArchiveGenre,
+    isSyncingFirestore,
+    lastFirestoreSync,
+    firestoreSyncError,
+    retryFirestoreSync,
   } = useJournal();
 
   const [search, setSearch] = useState('');
-  const [selectedGenre, setSelectedGenre] = useState<Genre | 'All'>('All');
+  const [selectedGenre, setSelectedGenre] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<CaseStatus | 'All'>('All');
   const [sortBy, setSortBy] = useState<'case-desc' | 'case-asc' | 'rating-desc' | 'pages-desc' | 'likes-desc' | 'title'>('case-desc');
+
+  // Async action processing state & error feedback
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [isRetryingSync, setIsRetryingSync] = useState(false);
 
   const filteredAndSorted = useMemo(() => {
     return reviews
@@ -88,9 +107,56 @@ export const ArchiveManager: React.FC = () => {
   const totalSuspects = reviews.reduce((acc, r) => acc + (r.suspects?.length || 0), 0);
   const totalLikes = Object.values(postLikes).reduce((acc: number, l: number) => acc + (Number(l) || 0), 0);
 
-  const handleDelete = (review: BookReview) => {
-    if (window.confirm(`Are you sure you want to permanently delete Case #${review.caseNumber}: "${review.title}" from your archive?`)) {
-      deleteReview(review.id);
+  const handleDelete = async (review: BookReview) => {
+    if (!window.confirm(`Are you sure you want to permanently delete Case #${review.caseNumber}: "${review.title}" from your archive? This deletion will be synchronized with Firestore.`)) {
+      return;
+    }
+    setActionError(null);
+    setActionSuccess(null);
+    setProcessingId(review.id);
+    try {
+      await deleteReview(review.id);
+      setActionSuccess(`Case #${review.caseNumber} ("${review.title}") successfully removed and persisted to Firestore.`);
+      setTimeout(() => setActionSuccess(null), 5000);
+    } catch (err: any) {
+      const errorMsg = err?.message || 'Failed to persist deletion to Firestore cloud database.';
+      console.error('Delete case file error:', err);
+      setActionError(`Failed to delete Case #${review.caseNumber}: ${errorMsg}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleDuplicate = async (review: BookReview) => {
+    setActionError(null);
+    setActionSuccess(null);
+    setProcessingId(review.id);
+    try {
+      const cloned = await duplicateReview(review.id);
+      const caseNum = (cloned as any)?.caseNumber || 'New';
+      setActionSuccess(`Case #${review.caseNumber} duplicated as Case #${caseNum} and saved to Firestore.`);
+      setTimeout(() => setActionSuccess(null), 5000);
+    } catch (err: any) {
+      const errorMsg = err?.message || 'Failed to persist duplicate to Firestore cloud database.';
+      console.error('Duplicate case file error:', err);
+      setActionError(`Failed to duplicate Case #${review.caseNumber}: ${errorMsg}`);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleManualSync = async () => {
+    setIsRetryingSync(true);
+    setActionError(null);
+    try {
+      await retryFirestoreSync();
+      setActionSuccess('Firestore cloud database synchronization completed successfully.');
+      setTimeout(() => setActionSuccess(null), 5000);
+    } catch (err: any) {
+      const errorMsg = err?.message || 'Manual Firestore sync failed.';
+      setActionError(`Firestore Sync Failed: ${errorMsg}`);
+    } finally {
+      setIsRetryingSync(false);
     }
   };
 
@@ -133,8 +199,102 @@ export const ArchiveManager: React.FC = () => {
     <div className="w-full max-w-7xl mx-auto px-4 py-8 space-y-8">
       
       {/* Editorial Header */}
-      <header className="border-b-4 border-black pb-6 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <header className="border-b-4 border-black pb-6 space-y-4">
+        
+        {/* Firestore Cloud Sync & Persistence Live Banner */}
+        <div className="bg-[#faf9f5] border-2 border-black p-3.5 flex flex-wrap items-center justify-between gap-3 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center gap-2.5">
+            {isSyncingFirestore ? (
+              <span className="flex items-center gap-2 font-mono text-xs font-bold text-[#8b0000]">
+                <Loader2 size={16} className="animate-spin text-[#8b0000]" />
+                <span>PERSISTING TO FIRESTORE CLOUD DATABASE...</span>
+              </span>
+            ) : firestoreSyncError ? (
+              <span className="flex items-center gap-2 font-mono text-xs font-bold text-[#8b0000]">
+                <AlertTriangle size={16} />
+                <span>FIRESTORE SYNC ATTENTION NEEDED</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 font-mono text-xs font-bold text-green-800">
+                <CheckCircle2 size={16} className="text-green-700" />
+                <span>FIRESTORE CLOUD PERSISTENCE ACTIVE</span>
+              </span>
+            )}
+
+            <span className="text-xs text-[#737373] hidden sm:inline">•</span>
+            <span className="text-[11px] font-mono text-[#555] hidden sm:inline">
+              Database: <code className="bg-[#f0ebe1] px-1 py-0.5 border border-black/20">ai-studio-themidnightreade-dcef3e05-ceb1-4426-a0a4-01c5ec2c2d64</code>
+            </span>
+            {lastFirestoreSync && (
+              <span className="text-[11px] font-mono text-[#737373] hidden md:inline">
+                (Last write: {lastFirestoreSync.toLocaleTimeString()})
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleManualSync}
+              disabled={isSyncingFirestore || isRetryingSync}
+              className="flex items-center gap-1 bg-white hover:bg-[#faf7f2] text-[#1a1a1a] border border-black px-2.5 py-1 text-[11px] font-sans font-bold uppercase tracking-wider transition-all shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] hover:shadow-none disabled:opacity-50 cursor-pointer"
+              title="Manually trigger immediate Firestore sync verification"
+            >
+              <RefreshCw size={12} className={isSyncingFirestore || isRetryingSync ? 'animate-spin' : ''} />
+              <span>{isRetryingSync ? 'SYNCING...' : 'SYNC FIRESTORE'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Global Error Banner */}
+        {firestoreSyncError && (
+          <div className="bg-[#fee2e2] border-2 border-[#8b0000] p-3 text-xs font-sans flex items-start gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <AlertTriangle size={16} className="text-[#8b0000] shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-1">
+              <span className="font-bold text-[#8b0000] block uppercase">Firestore Write Failed:</span>
+              <p className="text-[#1a1a1a] font-mono text-[11px] break-all">{firestoreSyncError}</p>
+            </div>
+            <button
+              onClick={handleManualSync}
+              className="px-2.5 py-1 bg-[#8b0000] text-white font-bold text-[10px] uppercase hover:bg-black transition-colors shrink-0"
+            >
+              Retry Sync
+            </button>
+          </div>
+        )}
+
+        {/* Action Error Banner */}
+        {actionError && (
+          <div className="bg-[#fee2e2] border-2 border-[#8b0000] p-3 text-xs font-sans flex items-start justify-between gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex items-start gap-2">
+              <AlertTriangle size={16} className="text-[#8b0000] shrink-0 mt-0.5" />
+              <span className="font-bold text-[#8b0000]">{actionError}</span>
+            </div>
+            <button 
+              onClick={() => setActionError(null)}
+              className="text-[#8b0000] font-bold text-xs uppercase underline ml-2"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Action Success Banner */}
+        {actionSuccess && (
+          <div className="bg-[#dcfce7] border-2 border-[#166534] p-3 text-xs font-sans flex items-center justify-between gap-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex items-center gap-2 text-[#166534]">
+              <CheckCircle2 size={16} className="shrink-0" />
+              <span className="font-bold">{actionSuccess}</span>
+            </div>
+            <button 
+              onClick={() => setActionSuccess(null)}
+              className="text-[#166534] font-bold text-xs uppercase underline ml-2"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <div className="flex items-center gap-2 text-xs font-sans font-bold uppercase tracking-widest text-[#8b0000]">
             <FolderLock size={15} />
             <span>CENTRAL ARCHIVE & DOSSIER LOCKER</span>
@@ -146,7 +306,7 @@ export const ArchiveManager: React.FC = () => {
               className="flex items-center gap-1.5 bg-white hover:bg-[#faf7f2] text-[#1a1a1a] border-2 border-black px-3 py-1.5 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none cursor-pointer"
             >
               <Download size={13} />
-              <span>SYNC</span>
+              <span>SYNC HUB</span>
             </button>
 
             <button
@@ -180,7 +340,7 @@ export const ArchiveManager: React.FC = () => {
         </h1>
 
         <p className="font-serif italic text-base text-[#4a4a4a] max-w-3xl leading-relaxed">
-          Manage your complete thriller archive in one central locker. Click <strong className="text-[#8b0000]">"EDIT DOSSIER"</strong> on any book below to modify reviews, rewrite suspects, tweak ratings, or adjust classified spoilers.
+          Manage your complete thriller archive in one central locker. Every edit, deletion, or new dossier is <strong className="text-[#8b0000]">safely awaited and persisted to Firestore cloud database</strong> so your files remain intact across sessions, builds, and redeployments.
         </p>
 
         {/* Quick Archive Metrics Strip */}
@@ -247,7 +407,8 @@ export const ArchiveManager: React.FC = () => {
               onChange={(e) => setSelectedGenre(e.target.value as any)}
               className="w-full py-2 px-3 border border-black text-xs font-sans bg-[#faf9f5]"
             >
-              {GENRES.map((g) => (
+              <option value="All">All Archive Genres</option>
+              {archiveGenres.map((g) => (
                 <option key={g} value={g}>Genre: {g}</option>
               ))}
             </select>
@@ -333,11 +494,13 @@ export const ArchiveManager: React.FC = () => {
                   
                   {/* Book Cover */}
                   <div className="relative flex-shrink-0 w-16 sm:w-20 h-24 sm:h-28 bg-[#e8e2d8] border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] overflow-hidden">
-                    <img
+                    <BookCoverImage
                       src={review.coverImage}
+                      title={review.title}
+                      author={review.author}
+                      genre={review.genre}
                       alt={review.title}
                       className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all"
-                      referrerPolicy="no-referrer"
                     />
                     <span className="absolute bottom-0 right-0 bg-black text-white font-mono text-[8px] px-1 font-bold">
                       #{review.caseNumber}
@@ -425,22 +588,32 @@ export const ArchiveManager: React.FC = () => {
                   {/* Duplicate / Clone */}
                   <button
                     type="button"
-                    onClick={() => duplicateReview(review.id)}
-                    className="flex items-center gap-1 bg-white hover:bg-[#faf7f2] text-[#1a1a1a] border border-black px-2.5 py-2 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none"
+                    onClick={() => handleDuplicate(review)}
+                    disabled={processingId === review.id}
+                    className="flex items-center gap-1 bg-white hover:bg-[#faf7f2] text-[#1a1a1a] border border-black px-2.5 py-2 text-xs font-sans font-bold uppercase tracking-wider transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none disabled:opacity-50 cursor-pointer"
                     title="Duplicate as new case file template"
                   >
-                    <Copy size={13} />
-                    <span className="hidden sm:inline">Clone</span>
+                    {processingId === review.id ? (
+                      <Loader2 size={13} className="animate-spin text-[#8b0000]" />
+                    ) : (
+                      <Copy size={13} />
+                    )}
+                    <span className="hidden sm:inline">{processingId === review.id ? 'Saving...' : 'Clone'}</span>
                   </button>
 
                   {/* Delete Button */}
                   <button
                     type="button"
                     onClick={() => handleDelete(review)}
-                    className="flex items-center gap-1 bg-white hover:bg-[#ffefef] text-[#8b0000] border border-[#8b0000] px-2.5 py-2 text-xs font-sans font-bold uppercase tracking-wider transition-all hover:bg-red-700 hover:text-white"
+                    disabled={processingId === review.id}
+                    className="flex items-center gap-1 bg-white hover:bg-[#ffefef] text-[#8b0000] border border-[#8b0000] px-2.5 py-2 text-xs font-sans font-bold uppercase tracking-wider transition-all hover:bg-red-700 hover:text-white disabled:opacity-50 cursor-pointer"
                     title="Delete this case file"
                   >
-                    <Trash2 size={13} />
+                    {processingId === review.id ? (
+                      <Loader2 size={13} className="animate-spin" />
+                    ) : (
+                      <Trash2 size={13} />
+                    )}
                   </button>
 
                 </div>

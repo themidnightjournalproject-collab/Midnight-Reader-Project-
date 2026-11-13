@@ -11,7 +11,8 @@
         "stats": { "type": "object" },
         "timelineStats": { "type": "object" },
         "intelligenceStats": { "type": "object" },
-        "aboutConfig": { "type": "object" }
+        "aboutConfig": { "type": "object" },
+        "bookAlbums": { "type": "array", "description": "User-created book albums grouping books in reading order" }
       }
     },
     "BookReview": {
@@ -28,7 +29,9 @@
         "rating": { "type": "number" },
         "pages": { "type": "number" },
         "dateRead": { "type": "string" },
-        "status": { "type": "string" }
+        "status": { "type": "string" },
+        "seriesName": { "type": "string" },
+        "seriesOrder": { "type": "number" }
       },
       "required": ["id", "title", "author"]
     },
@@ -43,7 +46,9 @@
         "author": { "type": "string" },
         "genre": { "type": "string" },
         "coverImage": { "type": "string" },
-        "rating": { "type": "number" }
+        "rating": { "type": "number" },
+        "seriesName": { "type": "string" },
+        "seriesOrder": { "type": "number" }
       },
       "required": ["id", "title", "author"]
     },

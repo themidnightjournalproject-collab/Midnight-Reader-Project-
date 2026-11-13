@@ -13,14 +13,17 @@ import {
   ArrowDown, 
   Sparkles,
   BookOpen,
-  Camera
+  Camera,
+  Layers
 } from 'lucide-react';
 import { ClueBoard } from './interactive/ClueBoard';
 import { SuspectBoard } from './interactive/SuspectBoard';
 import { TheoryBuilder } from './interactive/TheoryBuilder';
+import { CaseStatusBadge } from './common/CaseStatusBadge';
 import { InteractiveEngagement } from './interactive/InteractiveEngagement';
 import { ClassifiedInformationSection } from './interactive/ClassifiedInformationSection';
 import { QuickImageModal } from './modals/QuickImageModal';
+import { BookCoverImage } from './common/BookCoverImage';
 
 interface CaseFileFullViewProps {
   review: BookReview;
@@ -28,9 +31,14 @@ interface CaseFileFullViewProps {
 
 export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) => {
   const { 
+    reviews,
+    nonFictionBooks,
     setSelectedReview, 
+    setSelectedNonFictionBook,
     setEditingReview, 
     updateReview,
+    openAlbumByName,
+    removeTropeFromReview,
     postLikes, 
     userLikedPosts, 
     toggleLikePost, 
@@ -45,6 +53,38 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
   const isLiked = !!userLikedPosts[review.id];
   const hasGuestAccusation = Boolean(visitorGuesses[review.id]);
   const isClassifiedUnlocked = Boolean(unlockedSpoilers[review.id]);
+
+  const seriesKey = review.seriesName?.trim().toLowerCase() || '';
+  const seriesVolumes = seriesKey
+    ? [
+        ...reviews
+          .filter((r) => r.seriesName?.trim().toLowerCase() === seriesKey)
+          .map((r) => ({
+            kind: 'thriller' as const,
+            id: r.id,
+            title: r.title,
+            coverImage: r.coverImage,
+            author: r.author,
+            genre: r.genre,
+            seriesOrder: r.seriesOrder || 999,
+            code: `CASE #${r.caseNumber}`,
+            data: r,
+          })),
+        ...nonFictionBooks
+          .filter((b) => b.seriesName?.trim().toLowerCase() === seriesKey)
+          .map((b) => ({
+            kind: 'non-fiction' as const,
+            id: b.id,
+            title: b.title,
+            coverImage: b.coverImage || b.coverUrl || '',
+            author: b.author,
+            genre: b.genre,
+            seriesOrder: b.seriesOrder || 999,
+            code: b.catalogNumber,
+            data: b,
+          })),
+      ].sort((a, b) => a.seriesOrder - b.seriesOrder)
+    : [];
 
   const handleUpdateCover = (newImageUrl: string) => {
     updateReview(review.id, { coverImage: newImageUrl });
@@ -124,6 +164,23 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
                   </span>
                 </>
               )}
+              {review.seriesName && (
+                <>
+                  <span className="text-black opacity-30">•</span>
+                  <button
+                    type="button"
+                    onClick={() => openAlbumByName(review.seriesName!)}
+                    className="inline-flex items-center gap-1 bg-black hover:bg-[#8b0000] text-white text-[10px] font-mono font-bold uppercase px-2 py-0.5 tracking-wider cursor-pointer transition-colors"
+                    title="Open this book album"
+                  >
+                    <Layers size={10} />
+                    <span>
+                      {review.seriesName}
+                      {review.seriesOrder ? ` · BOOK ${review.seriesOrder}` : ''}
+                    </span>
+                  </button>
+                </>
+              )}
             </div>
             <h1 className="text-3xl sm:text-5xl font-black uppercase text-[#1a1a1a] tracking-tight font-serif">
               {review.title}
@@ -149,9 +206,7 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
           </div>
 
           <div className="flex flex-col items-end gap-1">
-            <span className="bg-black text-white text-xs font-sans font-bold uppercase px-3 py-1 tracking-wider">
-              {review.status}
-            </span>
+            <CaseStatusBadge item={review} size="lg" showProgressDetails />
             <span className="font-sans text-[11px] font-bold text-[#737373] mt-1 uppercase">
               {review.pages} PAGES INVESTIGATED
             </span>
@@ -233,6 +288,82 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
           </div>
         </div>
 
+        {/* Connected Series Volumes Navigation Strip */}
+        {review.seriesName && seriesVolumes.length > 0 && (
+          <div className="mb-8 p-4 bg-[#fffef7] border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black pb-2 mb-3">
+              <div className="flex items-center gap-2">
+                <Layers size={15} className="text-[#8b0000]" />
+                <span className="font-sans text-[11px] uppercase font-bold text-[#1a1a1a] tracking-widest">
+                  ALBUM DOSSIER: {review.seriesName} ({seriesVolumes.length} {seriesVolumes.length === 1 ? 'BOOK' : 'BOOKS'})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => openAlbumByName(review.seriesName!)}
+                className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] hover:underline cursor-pointer"
+              >
+                Open / Reorder Album →
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {seriesVolumes.map((vol) => {
+                const isCurrent = vol.kind === 'thriller' && vol.id === review.id;
+                return (
+                  <button
+                    key={`${vol.kind}-${vol.id}`}
+                    type="button"
+                    onClick={() => {
+                      if (isCurrent) return;
+                      if (vol.kind === 'thriller') {
+                        setSelectedReview(vol.data);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      } else {
+                        setSelectedReview(null);
+                        setSelectedNonFictionBook(vol.data);
+                      }
+                    }}
+                    className={`flex items-center gap-2.5 p-2 border text-left transition-all ${
+                      isCurrent
+                        ? 'bg-black text-white border-black cursor-default'
+                        : 'bg-white text-[#1a1a1a] border-black hover:bg-[#f5f2ed] cursor-pointer'
+                    }`}
+                  >
+                    <div className="w-10 h-14 shrink-0 border border-black/40 overflow-hidden bg-black">
+                      <BookCoverImage
+                        src={vol.coverImage}
+                        title={vol.title}
+                        author={vol.author}
+                        genre={vol.genre}
+                        alt={vol.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span
+                        className={`text-[9px] font-mono font-bold uppercase block ${
+                          isCurrent ? 'text-[#fbbf24]' : 'text-[#8b0000]'
+                        }`}
+                      >
+                        {vol.seriesOrder < 999 ? `BOOK ${vol.seriesOrder}` : 'SERIES'} • {vol.code}
+                      </span>
+                      <span className="font-serif font-bold text-xs leading-tight line-clamp-2 block">
+                        {vol.title}
+                      </span>
+                      {isCurrent && (
+                        <span className="text-[9px] font-sans uppercase text-gray-300 block mt-0.5">
+                          Currently Viewing
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Book Overview & Forensic Context Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-8 pb-8 border-b border-black border-opacity-20">
           
@@ -240,11 +371,13 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
           <div className="md:col-span-4 flex flex-col items-center">
             <div className="relative p-2 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-1deg] mb-3 group">
               <div className="relative overflow-hidden">
-                <img
+                <BookCoverImage
                   src={review.coverImage}
+                  title={review.title}
+                  author={review.author}
+                  genre={review.genre}
                   alt={review.title}
                   className="w-48 sm:w-56 h-72 object-cover grayscale-[15%] contrast-[110%]"
-                  referrerPolicy="no-referrer"
                 />
                 
                 {/* Quick Hover / Click Replace Overlay - only for unlocked admin */}
@@ -358,9 +491,23 @@ export const CaseFileFullView: React.FC<CaseFileFullViewProps> = ({ review }) =>
                   {review.tropes.map((trope, i) => (
                     <span 
                       key={i} 
-                      className="bg-[#1a1a1a] text-white text-[10px] font-sans font-bold px-2 py-0.5 uppercase tracking-wider"
+                      className="bg-[#1a1a1a] text-white text-[10px] font-sans font-bold px-2 py-0.5 uppercase tracking-wider inline-flex items-center gap-1.5"
                     >
-                      {trope}
+                      <span>{trope}</span>
+                      {isAdminUnlocked && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`Remove trope "${trope}" from this case file?`)) {
+                              removeTropeFromReview(review.id, trope);
+                            }
+                          }}
+                          title={`Remove "${trope}" from this case file`}
+                          className="text-gray-400 hover:text-red-400 font-bold text-xs cursor-pointer"
+                        >
+                          ×
+                        </button>
+                      )}
                     </span>
                   ))}
                 </div>

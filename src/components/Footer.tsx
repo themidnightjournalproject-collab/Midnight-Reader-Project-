@@ -125,9 +125,20 @@ export const Footer: React.FC = () => {
                   </button>
                 </>
               ) : (
-                <span className="text-[11px] text-[#737373] font-mono italic">
-                  Read-only archival ledger. Dispatch updates curated by editorial desk.
-                </span>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-[11px] text-[#737373] font-mono italic">
+                    Read-only archival ledger.
+                  </span>
+                  <button
+                    id="btn-footer-investigator-mode"
+                    onClick={() => setIsAdminModalOpen(true)}
+                    className="inline-flex items-center gap-1.5 text-[11px] text-[#8b0000] hover:text-black font-mono font-bold hover:underline cursor-pointer"
+                    title="Unlock Chief Investigator Mode"
+                  >
+                    <Lock size={11} />
+                    <span>Investigator Mode Access</span>
+                  </button>
+                </div>
               )}
             </div>
           </div>

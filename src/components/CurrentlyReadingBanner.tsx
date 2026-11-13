@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
 import { Edit3, Camera, BookOpen, Bookmark, Sparkles, PlusCircle, CheckCircle, Trash2, ArrowUpCircle, ArrowRightCircle } from 'lucide-react';
 import { QuickImageModal } from './modals/QuickImageModal';
+import { BookCoverImage } from './common/BookCoverImage';
 
 export const CurrentlyReadingBanner: React.FC = () => {
   const { 
@@ -122,11 +123,13 @@ export const CurrentlyReadingBanner: React.FC = () => {
             <div className="md:col-span-3 flex flex-col items-center justify-center">
               <div className="relative group">
                 <div className="w-32 sm:w-36 h-48 bg-[#ffffff] border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative rotate-[-1deg]">
-                  <img
+                  <BookCoverImage
                     src={currentlyReading.coverImage}
+                    title={currentlyReading.title}
+                    author={currentlyReading.author}
+                    genre={currentlyReading.genre}
                     alt={currentlyReading.title}
                     className="w-full h-full object-cover grayscale-[15%] contrast-[110%]"
-                    referrerPolicy="no-referrer"
                   />
 
                   {isAdminUnlocked && (
@@ -289,11 +292,13 @@ export const CurrentlyReadingBanner: React.FC = () => {
             <div className="md:col-span-3 flex flex-col items-center justify-center">
               <div className="relative group">
                 <div className="w-32 sm:w-36 h-48 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden relative rotate-[1deg]">
-                  <img
+                  <BookCoverImage
                     src={currentlyReading.nonThrillerCoverImage || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80'}
+                    title={currentlyReading.nonThrillerTitle || 'Non-Thriller Book'}
+                    author={currentlyReading.nonThrillerAuthor || ''}
+                    genre={currentlyReading.nonThrillerGenre || 'Non-Fiction'}
                     alt={currentlyReading.nonThrillerTitle || 'Non-Thriller Book'}
                     className="w-full h-full object-cover contrast-[105%]"
-                    referrerPolicy="no-referrer"
                   />
 
                   {isAdminUnlocked && (
@@ -423,11 +428,13 @@ export const CurrentlyReadingBanner: React.FC = () => {
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative group shrink-0">
-                      <img
+                      <BookCoverImage
                         src={b.coverImage || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80'}
+                        title={b.title}
+                        author={b.author}
+                        genre={b.genre}
                         alt={b.title}
                         className="w-20 h-28 object-cover border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
-                        referrerPolicy="no-referrer"
                       />
                       {isAdminUnlocked && (
                         <div

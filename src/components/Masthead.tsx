@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
-import { Search, PlusCircle, Lock, Unlock, KeyRound, FolderLock, Database, BarChart2, Github, CloudUpload, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Search, PlusCircle, Lock, Unlock, KeyRound, FolderLock, Database, BarChart2, Github, CloudUpload, CheckCircle2, ChevronDown, Layers } from 'lucide-react';
 
 export const Masthead: React.FC = () => {
   const { 
@@ -30,7 +30,8 @@ export const Masthead: React.FC = () => {
     setIsGitHubModalOpen,
     syncToGitHub,
     heroConfig,
-    offTheRecordConfig
+    offTheRecordConfig,
+    openAlbumEditor
   } = useJournal();
 
   const [isQuickSyncing, setIsQuickSyncing] = useState(false);
@@ -78,11 +79,13 @@ export const Masthead: React.FC = () => {
             </div>
           ) : (
             <button
+              id="btn-investigator-mode"
               onClick={() => setIsAdminModalOpen(true)}
-              className="text-[#8b0000] hover:text-black transition-colors cursor-pointer select-none"
-              title="Editorial Desk"
+              className="text-[#8b0000] hover:text-black transition-colors cursor-pointer select-none font-bold flex items-center gap-1.5"
+              title="Chief Investigator Mode (Password Protected)"
             >
-              {heroConfig?.classifiedTag || 'Classified: Case Archive'}
+              <Lock size={11} />
+              <span>{heroConfig?.classifiedTag || 'Investigator Mode'}</span>
             </button>
           )}
         </div>
@@ -150,6 +153,13 @@ export const Masthead: React.FC = () => {
             >
               <PlusCircle size={12} />
               <span>+ Add to Current Reads</span>
+            </button>
+            <button
+              onClick={() => openAlbumEditor(null)}
+              className="flex items-center gap-1 bg-[#222] hover:bg-white hover:text-black text-white px-2.5 py-1 text-[11px] font-bold uppercase transition-colors border border-white/20"
+            >
+              <Layers size={11} className="text-[#8b0000]" />
+              <span>+ Create Album</span>
             </button>
             <button
               onClick={() => setIsEditOffTheRecordModalOpen(true)}

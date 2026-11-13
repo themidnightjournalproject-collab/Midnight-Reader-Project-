@@ -12,6 +12,7 @@ import {
   Sparkles,
   BarChart2
 } from 'lucide-react';
+import { BookCoverImage } from './common/BookCoverImage';
 
 export const ReaderAnalyticsDashboard: React.FC = () => {
   const { 
@@ -245,11 +246,13 @@ export const ReaderAnalyticsDashboard: React.FC = () => {
                   </div>
 
                   <div className="flex gap-3 items-center">
-                    <img
+                    <BookCoverImage
                       src={r.coverImage}
+                      title={r.title}
+                      author={r.author}
+                      genre={r.genre}
                       alt={r.title}
                       className="w-14 h-20 object-cover border border-black flex-shrink-0"
-                      referrerPolicy="no-referrer"
                     />
                     <div className="min-w-0">
                       <h3 

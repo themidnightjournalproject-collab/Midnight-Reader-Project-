@@ -1,32 +1,638 @@
 {
-  "exportedAt": "2026-11-03T11:16:39.380Z",
-  "curator": "The Midnight Reader",
-  "reviewsCount": 4,
-  "nonFictionCount": 2,
+  "adminPasscode": "lol12ymn",
   "reviews": [
     {
-      "caseNumber": "002",
-      "title": "The Silent Patient",
-      "author": "Alex Michaelides",
-      "coverImage": "/covers/silent-patient.jpg",
-      "genre": "Psychological Thriller",
-      "dateRead": "Aug 4, 2026",
-      "dateStarted": "Aug 12, 2025",
-      "dateFinished": "Aug 17, 2025",
-      "yearRead": 2025,
-      "pages": 359,
-      "rating": 4,
       "status": "CLOSED",
+      "correctGuess": false,
+      "whatActuallyHappened": "The truth surrounding Savvy's murder is far more complicated than the town's assumptions about Lucy suggest. The investigation eventually exposes the secrets and conflicting accounts surrounding that night, revealing that the person responsible was not necessarily the person everyone had spent years suspecting. The final revelations reframe Lucy's memories and the relationships surrounding the case, bringing the mystery to a conclusion that is both surprising and unsettling.",
+      "readerPollVotes": {
+        "sawItComingMidway": 13,
+        "solvedBeforeTwist": 10,
+        "jawDroppedEnding": 11,
+        "fooledCompletely": 15
+      },
+      "coverImage": "/covers/listen-for-the-lie.jpg",
+      "marginaliaNotes": [
+        "Plumpton desperately needs a group therapy session. Actually, several.",
+        "Bff bracelets with Lucy Chase",
+        "Finished another chapter. Have I gained any useful information? No. Have I developed another completely unreasonable theory? Absolutely."
+      ],
+      "twistsCount": 2,
+      "favoriteMoment": "My favourite aspect was the podcast interviews and the way they gradually exposed the town's conflicting stories. Watching people present themselves as reliable witnesses while revealing little pieces of information that could completely change the investigation was genuinely entertaining. It made me question almost everyone, which is exactly what I want from a thriller.",
+      "dateFinished": "Dec 15, 2025",
+      "pages": 414,
+      "genre": "Psychological Thriller",
+      "yearRead": 2025,
+      "recommendedFor": "Readers who enjoy humorous psychological thrillers, small-town murder mysteries, unreliable narrators, true-crime podcasts and stories where absolutely nobody seems trustworthy.",
+      "leadQuote": "The truth has a funny way of getting buried beneath everyone else's stories",
+      "tropes": [
+        "Unreliable Narrator",
+        "Multiple POVs",
+        "Cold Case Reopened",
+        "Amnesia / Missing Memories",
+        "Small Town Secrets",
+        "True-Crime Podcast",
+        "Dark Humour",
+        "Amateur Investigation",
+        "Hidden Relationships"
+      ],
+      "author": "Amy Tintera",
+      "paranoiaRating": 2,
+      "title": "Listen For The Lie",
+      "summary": "Lucy Chase returns to her hometown of Plumpton (funny name I know), Texas, after becoming the centre of a murder investigation. Years earlier, she was found wandering along a road covered in blood, with no memory of what happened to her best friend Savvy. Now, when a true-crime podcast revisits the unsolved case, Lucy finds herself dragged back into the mystery. Everyone seems to have an opinion about what happened, but with a town full of secrets and a narrator who cannot always trust her own memories, uncovering the truth becomes anything but simple.",
+      "spoilerCulpritReveal": "Matt, Savvy's husband, is ultimately revealed to be responsible for her death.\n\nThe revelation completely changes how the earlier events are understood. Lucy's blood-stained appearance and missing memories had made her seem guilty, while Matt had remained outside the centre of suspicion for much of the investigation.\n\nThe truth exposes the danger of accepting a convincing narrative without questioning who benefits from it. Lucy had spent years carrying the weight of a murder she did not commit, while the actual culprit had remained hidden behind the assumptions surrounding the case. \n\nThe biggest misdirection in this case was never just Lucy's missing memory. It was how readily everyone else believed they already knew what had happened.",
+      "unreliableNarratorRating": 5,
+      "reviewText": "I went into this book expecting a fairly conventional murder mystery, but Lucy Chase made it anything but ordinary. One of my favourite things about this read was definitely the humour. Despite dealing with a murder investigation and some genuinely unsettling events, the book manages to be surprisingly funny without taking away from the mystery itself. And honestly, Lucy might just be one of my favourite main characters ever. Her sarcastic inner commentary reminded me of myself more than once, and I loved getting little glimpses into the way her brain works. I found myself looking forward to her reactions just as much as the actual investigation, which is probably a good indication of how much I enjoyed her character.\n\nThe podcast format was another detail I really enjoyed. It added a completely different layer to the story because we weren't just following an investigation; we were also getting to see how that investigation was being presented to everyone else. The interviews, public speculation and different accounts of what happened made me realise how easily a story can change depending on who's telling it. Everyone seemed to have their own version of Lucy, and I found it interesting how quickly people were willing to believe certain things about her without really knowing what had happened. It also made the whole situation feel a lot more personal because Lucy wasn't just trying to figure out the truth herself; she was dealing with an entire town that had practically decided her story for her.\n\nThe pacing was great, and I found myself changing suspects constantly. Every time I thought I had finally figured something out, another little detail would make me question everything all over again. I especially liked how the book played around with memory and perception. Lucy's missing memories made it difficult to know what to believe, and I loved that even the smallest interactions could leave me wondering whether there was something more going on. It made me realise just how much we rely on our own memories when trying to understand situations, and how unsettling it would be to have everyone else remember something that you simply couldn't.\n\nIf I had one criticism, it would be that a few of the revelations felt slightly convenient, and I would have liked certain parts of the mystery to be explored a little further. Nevertheless, this was such an entertaining read. I loved the balance between humour and suspense, and I think Lucy is what really makes the book stand out. I would genuinely love to read another book featuring her because, at this point, I'm probably just as interested in following her thoughts as I am in solving the actual murder.",
+      "twistExecutionRating": 5,
+      "spoilerEvidence": "For most of the investigation, Lucy is positioned as the obvious suspect. She was found covered in blood, cannot remember the night Savvy died, and has spent years being judged by a town convinced she murdered her best friend.\n\nHowever, the investigation gradually reveals that the story everyone has accepted is not the complete truth.\n\nThe focus eventually shifts towards Matt, whose relationship with Savvy and involvement in the events surrounding her death become central to the mystery. The details of their marriage expose a much darker situation than the version of events initially presented to the public.\n\nThe podcast, conflicting testimonies and Lucy's fragmented memories all contribute to the gradual dismantling of the original theory. What initially appears to be a straightforward case against Lucy turns into a revelation about how easily the wrong person can become the centre of an entire town's suspicion.",
+      "clues": [
+        {
+          "importance": "CRUCIAL",
+          "id": "c-new-1793632477352",
+          "detailedAnalysis": "This becomes the foundation of the entire investigation. The physical circumstances make Lucy appear guilty, but the absence of reliable memories means that appearances cannot be treated as proof.",
+          "summary": "Lucy is discovered covered in blood after Savvy's murder, but she has no memory of what happened.",
+          "title": "The Blood-Stained Night",
+          "pageDiscovered": "Opening chapters — the night of Savvy's murder."
+        },
+        {
+          "detailedAnalysis": "Her memory gaps make her an unreliable witness to her own experiences. The reader is forced to question whether Lucy is hiding something, whether her memories are incomplete, or whether other people are deliberately shaping the narrative.",
+          "summary": "Lucy cannot remember key parts of the night Savvy died.",
+          "importance": "CONFIRMED EVIDENCE",
+          "title": "Lucy's Missing Memories",
+          "id": "c-new-1793634361186",
+          "pageDiscovered": "Throughout the novel."
+        },
+        {
+          "title": "The True-Crime Podcast",
+          "importance": "CONFIRMED EVIDENCE",
+          "id": "c-new-1793634393032",
+          "pageDiscovered": "When the podcast revisits Savvy's murder.",
+          "summary": " A true-crime podcast reopens the investigation and brings Lucy back into the spotlight.",
+          "detailedAnalysis": " The interviews introduce conflicting accounts and reveal how differently people remember the same events. The podcast becomes a way of exposing the gap between public opinion and the actual truth."
+        },
+        {
+          "detailedAnalysis": "The contradictions reveal how easily assumptions become accepted as facts. The town's collective certainty about Lucy's guilt becomes one of the biggest obstacles to uncovering the truth.",
+          "title": "Plumpton's Conflicting Stories",
+          "pageDiscovered": "Throughout the interviews and investigation.",
+          "importance": "ANOMALOUS",
+          "id": "c-new-1793634432152",
+          "summary": "Different residents offer their own versions of Lucy, Savvy and the night of the murder."
+        },
+        {
+          "importance": "ANOMALOUS",
+          "summary": "The details of Savvy's marriage and her relationship with Matt become increasingly important.",
+          "pageDiscovered": "Gradually revealed through the investigation.",
+          "id": "c-new-1793634469484",
+          "title": " Savvy and Matt's Marriage",
+          "detailedAnalysis": "Looking beyond Lucy's relationship with Savvy reveals another side of Savvy's personal life. Matt's connection to her becomes central to understanding the events leading up to her death."
+        },
+        {
+          "title": "Lucy's Reputation",
+          "importance": "DECEPTIVE (RED HERRING)",
+          "detailedAnalysis": "People repeatedly judge Lucy based on what they believe about her rather than what they can actually prove. Her reputation makes it easier to overlook alternative explanations and reinforces the assumption that she must be responsible.\n\n",
+          "id": "c-new-1793634470040",
+          "pageDiscovered": "Throughout the novel.",
+          "summary": "Lucy's reputation as an unpredictable and potentially dangerous person influences how everyone interprets her behaviour."
+        }
+      ],
+      "caseNumber": "006",
+      "atmosphereRating": 4,
+      "likes": 1,
+      "id": "case-006-1793634759237",
+      "pacingRating": 5,
+      "evidenceBullets": [
+        "The Blood Stained Night",
+        "The Missing Memories ",
+        "Savvy's Reputation",
+        "Conflicting Testimonies",
+        "Unreliable Storytelling"
+      ],
+      "dateStarted": "Dec 10, 2025",
       "readingFormat": "Paperback",
+      "suspects": [
+        {
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "opportunity": "MAXIMUM",
+          "role": "Savvy's best friend and the person everyone suspects of murdering her",
+          "isActualCulprit": false,
+          "id": "s-new-1793632476592",
+          "name": "Lucy Chase",
+          "alibi": " Lucy has very little reliable recollection of that night. She was found covered in blood but cannot remember what happened.",
+          "suspicionLevel": 5,
+          "revealNotes": "",
+          "motive": "The nature of Lucy and Savvy's relationship, combined with the events of the night Savvy died, makes Lucy the town's obvious suspect."
+        },
+        {
+          "role": "Savvy's husband and a central figure in her personal life.",
+          "motive": "His relationship with Savvy and the secrets surrounding their marriage make him a significant suspect.",
+          "alibi": "His account of the events surrounding Savvy's murder becomes increasingly questionable as the investigation uncovers the truth.",
+          "opportunity": "HIGH",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "name": "Matt",
+          "suspicionLevel": 3,
+          "id": "s-new-1793634147441",
+          "revealNotes": "Matt murdered Savvy during a confrontation connected to the truth about their marriage. He then left Lucy to become the focus of suspicion, allowing her blood-stained appearance and memory loss to reinforce the town's belief that she was responsible. His role only becomes clear when the investigation exposes the truth behind their relationship.",
+          "isActualCulprit": true
+        },
+        {
+          "motive": "His personal connections and the complicated relationships surrounding Savvy make him worth investigating.",
+          "revealNotes": "",
+          "id": "s-new-1793634189524",
+          "role": "A man connected to Lucy's past and the events surrounding the murder.",
+          "alibi": " His involvement must be considered alongside the conflicting accounts of the people involved.",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "isActualCulprit": false,
+          "opportunity": "HIGH",
+          "suspicionLevel": 2,
+          "name": "Ben Owens"
+        },
+        {
+          "alibi": "Everyone seems to have a different recollection of events, making the truth difficult to establish.",
+          "name": "The Town of Plumpton",
+          "suspicionLevel": 4,
+          "revealNotes": "",
+          "motive": "Gossip, personal loyalties and the desire to protect reputations contribute to the town's obsession with controlling Lucy's story.",
+          "id": "s-new-1793634243920",
+          "opportunity": "LOW",
+          "isActualCulprit": false,
+          "role": "The collective network of locals, witnesses and people who have formed their own version of Savvy's murder.",
+          "clues": [
+            "Initial interrogator observation"
+          ]
+        }
+      ],
+      "finalVerdict": "A witty, unpredictable murder mystery with an unforgettable narrator, plenty of suspicious characters and just enough twists to keep you questioning everyone.",
+      "rating": 4.5,
+      "dateRead": "Nov 01, 2026",
+      "whatIThought": "I spent most of the book questioning whether Lucy's missing memories were hiding something much darker than she realised. I suspected that the people around her knew considerably more than they were letting on, especially given how quickly the town seemed to settle on its own version of events. I also kept wondering whether the podcast was genuinely trying to solve the case or simply using Lucy's past to create a more entertaining story."
+    },
+    {
+      "status": "CLOSED",
+      "recommendedFor": "Readers who enjoy psychological thrillers, isolated settings, unreliable characters, and stories that blur the line between fiction and reality.",
+      "reviewText": "The premise immediately grabbed me: a negative book review leading to a real-life nightmare is such a clever setup. However it felt a bit like the start of a dramatic movie rather than psychological thriller so I dived into this book with more a mindset which left me rather unprepared for the plots and twisty writing. The isolated beach house also adds to this creating an unsettling atmosphere, and the story keeps you questioning.I liked how the book plays with the line between fiction and reality. However I think by the end it left more questions than answers and kept me wanting more from the book. The fast pacing and constant reveals make it an easy thriller to get pulled into, although the number of twists can sometimes feel a little over-the-top. Overall, it’s a tense, unpredictable read with a memorable premise. It may stretch believability at times, but it knows how to keep the suspense going.",
+      "paranoiaRating": 3,
+      "id": "case-005",
+      "genre": "Psychological Thriller",
+      "pages": 337,
+      "caseNumber": "005",
+      "unreliableNarratorRating": 4,
+      "evidenceBullets": [
+        "Emma’s One-Star Review",
+        "The Remote Beach House",
+        "Deek’s Involvement",
+        "The Threatening Messages"
+      ],
+      "twistsCount": 3,
+      "yearRead": 2026,
+      "tropes": [
+        "Unreliable Narrator",
+        "Isolated Island / Cabin",
+        "Domestic Gaslighting",
+        "Cat-and-Mouse Game",
+        "Multiple POVs",
+        "Hidden family secrets",
+        "Twist in the Epilogue",
+        "Red Herring Suspect",
+        "Claustrophobic Setting",
+        "Paranoid Protagonist"
+      ],
+      "dateFinished": "Oct 31, 2026",
+      "author": "Taylor Adams",
+      "leadQuote": "\"One harmless review turns into a nightmare.\"",
+      "spoilerEvidence": "Emma’s one-star review initially points towards H.G. Kane as the person behind her nightmare. However, Kane is revealed to be Howard Grosvenor Kline, who physically attacks Emma. The real mastermind is Deek, her seemingly helpful neighbour, who orchestrated the events and used Howard to carry out his plan. The manuscript and Deek’s suspicious behaviour take on a new meaning once his involvement is exposed.",
       "correctGuess": true,
+      "twistExecutionRating": 2,
+      "summary": "While house-sitting at a remote beach home, Emma Carpenter leaves a scathing review of a horror novel by H. G. Kane. The author responds by stalking her, turning Emma’s quiet retreat into a fight for survival. With only her dog Laika and distant, rather strange neighbour Deek to rely on, Emma must figure out who is behind the attacks and why.",
+      "favoriteMoment": "The moment Deek’s apparent role as Emma’s helpful neighbour turns sinister. It completely changes how his earlier actions read and makes the story’s final twist especially unsettling.",
+      "title": "The Last Word",
+      "spoilerCulpritReveal": "Deek, whose real identity is Deacon Cowl, reveals that he planned the ordeal to create a sensational real-life story and revive his failing writing career. He manipulated Emma’s trust and turned her nightmare into material for his own ambitions. Howard was the attacker, but Deek was the mastermind behind it all.",
+      "whatIThought": "I suspected H. G. Kane was behind the attacks, but I thought Deek might be helping him or hiding something about the house. I expected Emma’s review to be the reason she was targeted, but I didn’t anticipate how deeply the events were connected to the people around her.",
+      "dateRead": "Oct 31, 2026",
+      "coverImage": "/covers/the-last-word.jpg",
+      "readingFormat": "Paperback",
+      "likes": 17,
+      "finalVerdict": "A clever, fast-paced thriller with enough twists to keep you guessing.",
+      "suspects": [
+        {
+          "opportunity": "MEDIUM",
+          "name": " Deek",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "id": "s-edit-1793510321318",
+          "isActualCulprit": true,
+          "alibi": "supposedly assisting her during the attacks.",
+          "suspicionLevel": 3,
+          "motive": "Wants to revive his declining writing career ",
+          "revealNotes": "Deek was not simply Emma’s helpful neighbour; he was orchestrating the nightmare from behind the scenes. He arranged for Howard to become the physical threat Emma was trying to escape.",
+          "role": "Emma’s mysterious neighbour and a former writer."
+        },
+        {
+          "suspicionLevel": 5,
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "role": "Horror novelist and Jules’s son",
+          "id": "s-edit-1793510462056",
+          "isActualCulprit": true,
+          "opportunity": "MAXIMUM",
+          "motive": " Anger over Emma’s negative review",
+          "revealNotes": "Howard was hiding behind the identity of H.G. Kane, the author whose book Emma had criticised.He is the person who physically attacks Emma and turns her fear into a real-life nightmare.  His connection to Deek reveals that the danger was part of something much larger than a writer simply reacting badly to criticism.",
+          "name": "Howard Grosvenor Kline",
+          "alibi": "Initially hides behind his identity as H.G. Kane "
+        },
+        {
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "role": "Owner of the beach house and Howard’s mother",
+          "isActualCulprit": false,
+          "revealNotes": "",
+          "suspicionLevel": 3,
+          "name": "Jules Phelps",
+          "opportunity": "MEDIUM",
+          "alibi": "Claims to be away from the property and communicates with Emma remotely.",
+          "id": "s-edit-1793510508762",
+          "motive": " Initially appears suspicious because of her connection to the house and the strange events surrounding it"
+        }
+      ],
+      "clues": [
+        {
+          "title": "The Whiteboard Messages",
+          "importance": "DECEPTIVE (RED HERRING)",
+          "pageDiscovered": "Early chapters",
+          "id": "c-edit-1793510322211",
+          "summary": " Emma communicates with Deek through messages written on whiteboards and viewed from a distance",
+          "detailedAnalysis": "Their unusual communication creates a sense of trust while keeping Deek physically distant. His helpful behaviour makes it difficult for Emma to recognise his real intentions."
+        },
+        {
+          "detailedAnalysis": "This discovery connects the mysterious author to the beach house and explains his personal involvement in Emma's ordeal.\n\n",
+          "title": "Howard's True Identity",
+          "summary": "H.G. Kane is revealed to be Howard Grosvenor Kline, Jules's son.",
+          "id": "c-edit-1793510580509",
+          "pageDiscovered": "Later sections of the main attack",
+          "importance": "CONFIRMED EVIDENCE"
+        }
+      ],
+      "dateStarted": "Aug 3, 2026",
+      "marginaliaNotes": [
+        "Book reviewers deserve safety. This is why I keep my opinions in my notes app."
+      ],
+      "rating": 5,
+      "pacingRating": 5,
+      "atmosphereRating": 4,
+      "whatActuallyHappened": "H. G. Kane is Howard, the homeowner’s son, and he attacks Emma after her review. Emma survives and kills him, but the danger isn’t over. Deek later reveals that he orchestrated the attack to create a sensational story and revive his writing career. He drugs Emma and tries to stage her death, but she escapes and reaches the police. The ending also reveals that Emma’s husband Shawn is alive; their baby daughter died in a car accident, and Emma had been isolating herself in grief.",
+      "readerPollVotes": {
+        "sawItComingMidway": 10,
+        "fooledCompletely": 30,
+        "jawDroppedEnding": 7,
+        "solvedBeforeTwist": 7
+      }
+    },
+    {
+      "evidenceBullets": [
+        "The Bloodstained Pocketknife",
+        "The Hidden Room",
+        "The Stolen Jewellery",
+        "Ada’s Confession"
+      ],
+      "summary": "After years of working in other people’s homes, Millie finally has a house of her own with her husband, Enzo, and their two children. But their fresh start in a quiet Long Island neighbourhood quickly turns unsettling. Their neighbours are strange, Enzo starts acting suspiciously, and the family discovers that their new home may be hiding something. When a neighbour is found dead, Millie’s seemingly perfect life spirals into a mystery filled with secrets, lies, and unexpected suspects.",
+      "pacingRating": 5,
+      "spoilerEvidence": "Jonathan Lowell’s murder appears to implicate Enzo, while Ada’s confession reveals that she had attacked Jonathan after discovering his disturbing secret involving Nico. However, Ada’s attack was not the fatal one. The final revelation exposes a second, unexpected act of violence that changes the entire interpretation of the case.\n\nMartha, the housemaid, returned to the Lowell home to steal jewellery as she tried to escape her abusive husband. When Jonathan caught her and threatened to expose her, she killed him with a letter opener. Because Jonathan was already wounded, the earlier events made it difficult to establish who had actually caused his death. Martha escaped, while Suzette ultimately took the blame.",
+      "paranoiaRating": 5,
+      "readingFormat": "Paperback",
+      "genre": "Psychological Thriller",
+      "pages": 400,
+      "spoilerCulpritReveal": "Martha’s motive was a combination of desperation and self-preservation. She wanted the jewellery to help her escape her abusive marriage, but Jonathan’s threat to report her put that plan at risk. Rather than face the consequences, she killed him and fled.\n\nThe most important twist is that Ada wounded Jonathan, but Martha caused his fatal injury. Enzo’s apparent guilt and Suzette’s confession further complicate the investigation, allowing Martha to remain hidden. The epilogue reveals that the housemaid who seemed peripheral to the mystery was actually the person responsible for the final, deadly act.",
+      "recommendedFor": "Readers who enjoy unreliable narrators and multiple twists.    Fans of domestic thrillers where ordinary homes conceal disturbing secrets.    Readers who enjoy endings that make them reconsider earlier clues.",
+      "rating": 5,
+      "favoriteMoment": "The most chilling moment is the final revelation about Martha. Just when the mystery appears solved and the family can move on, the epilogue reveals that the person who seemed least threatening was responsible for the fatal injury.",
+      "twistsCount": 5,
+      "seriesOrder": 3,
+      "dateRead": "Oct 29, 2026",
+      "reviewText": "I was honestly excited to see Millie and Enzo again, but this time, instead of dealing with another wealthy family’s problems, we get to see Millie navigating her own suburban nightmare. And somehow, the neighbours manage to be just as suspicious as the people she used to work for. The beginning does a good job of building that uncomfortable feeling that something is seriously wrong. Between the overly involved neighbours, Enzo’s suspicious behaviour, and the strange discoveries around the house, there’s plenty to keep you questioning everyone. I also liked that the story shifts its focus towards Millie’s family, giving us a different side of her life. I get a bit emotional saying this but this book truly felt like a tribute back to the original. There are so many secrets and suspicious characters it just all pulls back to the first book and reminds me of why I was so addicted before. The twists are entertaining, but some of the reveals feel more shocking than genuinely satisfying, and I found myself questioning a few of the characters’ decisions.Overall, it was an entertaining return to the series, especially for someone already invested in Millie’s story. It has the classic combination of short chapters, family secrets, and last-minute revelations, absolutely amazing read thank you Fredia.",
+      "whatIThought": "I suspected Enzo was hiding something much worse than he was letting on, especially with his unexplained disappearances and the suspicious evidence surrounding him. I also thought the neighbours were involved in something together, and that the seemingly perfect suburban life was hiding a much darker reality. I expected the murder mystery to connect everyone somehow, but I definitely didn't predict how many layers the truth would have.",
+      "whatActuallyHappened": "Enzo initially appears to be the killer, but the truth is much more complicated. Ada reveals that she confronted Jonathan Lowell after discovering what he had done to Nico and attacked him. Suzette later falsely confesses to Jonathan’s murder to protect herself from exposure for her own involvement in his crimes.\n\nThe final twist reveals that Martha, the housemaid, delivered the fatal injury after finding Jonathan wounded and confronting him while stealing jewellery. She feared the consequences of being caught and wanted to escape her abusive husband. Meanwhile, Suzette takes the blame, and Martha remains free.\n\nJust when the mystery seems solved, the ending reveals that the person who appeared to be on the sidelines was hiding the biggest secret of all.",
+      "title": "The Housemaid Is Watching",
+      "suspects": [
+        {
+          "name": "Enzo Accardi",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "opportunity": "MAXIMUM",
+          "alibi": "He claims he did not kill Jonathan",
+          "revealNotes": "",
+          "id": "s-new-1793264701884",
+          "isActualCulprit": false,
+          "role": "Millie’s husband and a landscaper",
+          "motive": " suspected of having a personal or financial motive.",
+          "suspicionLevel": 5
+        },
+        {
+          "alibi": "Asleep during the murder ",
+          "isActualCulprit": false,
+          "name": "Suzette Lowell",
+          "opportunity": "HIGH",
+          "suspicionLevel": 4,
+          "id": "s-edit-1793265286983",
+          "motive": "Concealing her knowledge of Jonathan’s crimes",
+          "role": "Jonathan’s wife/ Neighbour ",
+          "revealNotes": "",
+          "clues": [
+            "Initial interrogator observation"
+          ]
+        },
+        {
+          "revealNotes": "",
+          "role": "Millie and Enzo’s daughter",
+          "motive": "Protecting Nico after discovering Jonathan’s disturbing secret.",
+          "alibi": "In their family house asleep ",
+          "name": "Ada Accardi",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "id": "s-edit-1793265351257",
+          "opportunity": "LOW",
+          "isActualCulprit": false,
+          "suspicionLevel": 1
+        },
+        {
+          "revealNotes": "Martha returned to the Lowell home to steal jewellery so she could escape her abusive husband. When she found Jonathan already wounded by Ada, he threatened to expose her theft. Martha then killed him with a letter opener and fled, leaving others to take the blame.",
+          "alibi": "She disappears before the investigation can connect her to Jonathan’s death",
+          "name": "Marta ",
+          "isActualCulprit": true,
+          "motive": "She feared being arrested for stealing jewellery and being returned to her abusive husband.",
+          "role": "The Accardis’ housemaid ",
+          "suspicionLevel": 3,
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "id": "s-edit-1793265409419",
+          "opportunity": "MEDIUM"
+        }
+      ],
+      "caseNumber": "004",
+      "finalVerdict": "The Housemaid Is Watching builds its suspense through suspicious neighbours, hidden secrets and multiple conflicting confessions. The final twist reframes the entire investigation, showing how easily the wrong person can appear guilty when crucial information is missing.",
+      "id": "case-004-1793264724662",
+      "dateFinished": "Oct 22, 2026",
+      "yearRead": 2026,
+      "leadQuote": "Apparently, the perfect suburban life comes with a few secrets of its own.",
+      "marginaliaNotes": [
+        "Martha really took the title of The Housemaid personally.",
+        "Enzo, please stop acting suspicious for FIVE MINUTES."
+      ],
+      "clues": [
+        {
+          "importance": "DECEPTIVE (RED HERRING)",
+          "title": "The Bloodstained Pocketknife",
+          "summary": "Enzo’s pocketknife contains Jonathan’s blood, seemingly connecting Enzo to the murder.",
+          "pageDiscovered": "During the police investigation",
+          "detailedAnalysis": "The knife initially strengthens suspicion against Enzo and contributes to his arrest. However, the evidence does not establish who caused Jonathan’s fatal injury.\n\n",
+          "id": "c-edit-1793265206089"
+        },
+        {
+          "pageDiscovered": "When Nico’s secret is revealed",
+          "title": "The Hidden Room",
+          "importance": "CRUCIAL",
+          "summary": " A concealed room in the Lowell home reveals Jonathan’s disturbing treatment of Nico and connects him to a missing child.",
+          "detailedAnalysis": "The room changes the meaning of the mystery. Ada’s confrontation with Jonathan is driven by what she discovers there, explaining why she becomes involved in the events leading to his death.",
+          "id": "c-edit-1793265536722"
+        },
+        {
+          "id": "c-edit-1793265583068",
+          "title": "The Stolen Jewellery",
+          "pageDiscovered": "Martha’s perspective in the epilogue",
+          "summary": "Martha returns to the Lowell home to steal jewellery while trying to escape her abusive husband.",
+          "detailedAnalysis": "This seemingly separate theft puts Martha at the scene after Ada’s confrontation. When Jonathan threatens to report her, well then things get complicated. ",
+          "importance": "CONFIRMED EVIDENCE"
+        }
+      ],
+      "atmosphereRating": 5,
+      "dateStarted": "Oct 3, 2026",
+      "readerPollVotes": {
+        "fooledCompletely": 15,
+        "sawItComingMidway": 13,
+        "jawDroppedEnding": 11,
+        "solvedBeforeTwist": 10
+      },
+      "tropes": [
+        "Unreliable Narrator",
+        "Multiple POVs",
+        "Rich Family Secrets",
+        "Red Herring Suspect",
+        "Domestic Gaslighting",
+        "Small Town Secrets",
+        "Locked Room"
+      ],
+      "author": "Fredia McFadden",
+      "likes": 18,
+      "correctGuess": false,
+      "twistExecutionRating": 5,
+      "coverImage": "/covers/the-housemaid-is-watching.jpg",
+      "seriesName": "The Housemaid",
+      "unreliableNarratorRating": 3,
+      "status": "CLOSED"
+    },
+    {
+      "dateFinished": "Sep 23, 2026",
+      "rating": 3.5,
+      "summary": "Millie is back, but this time she's working for Douglas Garrick, a wealthy man whose wife is mysteriously confined to the guest bedroom. With strange noises, suspicious behaviour, and plenty of secrets behind closed doors, something clearly isn't right. But is this another mystery worth getting invested in?",
+      "suspects": [
+        {
+          "opportunity": "HIGH",
+          "role": "Wealthy husband",
+          "alibi": "His account of what is happening inside the bedroom.",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "name": "Douglas Garrick",
+          "motive": "Concealing the truth about his marriage and protecting his reputation.",
+          "suspicionLevel": 5,
+          "revealNotes": "",
+          "isActualCulprit": false,
+          "id": "s-new-1793262149844"
+        },
+        {
+          "suspicionLevel": 3,
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "id": "s-new-1793262199006",
+          "isActualCulprit": true,
+          "role": "Douglas's wife",
+          "revealNotes": "Wendy secretly orchestrated the situation to escape Douglas’s abuse and turn the tables on him. She manipulated events so that Douglas would face the consequences of his own actions, while Millie’s discoveries helped expose the truth.",
+          "opportunity": "MEDIUM",
+          "name": "Wendy Garrick",
+          "motive": "Her true circumstances and intentions are unclear.",
+          "alibi": "Her isolation limits what Millie can independently verify."
+        },
+        {
+          "alibi": "Her actions and discoveries gradually reveal her involvement.",
+          "name": "Millie Calloway",
+          "opportunity": "LOW",
+          "motive": "To uncover the truth and respond to the disturbing situation she encounters.",
+          "revealNotes": "",
+          "role": "Housemaid and investigator",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "suspicionLevel": 1,
+          "isActualCulprit": false,
+          "id": "s-edit-1793262263587"
+        }
+      ],
+      "likes": 8,
+      "coverImage": "/covers/the-housmaid-s-secret.jpg",
+      "spoilerCulpritReveal": "The key reveal is that Douglas is not the innocent, protective husband he initially appears to be. His carefully managed version of events conceals the truth about his marriage and Wendy's situation. Millie's involvement becomes crucial as the apparent roles of victim and perpetrator are challenged.",
+      "clues": [
+        {
+          "importance": "CRUCIAL",
+          "id": "c-edit-1793262327272",
+          "detailedAnalysis": "The bedroom acts as the centre of the novel's mystery. Douglas controls what Millie can see and how she understands Wendy's situation, creating an immediate imbalance of information. His insistence on keeping Millie away makes the restriction itself suspicious. The reader is pushed to question whether Douglas is protecting his wife, hiding something from Millie, or manipulating the situation to control the narrative.\n\n",
+          "title": "The Forbidden Bedroom",
+          "summary": "Douglas Garrick gives Millie one strict instruction: stay away from his wife, Wendy, who remains shut inside the guest bedroom. But the strange sounds and disturbing signs coming from behind the closed door make it increasingly difficult to believe that everything is normal.",
+          "pageDiscovered": "Millie's first days working for the Garricks."
+        },
+        {
+          "id": "c-edit-1793262455818",
+          "summary": "Millie encounters bloodstained nightclothes associated with Wendy. This disturbing discovery raises questions about Wendy's condition and whether Douglas's explanation can be trusted.",
+          "title": "The Bloodstained Nightclothes",
+          "pageDiscovered": "when Millie notices evidence suggesting Wendy may be in danger.",
+          "importance": "CRUCIAL",
+          "detailedAnalysis": "Unlike Douglas's verbal explanations, the clothing provides a physical sign that something may be seriously wrong. It creates a conflict between what Millie is told and what she observes herself. The clue encourages readers to investigate the possibility of deception without immediately revealing the truth."
+        },
+        {
+          "title": "Douglas's Carefully Constructed Story",
+          "summary": "Douglas presents himself as a respectable husband and offers explanations for Wendy's circumstances. Yet his behaviour and insistence on controlling Millie's access to her wife raise doubts about his account.",
+          "detailedAnalysis": "Douglas's apparent respectability encourages the reader to judge him by his status and presentation. His explanations direct suspicion toward particular interpretations of Wendy's situation. The key question is whether his story explains the evidence or merely encourages Millie to stop asking questions.",
+          "id": "c-edit-1793264192405",
+          "importance": "DECEPTIVE (RED HERRING)",
+          "pageDiscovered": "Throughout the early investigation."
+        },
+        {
+          "id": "c-edit-1793264248901",
+          "pageDiscovered": "As Millie's background and motivations become relevant to the investigation.",
+          "title": "Millie's Hidden Past",
+          "summary": "Millie brings her own experiences, history, and instincts into the Garrick household. Her response to the suspicious circumstances is shaped by more than what she sees in the present.",
+          "detailedAnalysis": "Millie's past complicates her role as an observer. She is not simply uncovering someone else's secrets; her own experiences influence the risks she takes and the choices she makes. This adds another layer to the mystery because the reader must consider both the household's deception and Millie's reasons for getting involved.",
+          "importance": "CONFIRMED EVIDENCE"
+        }
+      ],
+      "correctGuess": false,
+      "readingFormat": "Paperback",
+      "seriesName": "The Housemaid",
+      "dateRead": "Oct 29, 2026",
+      "leadQuote": "Apparently, lightning doesn't always strike twice",
+      "seriesOrder": 2,
+      "atmosphereRating": 4,
+      "whatActuallyHappened": "The revelations surrounding Douglas, Wendy, and Millie's involvement turn the situation into something far more complicated than it first appears. The story challenges your assumptions about who is really in danger and who is hiding the truth.\n\nAlthough the twists added some excitement, they didn't completely make up for the slower parts of the book for me. The ending had its moments, but overall, I was left thinking that the first book had been the stronger read.",
+      "unreliableNarratorRating": 2,
+      "twistsCount": 2,
+      "spoilerEvidence": "The central deception revolves around Douglas Garrick's account of his wife, Wendy, and the disturbing circumstances surrounding her confinement. Millie's discoveries gradually expose the gap between the story she is told and what is actually happening. The novel uses shifting assumptions about victimhood, control, and trust to make the reader reconsider who is manipulating whom.",
+      "id": "case-003-1793262236164",
+      "evidenceBullets": [
+        "The Forbidden Guest Bedroom",
+        "The Bloodstained Nightclothes",
+        "Douglas's Perfect-Husband Act",
+        "Millie's Own Secrets"
+      ],
+      "pacingRating": 2,
+      "caseNumber": "003",
+      "tropes": [
+        "Multiple POVs",
+        "Domestic Gaslighting",
+        "Rich Family Secrets",
+        "Cat-and-Mouse Game"
+      ],
+      "author": "Fredia Mcfadden",
+      "genre": "Psychological Thriller",
+      "pages": 311,
+      "paranoiaRating": 3,
+      "reviewText": "After absolutely loving the first book, I went into The Housemaid's Secret with pretty high expectations. Unfortunately, this sequel didn't quite deliver the same excitement for me. McFadden's writing is still simple and easy to fly through, but the pacing felt slower than I expected. The premise was intriguing, and there were definitely moments that made me curious, but I never felt as hooked as I did with the first book. I wanted that constant urge to read just one more chapter, and this time, it was missing.While there were some interesting twists, the overall experience felt a little underwhelming. Maybe my expectations were simply too high after the first book, but I wanted more suspense and a stronger reason to keep turning the pages. It was entertaining enough, but it didn't leave the same impression on me. I'll still give Millie another chance, though, because apparently, I haven't learnt my lesson yet.",
+      "recommendedFor": "- Fans of Freida McFadden and The Housemaid. - Readers who enjoy domestic suspense, suspicious characters, and secrets hidden behind wealthy households. - Anyone looking for a relatively quick, accessible thriller rather than a complex, slow-burn mystery.",
+      "dateStarted": "Sep 14, 2026",
+      "favoriteMoment": "The moments when Millie discovers the bloodstained nightclothes and realises that something is seriously wrong with Wendy. The contrast between Douglas's seemingly perfect life and the disturbing secrets inside his penthouse creates an unsettling atmosphere. It was the kind of setup that made me curious, even if the book didn't keep me hooked the entire way through.",
+      "status": "CLOSED",
+      "whatIThought": "I expected the mystery surrounding Wendy's confinement to be the main focus, with Douglas hiding something far more sinister than he initially let on. I was ready for a complicated web of lies, shocking revelations, and a twist that would completely change how I viewed the characters.",
+      "readerPollVotes": {
+        "jawDroppedEnding": 7,
+        "fooledCompletely": 11,
+        "solvedBeforeTwist": 6,
+        "sawItComingMidway": 8
+      },
+      "twistExecutionRating": 4,
+      "marginaliaNotes": [
+        "Why is every rich household Millie enters a walking red flag? Girl, can we get ONE normal employer?",
+        "Trust absolutely nobody. Not the husband, not the explanations, not even my own theories at this point."
+      ],
+      "yearRead": 2026,
+      "finalVerdict": "A promising, easy-to-read thriller with intriguing secrets and a few good twists, but one that lacked the pacing and addictive pull that made the first book so memorable.",
+      "title": "The Housmaid's Secret"
+    },
+    {
+      "status": "CLOSED",
+      "caseNumber": "002",
       "leadQuote": "“Silence is a form of communication.”",
-      "summary": "Alicia Berenson, a famous painter, is accused of murdering her husband Gabriel and then stops speaking entirely. Years later, psychotherapist Theo Faber becomes obsessed with discovering why she refuses to talk — only to uncover a connection between himself and Alicia that changes everything.",
-      "reviewText": "I absolutely LOVE this book, like everyone else in the thriller community, what an amazing read. The Silent Patient is built around the mystery of Alicia’s silence, but its real strength is how it makes the reader question Theo while simultaneously trusting him. It makes for a perfectly suspenseful read while making me think through every interaction again and again. His investigation into Alicia felt so convincing because we experience everything through his perspective, making his personal obsession so easy to overlook.\n\nI love the use of Alicia’s diary, gradually revealing pieces of her life before Gabriel’s death, it gave so much essence to Alicia as a character even without her actually ever communicating. The biggest trick is the timeline: Theo makes the reader believe his personal story is happening alongside Alicia’s treatment, when his story actually takes place years earlier.\n\nIts beautifully revealed using Alicia’s final diary entry exposing the truth and turning the entire narrative on its head. What an amazing experience this book was its almost admirable how brilliantly it was created. It was truly mind boggling throughout and kept me entertained but the ending could've done better, it all felt a bit anti climatic and too easy to digest I just wanted something more.",
-      "whatIThought": "I had instantly felt that there was something wrong with Theo, so I was mainly watching for how the story would reveal his connection to Alicia.",
-      "whatActuallyHappened": "Theo was the masked man who confronted Alicia and Gabriel, and his actions led to Gabriel’s death. Years later, Alicia recognises him as her therapist and secretly documents the truth. (Which was insane)",
-      "favoriteMoment": "In between when it all seems to become painfully obvious but then we're in for so much more as the book progresses",
+      "spoilerCulpritReveal": "Theo’s motive was revenge. He wanted Gabriel to suffer for having an affair with Kathy, but his plan ultimately led to Gabriel’s death and Alicia’s silence. When Alicia realized who Theo was, she documented the truth, eventually exposing him.",
       "finalVerdict": "A masterpiece with the best story writing concepts all deliciously combined into one delightful experience",
-      "recommendedFor": "Fans of Alex Michaelides, Freida McFadden, Ruth Ware, Lucy Foley, and Lisa Jewell",
+      "readingFormat": "Paperback",
+      "reviewText": "I absolutely LOVE this book, like everyone else in the thriller community, what an amazing read. The Silent Patient is built around the mystery of Alicia’s silence, but its real strength is how it makes the reader question Theo while simultaneously trusting him. It makes for a perfectly suspenseful read while making me think through every interaction again and again. His investigation into Alicia felt so convincing because we experience everything through his perspective, making his personal obsession so easy to overlook.\n\nI love the use of Alicia’s diary, gradually revealing pieces of her life before Gabriel’s death, it gave so much essence to Alicia as a character even without her actually ever communicating. The biggest trick is the timeline: Theo makes the reader believe his personal story is happening alongside Alicia’s treatment, when his story actually takes place years earlier.\n\nIts beautifully revealed using Alicia’s final diary entry exposing the truth and turning the entire narrative on its head. What an amazing experience this book was its almost admirable how brilliantly it was created. It was truly mind boggling throughout and kept me entertained but the ending could've done better, it all felt a bit anti climatic and too easy to digest I just wanted something more.",
+      "pages": 359,
+      "genre": "Psychological Thriller",
+      "whatIThought": "I had instantly felt that there was something wrong with Theo, so I was mainly watching for how the story would reveal his connection to Alicia.",
+      "suspects": [
+        {
+          "isActualCulprit": false,
+          "revealNotes": "",
+          "name": "Alicia Berenson",
+          "clues": [
+            "Contradictory timeline statement during interrogation"
+          ],
+          "id": "s-new-1",
+          "suspicionLevel": 4,
+          "alibi": "No explanation — she stops speaking after Gabriel’s death.",
+          "opportunity": "MAXIMUM",
+          "role": "Painter and Gabriel’s wife",
+          "motive": "Anger or betrayal within her marriage"
+        },
+        {
+          "revealNotes": "Theo discovered Kathy’s affair with Gabriel and became obsessed with confronting them. He disguised himself with a mask, followed Gabriel and Alicia, and confronted them at their home. He restrained Gabriel and threatened him with a gun, demanding that he confess to the affair. When Gabriel refused, Theo left him with Alicia, creating the situation that ultimately led to Gabriel’s death.",
+          "alibi": "Presents himself as Alicia’s therapist, concealing his previous connection to the murder.",
+          "name": "Theo Faber",
+          "isActualCulprit": true,
+          "suspicionLevel": 5,
+          "motive": "Jealousy and revenge after discovering his wife's secret",
+          "id": "s-new-1789801240721",
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "opportunity": "MAXIMUM",
+          "role": "Psychotherapist treating Alicia"
+        },
+        {
+          "isActualCulprit": false,
+          "alibi": "Theo's obliviousness",
+          "revealNotes": "",
+          "role": "Theo’s wife",
+          "opportunity": "MEDIUM",
+          "suspicionLevel": 3,
+          "clues": [
+            "Initial interrogator observation"
+          ],
+          "motive": "Her secret creates a direct connection between the characters.",
+          "id": "s-new-1789801363600",
+          "name": "Kathy Faber"
+        }
+      ],
+      "twistsCount": 3,
+      "atmosphereRating": 5,
       "tropes": [
         "Unreliable Narrator",
         "Multiple POVs",
@@ -35,419 +641,395 @@
         "Obsession & Jealousy",
         "Dual Timelines"
       ],
-      "atmosphereRating": 5,
+      "author": "Alex Michaelides",
+      "readerPollVotes": {
+        "sawItComingMidway": 0,
+        "jawDroppedEnding": 0,
+        "fooledCompletely": 0,
+        "solvedBeforeTwist": 0
+      },
+      "marginaliaNotes": [
+        "Something about Theo feels WAY too personal…",
+        "Everyone keeps looking at Alicia. Maybe we should be watching someone else"
+      ],
       "pacingRating": 5,
-      "twistExecutionRating": 5,
+      "dateRead": "Aug 4, 2026",
+      "title": "The Silent Patient",
+      "whatActuallyHappened": "Theo was the masked man who confronted Alicia and Gabriel, and his actions led to Gabriel’s death. Years later, Alicia recognises him as her therapist and secretly documents the truth. (Which was insane)",
+      "summary": "Alicia Berenson, a famous painter, is accused of murdering her husband Gabriel and then stops speaking entirely. Years later, psychotherapist Theo Faber becomes obsessed with discovering why she refuses to talk — only to uncover a connection between himself and Alicia that changes everything.",
+      "clues": [
+        {
+          "detailedAnalysis": "The medical evidence confirms the manner of death and becomes part of the investigation into Alicia’s involvement.",
+          "title": "Gabriel’s Autopsy Report",
+          "pageDiscovered": 64,
+          "importance": "CRUCIAL",
+          "summary": "The report establishes that Gabriel died from a gunshot wound.",
+          "id": "c-new-1"
+        },
+        {
+          "summary": "Alicia’s paintings contain disturbing imagery connected to her state of mind.",
+          "importance": "ANOMALOUS",
+          "id": "c-new-1789801571493",
+          "pageDiscovered": 179,
+          "detailedAnalysis": "They provide visual clues about Alicia’s trauma and experiences without directly explaining the murder.",
+          "title": "Alicia’s Paintings"
+        },
+        {
+          "detailedAnalysis": "They initially make Theo appear like an investigator from outside the crime, hiding how personally connected he actually is.",
+          "title": "Theo’s Records",
+          "id": "c-new-1789801609651",
+          "pageDiscovered": 179,
+          "importance": "DECEPTIVE (RED HERRING)",
+          "summary": "Theo’s collected notes and case information appear to document his search for the truth."
+        }
+      ],
+      "dateStarted": "Aug 12, 2025",
       "paranoiaRating": 5,
+      "likes": 1,
+      "coverImage": "/covers/silent-patient.jpg",
+      "recommendedFor": "Fans of Alex Michaelides, Freida McFadden, Ruth Ware, Lucy Foley, and Lisa Jewell",
+      "yearRead": 2025,
+      "favoriteMoment": "In between when it all seems to become painfully obvious but then we're in for so much more as the book progresses",
+      "spoilerEvidence": "Theo Faber is the masked man who confronted Alicia and Gabriel on the night of the murder. After discovering Kathy’s affair with Gabriel, Theo became obsessed with revenge. He broke into their home, restrained Gabriel and forced him to face what he had done. Theo then left Alicia with Gabriel, expecting Gabriel to be killed. Alicia later recognized Theo when he became her therapist and secretly recorded the truth in her diary.",
+      "rating": 4,
+      "correctGuess": true,
+      "dateFinished": "Aug 17, 2025",
+      "twistExecutionRating": 5,
       "unreliableNarratorRating": 5,
-      "twistsCount": 3,
       "evidenceBullets": [
         "Alicia’s diary — Hidden entries reveal what happened before Gabriel’s murder and expose Theo’s connection to the crime.",
         "The Missing Gun — Gabriel is shot, but the circumstances surrounding the weapon and Alicia’s silence leave questions about what really happened that night.",
         "Gabriel’s murder scene — The physical evidence points toward Alicia, but key details surrounding the night of the murder don’t completely add up."
       ],
-      "marginaliaNotes": [
-        "Something about Theo feels WAY too personal…",
-        "Everyone keeps looking at Alicia. Maybe we should be watching someone else"
-      ],
-      "suspects": [
-        {
-          "id": "s-new-1",
-          "name": "Alicia Berenson",
-          "role": "Painter and Gabriel’s wife",
-          "motive": "Anger or betrayal within her marriage",
-          "opportunity": "MAXIMUM",
-          "alibi": "No explanation — she stops speaking after Gabriel’s death.",
-          "suspicionLevel": 4,
-          "clues": [
-            "Contradictory timeline statement during interrogation"
-          ],
-          "isActualCulprit": false,
-          "revealNotes": ""
-        },
-        {
-          "id": "s-new-1789801240721",
-          "name": "Theo Faber",
-          "role": "Psychotherapist treating Alicia",
-          "motive": "Jealousy and revenge after discovering his wife's secret",
-          "opportunity": "MAXIMUM",
-          "alibi": "Presents himself as Alicia’s therapist, concealing his previous connection to the murder.",
-          "suspicionLevel": 5,
-          "clues": [
-            "Initial interrogator observation"
-          ],
-          "isActualCulprit": true,
-          "revealNotes": "Theo discovered Kathy’s affair with Gabriel and became obsessed with confronting them. He disguised himself with a mask, followed Gabriel and Alicia, and confronted them at their home. He restrained Gabriel and threatened him with a gun, demanding that he confess to the affair. When Gabriel refused, Theo left him with Alicia, creating the situation that ultimately led to Gabriel’s death."
-        },
-        {
-          "id": "s-new-1789801363600",
-          "name": "Kathy Faber",
-          "role": "Theo’s wife",
-          "motive": "Her secret creates a direct connection between the characters.",
-          "opportunity": "MEDIUM",
-          "alibi": "Theo's obliviousness",
-          "suspicionLevel": 3,
-          "clues": [
-            "Initial interrogator observation"
-          ],
-          "isActualCulprit": false,
-          "revealNotes": ""
-        }
-      ],
-      "clues": [
-        {
-          "id": "c-new-1",
-          "title": "Gabriel’s Autopsy Report",
-          "summary": "The report establishes that Gabriel died from a gunshot wound.",
-          "detailedAnalysis": "The medical evidence confirms the manner of death and becomes part of the investigation into Alicia’s involvement.",
-          "pageDiscovered": 64,
-          "importance": "CRUCIAL"
-        },
-        {
-          "id": "c-new-1789801571493",
-          "title": "Alicia’s Paintings",
-          "summary": "Alicia’s paintings contain disturbing imagery connected to her state of mind.",
-          "detailedAnalysis": "They provide visual clues about Alicia’s trauma and experiences without directly explaining the murder.",
-          "pageDiscovered": 179,
-          "importance": "ANOMALOUS"
-        },
-        {
-          "id": "c-new-1789801609651",
-          "title": "Theo’s Records",
-          "summary": "Theo’s collected notes and case information appear to document his search for the truth.",
-          "detailedAnalysis": "They initially make Theo appear like an investigator from outside the crime, hiding how personally connected he actually is.",
-          "pageDiscovered": 179,
-          "importance": "DECEPTIVE (RED HERRING)"
-        }
-      ],
-      "spoilerEvidence": "Theo Faber is the masked man who confronted Alicia and Gabriel on the night of the murder. After discovering Kathy’s affair with Gabriel, Theo became obsessed with revenge. He broke into their home, restrained Gabriel and forced him to face what he had done. Theo then left Alicia with Gabriel, expecting Gabriel to be killed. Alicia later recognized Theo when he became her therapist and secretly recorded the truth in her diary.",
-      "spoilerCulpritReveal": "Theo’s motive was revenge. He wanted Gabriel to suffer for having an affair with Kathy, but his plan ultimately led to Gabriel’s death and Alicia’s silence. When Alicia realized who Theo was, she documented the truth, eventually exposing him.",
-      "likes": 1,
-      "id": "case-002-1789801824370",
-      "readerPollVotes": {
-        "solvedBeforeTwist": 0,
-        "fooledCompletely": 0,
-        "sawItComingMidway": 0,
-        "jawDroppedEnding": 0
-      }
+      "id": "case-002-1789801824370"
     },
     {
-      "id": "case-014",
-      "caseNumber": "001",
-      "title": "The Housemaid",
-      "author": "Freida McFadden",
-      "coverImage": "https://imgs.search.brave.com/Wy7CV-9Cw3aIMDYtE5525byLLeXxeS29XANx3P6mzHM/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2E4LzZl/L2I2L2E4NmViNjdk/NzU3ZTU1YjU2NGZk/YzBjYzUzMzk4MmRi/LmpwZw",
-      "genre": "Psychological Thriller",
-      "dateRead": "June 30, 2026",
+      "dateStarted": "",
       "yearRead": 2026,
-      "pages": 336,
-      "rating": 5,
-      "status": "CLOSED",
-      "leadQuote": "“Every day I clean the Winchesters’ beautiful house. I pick up their daughter from school. I cook delicious meals for the whole family. But when I try the door to my tiny attic bedroom, it only locks from the outside.”",
-      "summary": "A desperate ex-con lands a live-in maid position with a wealthy, manic family on Long Island, only to discover the attic door locks from the exterior and the pristine husband might not be the saint he appears to be.",
-      "reviewText": "I had actually borrowed this book from one of my friends not really willing to commit to the series, but HOLY I have learnt to absolutely love Freida McFadden with this read. This was definitely not an academic read in any way it was mostly just to satisfy my guilty pleasures. The author from the books I've read and knowing how notorious she is for writing popcorn reads this was a perfect combination of her fast paced story telling and simple writing. I could not physically put this book down once I started as you read there is always something to look forward to and to be completely honest that is truly the best things about her books, it didn't feel like I reading. Every chapter i finished somehow made a home in my head and stayed there because I was always making theories. This book, I hold dear to my heart because it gave me the inspiration to create this website so I hope everyone reading also decides to interact and tell me your housemaid theories!",
-      "whatIThought": "I was 100% convinced Nina Winchester was an unhinged, sadistic socialite terrorizing her sweet golden-retriever husband Andrew and framing poor innocent Millie.",
       "whatActuallyHappened": "Nina was trapped in a systematic, psychological prison orchestrated by Andrew, who was a serial abuser. Nina intentionally hired Millie—an ex-felon convicted of manslaughter—as a recruited weapon of self-defense.",
-      "favoriteMoment": "The sudden perspective shift at the exact midpoint where we see Nina’s actual internal diary entries. The sheer whiplash almost gave me a concussion.",
-      "finalVerdict": "An addictive masterclass in psychological manipulation and unreliable domestic dynamics. Do not start this if you have early morning commitments.",
-      "paranoiaRating": 5,
-      "twistsCount": 3,
-      "unreliableNarratorRating": 5,
-      "marginaliaNotes": [
-        "Note to self: Never accept a live-in job with an attic room."
-      ],
-      "evidenceBullets": [
-        "Attic room door locks exclusively from the hallway",
-        "Sudden manic episodes of Nina Winchester over peanut butter",
-        "Andrew’s immaculate tailoring and perpetual victim complex",
-        "Millie’s sealed parole records and quiet combat instincts"
-      ],
-      "correctGuess": false,
-      "suspects": [
-        {
-          "id": "s-1",
-          "name": "Nina Winchester",
-          "role": "The Erratic Wife",
-          "motive": "Jealousy, unstable mental state, desperate obsession with controlling the household",
-          "opportunity": "MAXIMUM",
-          "alibi": "Constantly wandering the estate or causing scenes in town",
-          "suspicionLevel": 5,
-          "clues": [
-            "Scattered trash across pristine kitchen floor intentionally",
-            "Warned Millie in a hushed whisper when Andrew was in the driveway"
-          ],
-          "isActualCulprit": false,
-          "revealNotes": "She was not the monster; she was setting a trap for the true monster to save her daughter."
-        },
-        {
-          "id": "s-2",
-          "name": "Andrew Winchester",
-          "role": "The \"Perfect\" Wealthy Husband",
-          "motive": "Pathological control, psychopathic obsession with punishing perceived imperfections in women",
-          "opportunity": "MAXIMUM",
-          "alibi": "Claims to be working late at the firm while mourning his ruined marriage",
-          "suspicionLevel": 2,
-          "clues": [
-            "Locks the attic door with a heavy brass deadbolt",
-            "Enzo the gardener kept signing emergency warnings to Millie about him"
-          ],
-          "isActualCulprit": true,
-          "revealNotes": "The ultimate architect of terror who locked his previous wives and Nina in the attic."
-        },
-        {
-          "id": "s-3",
-          "name": "Enzo the Gardener",
-          "role": "The Italian Groundskeeper",
-          "motive": "Unknown; lingers in the rose bushes observing everything",
-          "opportunity": "MEDIUM",
-          "alibi": "Working outside in all weather conditions",
-          "suspicionLevel": 3,
-          "clues": [
-            "Told Millie in broken English: \"She is not the danger. Leave now.\"",
-            "Refuses to enter the house under any circumstance"
-          ],
-          "isActualCulprit": false,
-          "revealNotes": "Enzo knew Andrew’s true history and was trying to save innocent workers."
-        }
-      ],
-      "clues": [
-        {
-          "id": "c-1",
-          "title": "The Brass Exterior Deadbolt",
-          "summary": "A heavy keyed cylinder mounted on the hallway side of the attic door.",
-          "detailedAnalysis": "Standard domestic doors do not require exterior padlock bolts unless the intended purpose is involuntary confinement. Millie initially dismissed this as antique architectural quirk—a fatal miscalculation.",
-          "pageDiscovered": 42,
-          "importance": "CRUCIAL"
-        },
-        {
-          "id": "c-2",
-          "title": "The Peanut Butter Smear",
-          "summary": "Nina screamed hysterically at Millie for buying chunky instead of creamy.",
-          "detailedAnalysis": "On first reading, this paints Nina as an abusive perfectionist. In reality, Nina was provoking a public argument so Andrew wouldn’t suspect she was secretly signaling Millie.",
-          "pageDiscovered": 88,
-          "importance": "DECEPTIVE (RED HERRING)"
-        },
-        {
-          "id": "c-3",
-          "title": "Enzo’s Whispered Warning",
-          "summary": "“Pericolo. Bad man in casa.”",
-          "detailedAnalysis": "Enzo witnessed the previous housekeeper being dragged away in the middle of the night. He left garden shears deliberately near the service door.",
-          "pageDiscovered": 114,
-          "importance": "CONFIRMED EVIDENCE"
-        }
-      ],
-      "spoilerEvidence": "CLASSIFIED ARCHIVE SUMMARY:\nThe climax occurs when Andrew traps Millie inside the soundproofed attic, intending to starve and break her as he did with Nina. However, Nina had deliberately vetted Millie's criminal background, knowing Millie killed a prior abusive partner in self-defense. Millie turns the tables, locking Andrew in his own torture chamber and administering poetic justice. Nina and Millie form an unspoken sisterhood of retribution, and Millie moves on to her next cleaning assignment... with a very specific clientele.",
-      "readingFormat": "Paperback",
-      "recommendedFor": "Fans of gripping domestic mystery & psychological suspense",
       "tropes": [
         "Unreliable Narrator",
         "Domestic Gaslighting",
         "Multiple POVs",
         "Locked Room"
       ],
-      "atmosphereRating": 5,
-      "pacingRating": 5,
-      "twistExecutionRating": 5,
-      "spoilerCulpritReveal": "",
-      "dateStarted": "",
-      "dateFinished": "",
+      "author": "Freida McFadden",
+      "favoriteMoment": "The sudden perspective shift at the exact midpoint where we see Nina’s actual internal diary entries. The sheer whiplash almost gave me a concussion.",
+      "id": "case-014",
       "likes": 1,
-      "readerPollVotes": {
-        "solvedBeforeTwist": 0,
-        "fooledCompletely": 0,
-        "sawItComingMidway": 0,
-        "jawDroppedEnding": 0
-      }
-    },
-    {
-      "id": "case-003",
-      "caseNumber": "003",
-      "title": "The Last Word",
-      "author": "Taylor Adams",
-      "coverImage": "/covers/the-last-word.jpg",
-      "genre": "Psychological Thriller",
-      "dateRead": "Feb 2026",
-      "dateStarted": "Feb 12, 2026",
-      "yearRead": 2026,
-      "pages": 337,
-      "currentPage": 51,
-      "rating": 4,
-      "status": "Active",
-      "readingFormat": "Hardcover",
-      "correctGuess": false,
-      "leadQuote": "“People don't write bad reviews because they hated the book. They write them because they wanted to be heard.”",
-      "summary": "Emma Carpenter lives in an isolated beach house with only her dog for company. After posting a negative review of a poorly written horror novel, she finds herself locked in a deadly online feud with the author — who is now outside the house.",
-      "reviewText": "Currently 51 pages into Taylor Adams' locked-environment thriller. The pacing is already suffocating: a secluded coastal home, a raging winter storm, and an author who takes 1-star reviews personally. Actively tracking whether H.G. Kane is physically on the premises or if Emma's paranoia is creating ghosts in the dark.",
-      "whatIThought": "The author is already outside the door. Too many details in his emails match Emma's actual room layout.",
-      "whatActuallyHappened": "Investigation in progress. Suspect clues being collected as chapters unlock.",
-      "favoriteMoment": "The chilling email sent at 2:04 AM describing the color of Emma's porch light.",
-      "finalVerdict": "Active case file. High tension, trapped setting.",
-      "paranoiaRating": 5,
-      "twistsCount": 1,
-      "unreliableNarratorRating": 4,
-      "evidenceBullets": [
-        "Hostile online author tracking reviewer IP address",
-        "Secluded beach house with dead phone line in storm",
-        "Footprints spotted near ocean-facing porch"
-      ],
-      "suspects": [
+      "clues": [
         {
-          "id": "s-lw-1",
-          "name": "H.G. Kane",
-          "role": "The Vengeful Novelist",
-          "motive": "Obsessed with punishing a 1-star online book review",
-          "opportunity": "HIGH",
-          "alibi": "Unverified online IP location",
-          "suspicionLevel": 5,
-          "clues": [
-            "Sent threatening late-night messages quoting Emma's house details"
-          ],
-          "isActualCulprit": false,
-          "revealNotes": ""
+          "detailedAnalysis": "Standard domestic doors do not require exterior padlock bolts unless the intended purpose is involuntary confinement. Millie initially dismissed this as antique architectural quirk—a fatal miscalculation.",
+          "pageDiscovered": 42,
+          "title": "The Brass Exterior Deadbolt",
+          "importance": "CRUCIAL",
+          "summary": "A heavy keyed cylinder mounted on the hallway side of the attic door.",
+          "id": "c-1"
         },
         {
-          "id": "s-lw-2",
-          "name": "Deek",
-          "role": "The Neighbor",
-          "motive": "Lives down the road, knows the house floorplan",
-          "opportunity": "HIGH",
-          "alibi": "Claims to be repairing storm shutters",
-          "suspicionLevel": 3,
-          "clues": [
-            "Seen driving past the driveway after midnight"
-          ],
-          "isActualCulprit": false,
-          "revealNotes": ""
-        }
-      ],
-      "clues": [
+          "title": "The Peanut Butter Smear",
+          "summary": "Nina screamed hysterically at Millie for buying chunky instead of creamy.",
+          "id": "c-2",
+          "importance": "DECEPTIVE (RED HERRING)",
+          "pageDiscovered": 88,
+          "detailedAnalysis": "On first reading, this paints Nina as an abusive perfectionist. In reality, Nina was provoking a public argument so Andrew wouldn’t suspect she was secretly signaling Millie."
+        },
         {
-          "id": "c-lw-1",
-          "title": "The 2:04 AM Email",
-          "summary": "Direct message describing Emma's living room curtains.",
-          "detailedAnalysis": "Proves the sender has line of sight to the living room window.",
-          "pageDiscovered": 38,
-          "importance": "CRUCIAL"
+          "importance": "CONFIRMED EVIDENCE",
+          "title": "Enzo’s Whispered Warning",
+          "id": "c-3",
+          "detailedAnalysis": "Enzo witnessed the previous housekeeper being dragged away in the middle of the night. He left garden shears deliberately near the service door.",
+          "pageDiscovered": 114,
+          "summary": "“Pericolo. Bad man in casa.”"
         }
       ],
-      "spoilerEvidence": "Investigation ongoing — spoiler archive locked until final chapter verification.",
-      "recommendedFor": "Fans of No Exit, Ruth Ware, and snowed-in psychological survival",
-      "tropes": [
-        "Isolated Setting",
-        "Author as Suspect",
-        "Cat-and-Mouse",
-        "Survival Suspense"
-      ],
-      "atmosphereRating": 5,
       "pacingRating": 5,
-      "twistExecutionRating": 4,
-      "likes": 42
-    },
-    {
-      "id": "case-004",
-      "caseNumber": "004",
-      "title": "The Housemaid's Secret",
-      "author": "Freida McFadden",
-      "coverImage": "/covers/the-housmaid-s-secret.jpg",
-      "genre": "Domestic Thriller",
-      "dateRead": "Unresolved Dossier",
-      "dateStarted": "Oct 15, 2025",
-      "yearRead": 2025,
-      "pages": 336,
-      "currentPage": 180,
-      "rating": 3,
-      "status": "Cold Case",
-      "readingFormat": "Paperback",
-      "correctGuess": false,
-      "leadQuote": "“Don't go into the guest bedroom, Millie. Whatever you hear behind that door, ignore it.”",
-      "summary": "Millie takes on a new cleaning client in a luxurious penthouse. Blood stains in the bathroom and whispered cries from a locked room lead to an unsolved investigation that hit a dead end midway.",
-      "reviewText": "Investigation frozen at chapter 22. Suspect timelines became hopelessly contradictory and contradictory alibis derailed the interrogation. Logged as an official cold case until further forensic evidence surfaces.",
-      "whatIThought": "The husband was holding his wife hostage in the guest suite.",
-      "whatActuallyHappened": "Case cold. Conflicting accounts left the culprit unconfirmed.",
-      "favoriteMoment": "The discovery of blood-stained towels hidden inside the penthouse dryer.",
-      "finalVerdict": "Archived as Cold Case. Needs re-interrogation.",
-      "paranoiaRating": 4,
-      "twistsCount": 2,
+      "status": "CLOSED",
+      "coverImage": "/covers/the-housemaid.jpg",
+      "leadQuote": "“Every day I clean the Winchesters’ beautiful house. I pick up their daughter from school. I cook delicious meals for the whole family. But when I try the door to my tiny attic bedroom, it only locks from the outside.”",
+      "finalVerdict": "An addictive masterclass in psychological manipulation and unreliable domestic dynamics. Do not start this if you have early morning commitments.",
       "unreliableNarratorRating": 5,
+      "spoilerEvidence": "CLASSIFIED ARCHIVE SUMMARY:\nThe climax occurs when Andrew traps Millie inside the soundproofed attic, intending to starve and break her as he did with Nina. However, Nina had deliberately vetted Millie's criminal background, knowing Millie killed a prior abusive partner in self-defense. Millie turns the tables, locking Andrew in his own torture chamber and administering poetic justice. Nina and Millie form an unspoken sisterhood of retribution, and Millie moves on to her next cleaning assignment... with a very specific clientele.",
+      "readingFormat": "Paperback",
+      "seriesName": "The Housemaid",
+      "whatIThought": "I was 100% convinced Nina Winchester was an unhinged, sadistic socialite terrorizing her sweet golden-retriever husband Andrew and framing poor innocent Millie.",
+      "recommendedFor": "Fans of gripping domestic mystery & psychological suspense",
+      "paranoiaRating": 5,
       "evidenceBullets": [
-        "Locked guest bedroom with muffled cries at 3:00 AM",
-        "Scrubbed bleach stains on master bath Carrera marble",
-        "Anomalous phone calls from an unlisted Manhattan exchange"
+        "Attic room door locks exclusively from the hallway",
+        "Sudden manic episodes of Nina Winchester over peanut butter",
+        "Andrew’s immaculate tailoring and perpetual victim complex",
+        "Millie’s sealed parole records and quiet combat instincts"
       ],
+      "spoilerCulpritReveal": "",
+      "correctGuess": false,
+      "twistExecutionRating": 5,
+      "rating": 5,
+      "atmosphereRating": 5,
+      "genre": "Psychological Thriller",
+      "pages": 336,
+      "dateFinished": "",
+      "reviewText": "I actually borrowed this book from a friend, not entirely convinced I wanted to commit to the series, but HOLY, I have learnt to absolutely love Freida McFadden through this read. This was definitely not an academic read in any way; it was purely to satisfy my guilty pleasures. Having read a few of her books and knowing just how notorious she is for her addictive \"popcorn thrillers\", this was the perfect combination of her fast-paced storytelling and wonderfully simple writing. Once I started, I genuinely could not put it down. There was always something to look forward to, and honestly, I think that's one of the best things about McFadden's books. It never really felt like I was reading; I was just constantly caught up in the story. Every chapter somehow found a permanent little corner in my head because I was always coming up with theories, questioning characters and trying to figure out what would happen next. I hold this book particularly dear to my heart because it was the inspiration behind creating this website in the first place. So, if you've read The Housemaid, I really hope you'll share your theories, suspicions and favourite moments here. I would absolutely love to hear what everyone else made of it!",
+      "dateRead": "June 30, 2026",
+      "summary": "A desperate ex-con lands a live-in maid position with a wealthy, manic family on Long Island, only to discover the attic door locks from the exterior and the pristine husband might not be the saint he appears to be.",
+      "readerPollVotes": {
+        "jawDroppedEnding": 0,
+        "sawItComingMidway": 0,
+        "fooledCompletely": 0,
+        "solvedBeforeTwist": 0
+      },
+      "marginaliaNotes": [
+        "Note to self: Never accept a live-in job with an attic room."
+      ],
+      "twistsCount": 3,
+      "seriesOrder": 1,
+      "caseNumber": "001",
       "suspects": [
         {
-          "id": "s-hms-1",
-          "name": "Douglas Garrick",
-          "role": "The Penthouse Executive",
-          "motive": "Covering up domestic violence or kidnapping",
-          "opportunity": "MAXIMUM",
-          "alibi": "Claims his wife is bedridden with severe illness",
-          "suspicionLevel": 4,
+          "suspicionLevel": 5,
+          "revealNotes": "She was not the monster; she was setting a trap for the true monster to save her daughter.",
+          "id": "s-1",
+          "motive": "Jealousy, unstable mental state, desperate obsession with controlling the household",
+          "name": "Nina Winchester",
           "clues": [
-            "Forbids anyone from approaching the guest bedroom hallway"
+            "Scattered trash across pristine kitchen floor intentionally",
+            "Warned Millie in a hushed whisper when Andrew was in the driveway"
           ],
+          "alibi": "Constantly wandering the estate or causing scenes in town",
+          "opportunity": "MAXIMUM",
           "isActualCulprit": false,
-          "revealNotes": ""
-        }
-      ],
-      "clues": [
+          "role": "The Erratic Wife"
+        },
         {
-          "id": "c-hms-1",
-          "title": "Bleached Hand Towels",
-          "summary": "Faint iron stains remaining along the hem of white Egyptian cotton.",
-          "detailedAnalysis": "Indicates attempt to sterilize an unexpected injury inside the penthouse.",
-          "pageDiscovered": 92,
-          "importance": "CRUCIAL"
+          "motive": "Pathological control, psychopathic obsession with punishing perceived imperfections in women",
+          "alibi": "Claims to be working late at the firm while mourning his ruined marriage",
+          "id": "s-2",
+          "name": "Andrew Winchester",
+          "opportunity": "MAXIMUM",
+          "revealNotes": "The ultimate architect of terror who locked his previous wives and Nina in the attic.",
+          "role": "The \"Perfect\" Wealthy Husband",
+          "isActualCulprit": true,
+          "clues": [
+            "Locks the attic door with a heavy brass deadbolt",
+            "Enzo the gardener kept signing emergency warnings to Millie about him"
+          ],
+          "suspicionLevel": 2
+        },
+        {
+          "motive": "Unknown; lingers in the rose bushes observing everything",
+          "opportunity": "MEDIUM",
+          "id": "s-3",
+          "alibi": "Working outside in all weather conditions",
+          "name": "Enzo the Gardener",
+          "role": "The Italian Groundskeeper",
+          "isActualCulprit": false,
+          "suspicionLevel": 3,
+          "clues": [
+            "Told Millie in broken English: \"She is not the danger. Leave now.\"",
+            "Refuses to enter the house under any circumstance"
+          ],
+          "revealNotes": "Enzo knew Andrew’s true history and was trying to save innocent workers."
         }
       ],
-      "spoilerEvidence": "Case archived in deep storage pending forensic reappraisal.",
-      "recommendedFor": "Fans of Freida McFadden and domestic deceit",
-      "tropes": [
-        "Locked Room",
-        "Unreliable Narrator",
-        "Dual Timeline"
-      ],
-      "atmosphereRating": 4,
-      "pacingRating": 4,
-      "twistExecutionRating": 3,
-      "likes": 29
+      "title": "The Housemaid"
     }
   ],
   "nonFictionBooks": [
     {
-      "catalogNumber": "NF-002",
-      "title": "Dark Matter",
-      "author": "Blake Crouch",
-      "genre": "Sci-Fi & Speculative",
-      "coverImage": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
       "rating": 5,
-      "pages": 398,
-      "yearRead": 2025,
-      "dateStarted": "Nov 11, 2025",
-      "dateFinished": "Nov 23, 2025",
-      "dateLogged": "Sep 19, 2026",
-      "oneSentenceTakeaway": "A fast-moving exploration of how different choices can create completely different versions of a life and what makes one of them worth fighting for.",
-      "tagline": "A fast-moving exploration of how different choices can create completely different versions of a life and what makes one of them worth fighting for.",
-      "summary": "This book is mind numbingly perfect, I'm in no way a sci-fi reader but this book was so well written, it had such a great, unique plot and is probably my most memorable read. Jason Dessen is abducted and wakes up in a reality where his life has completely changed. His wife and son are gone, while an alternate version of Jason has become a brilliant physicist and achieved something impossible. Jason must navigate alternate realities to find his way back to the family and life he remembers.",
-      "reviewText": "Dark Matter takes a huge sci-fi concept and makes it surprisingly personal. The multiverse isn't just used as a way to create increasingly complicated worlds; it becomes a way of exploring regret, ambition, identity, and the choices that shape a person's life.\n\nThe science is definitely a major part of the appeal, but the emotional side is what gives the story weight. Jason's desperation to get back to Daniela and Charlie keeps the story grounded even when the plot becomes increasingly impossible.\n\nI also liked how the book plays with the idea of meeting versions of yourself who made completely different decisions. It turns the familiar “what if I had chosen differently?” question into an actual reality. The pacing is extremely quick, with Crouch constantly throwing another problem or revelation into the story, which makes it very easy to keep reading.\n\nWhat stayed with me most is the question underneath all the science: if there are countless versions of your life, how do you decide which one is actually yours?",
-      "fullReview": "Dark Matter takes a huge sci-fi concept and makes it surprisingly personal. The multiverse isn't just used as a way to create increasingly complicated worlds; it becomes a way of exploring regret, ambition, identity, and the choices that shape a person's life.\n\nThe science is definitely a major part of the appeal, but the emotional side is what gives the story weight. Jason's desperation to get back to Daniela and Charlie keeps the story grounded even when the plot becomes increasingly impossible.\n\nI also liked how the book plays with the idea of meeting versions of yourself who made completely different decisions. It turns the familiar “what if I had chosen differently?” question into an actual reality. The pacing is extremely quick, with Crouch constantly throwing another problem or revelation into the story, which makes it very easy to keep reading.\n\nWhat stayed with me most is the question underneath all the science: if there are countless versions of your life, how do you decide which one is actually yours?",
-      "favoriteQuote": "“Are you happy with your life?”",
-      "favoriteQuotes": [
-        "“Are you happy with your life?”"
+      "likes": 1,
+      "fullReview": "### Dissecting the Narrative • The Forensic Autopsy\n\nI chose *Stone Blind* because I already knew about Medusa’s assault and wanted to explore the story beyond the version of the myth I had grown up hearing. I knew she was transformed into a Gorgon, that Perseus eventually hunted her, and that her head became a weapon. What I wanted to understand was how the story had reached that point and, more importantly, what Medusa’s experience of it all had actually been.\n\nWhat I found particularly interesting was how Natalie Haynes uses different perspectives to reveal the injustice behind the myth. My obsession with true crime has made me increasingly interested in how stories are told, how evidence and perspectives shape public opinion, and how often victims are judged while those responsible escape the same scrutiny. I see so many real-world examples where the person who has been wronged ends up being questioned, blamed or forgotten. Seeing something similar unfold in Medusa’s story made it feel much more human and real to me. Through Medusa’s perspective, she is no longer just a terrifying figure; she is a young woman with sisters, relationships and a life that is taken away from her. Through Athene’s perspective, we see how Medusa is transformed and punished for Poseidon’s actions, while Poseidon himself does not face the same consequences. That contrast made the injustice even harder to ignore.\n\nThe shifting perspectives also changed how I viewed Perseus. I had always understood him as the hero of the myth, but Haynes makes us look beyond that familiar label and consider the story from the perspective of the person being hunted. We see how Medusa becomes a target in someone else's heroic journey, with her own fears and humanity pushed aside. It made me question how easily history turns one person into a hero and another into a monster, simply because of whose perspective gets remembered.\n\nBy the end, I felt that I had almost been introduced to an entirely different Medusa. I already knew what had happened to her, but I had never considered what it might have felt like to live through it. I found that especially difficult to separate from the injustices I see around me. Medusa deserved to be remembered for more than her appearance, her powers, or the fear she inspired. She deserved to have her story told as a person, not just as a monster. Stone Blind makes a meaningful effort to give Medusa that humanity, and I hope it inspires other readers to look beyond the familiar myth and research the stories and perspectives we may have overlooked.",
+      "dateFinished": "",
+      "keyTakeaways": [
+        "Stories depend on perspective."
       ],
+      "actionItems": [
+        "Question familiar narratives",
+        "Separate appearance from behaviour"
+      ],
+      "favoriteQuote": "The label is easy to remember; the truth is harder to tell.",
+      "dateLogged": "Nov 04, 2026",
+      "coverUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
+      "coverImage": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
+      "notesScratchpad": [],
+      "tagline": "A brilliant, feminist retelling of Medusa’s myth that questions who gets called a monster—and who gets remembered as a hero. ",
+      "mindsetRatings": {
+        "originality": 3,
+        "readability": 4,
+        "actionability": 4,
+        "intellectualImpact": 5
+      },
+      "pages": 371,
+      "genre": "Fantasy & Magical Realism",
+      "catalogNumber": "NF-004",
+      "tropes": [
+        "Character Study",
+        "Trauma & Recovery",
+        "Greek Mythology",
+        "Psychological Manipulation",
+        "Magical Realism",
+        "Morality & Ethics",
+        "Grief & Healing",
+        "Dual Timelines",
+        "Historical Chronicle",
+        "Coming-of-Age"
+      ],
+      "author": "Natalie Haynes",
+      "summary": "In Stone Blind, Natalie Haynes retells the myth of Medusa, a mortal girl raised by her immortal Gorgon sisters. After Poseidon assaults Medusa in Athene’s temple, Athene punishes Medusa by transforming her into a Gorgon whose gaze turns living beings to stone. Forced into isolation, Medusa’s story eventually collides with Perseus’s quest to claim a Gorgon’s head. Through shifting perspectives and sharp humour, the novel challenges the traditional portrayal of Medusa as a monster and Perseus as a hero.",
+      "reviewText": "### Dissecting the Narrative • The Forensic Autopsy\n\nI chose *Stone Blind* because I already knew about Medusa’s assault and wanted to explore the story beyond the version of the myth I had grown up hearing. I knew she was transformed into a Gorgon, that Perseus eventually hunted her, and that her head became a weapon. What I wanted to understand was how the story had reached that point and, more importantly, what Medusa’s experience of it all had actually been.\n\nWhat I found particularly interesting was how Natalie Haynes uses different perspectives to reveal the injustice behind the myth. My obsession with true crime has made me increasingly interested in how stories are told, how evidence and perspectives shape public opinion, and how often victims are judged while those responsible escape the same scrutiny. I see so many real-world examples where the person who has been wronged ends up being questioned, blamed or forgotten. Seeing something similar unfold in Medusa’s story made it feel much more human and real to me. Through Medusa’s perspective, she is no longer just a terrifying figure; she is a young woman with sisters, relationships and a life that is taken away from her. Through Athene’s perspective, we see how Medusa is transformed and punished for Poseidon’s actions, while Poseidon himself does not face the same consequences. That contrast made the injustice even harder to ignore.\n\nThe shifting perspectives also changed how I viewed Perseus. I had always understood him as the hero of the myth, but Haynes makes us look beyond that familiar label and consider the story from the perspective of the person being hunted. We see how Medusa becomes a target in someone else's heroic journey, with her own fears and humanity pushed aside. It made me question how easily history turns one person into a hero and another into a monster, simply because of whose perspective gets remembered.\n\nBy the end, I felt that I had almost been introduced to an entirely different Medusa. I already knew what had happened to her, but I had never considered what it might have felt like to live through it. I found that especially difficult to separate from the injustices I see around me. Medusa deserved to be remembered for more than her appearance, her powers, or the fear she inspired. She deserved to have her story told as a person, not just as a monster. Stone Blind makes a meaningful effort to give Medusa that humanity, and I hope it inspires other readers to look beyond the familiar myth and research the stories and perspectives we may have overlooked.",
+      "oneSentenceTakeaway": "A brilliant, feminist retelling of Medusa’s myth that questions who gets called a monster—and who gets remembered as a hero. ",
+      "yearRead": 2026,
+      "personalThoughts": "",
+      "themes": [
+        "Character Study",
+        "Trauma & Recovery",
+        "Greek Mythology",
+        "Psychological Manipulation",
+        "Magical Realism",
+        "Morality & Ethics",
+        "Grief & Healing",
+        "Dual Timelines",
+        "Historical Chronicle",
+        "Coming-of-Age"
+      ],
+      "tags": [
+        "Character Study",
+        "Trauma & Recovery",
+        "Greek Mythology",
+        "Psychological Manipulation",
+        "Magical Realism",
+        "Morality & Ethics",
+        "Grief & Healing",
+        "Dual Timelines",
+        "Historical Chronicle",
+        "Coming-of-Age"
+      ],
+      "dateStarted": "",
+      "title": "Stone Blind",
+      "id": "nf-nf-004-1793754914420",
+      "favoriteQuotes": [
+        "The label is easy to remember; the truth is harder to tell.",
+        "Sometimes the most powerful thing a retelling can do is let the forgotten speak."
+      ]
+    },
+    {
+      "favoriteQuote": "Survival is not simply about staying alive; it is about finding a way to remain yourself.",
+      "rating": 5,
+      "notesScratchpad": [],
+      "tags": [
+        "Mental Models",
+        "Character Study",
+        "Grief & Healing",
+        "Existential Reflections",
+        "Deep Focus & Habits",
+        "Cognitive Biases",
+        "Horror",
+        "Semi Fiction",
+        "Based On True Events",
+        "Psychological Manipulation",
+        "Captivity & Escape",
+        "Trauma & Recovery"
+      ],
+      "yearRead": 2026,
+      "tagline": "A gripping exploration of survival, resilience and identity that examines how people reclaim control over their lives after prolonged captivity and trauma.",
+      "actionItems": [
+        "Recognise that setbacks do not have to define your identity or future.",
+        "Understand the importance of reliable relationships",
+        "Learn to approach unexpected challenges with flexibility"
+      ],
+      "personalThoughts": "",
+      "dateFinished": "May 3, 2025",
+      "keyTakeaways": [
+        "Survival often depends on adaptability, determination and the ability to make decisions under pressure.",
+        "Mary's storyline demonstrates the importance of reclaiming one's sense of self after prolonged psychological control.",
+        "The novel acknowledges that surviving an experience does not automatically erase its emotional consequences."
+      ],
+      "title": "Gray After Dark",
+      "mindsetRatings": {
+        "actionability": 3,
+        "intellectualImpact": 3,
+        "readability": 5,
+        "originality": 4
+      },
+      "pages": 370,
+      "genre": "Other Literature",
+      "reviewText": "Honestly wasn't prepared for just how stressful this read would become. One of my favourite things about Gray After Dark was the setting. There's something particularly unsettling about the idea of being stranded in the middle of an enormous wilderness, completely cut off from the rest of the world. The cabin, the surrounding forest and the sheer distance from civilisation create an atmosphere that makes everything feel so much more threatening.\n\nMiley was definitely one of the strongest parts of the book for me. I loved how her background as an athlete actually became an important part of her survival rather than just being an interesting detail about her character. Her discipline, determination and ability to think strategically all come into play. What I found particularly interesting, though, was that her biggest struggle wasn't just physical. Her guilt surrounding her mother's death had clearly affected the way she viewed herself, and I liked how her personal journey developed alongside the survival storyline.\n\nThe dynamic between Miley and Mary was another part I really enjoyed. At first, I wasn't entirely sure what to make of Mary, and I found myself constantly questioning how much she knew and whether she could actually be trusted. Watching their relationship develop was particularly interesting because it added another emotional layer to a story that could otherwise have focused entirely on escaping the cabin. Their eventual alliance became one of the most important parts of the book.\n\nI also really appreciated the alternating perspectives. Being able to follow Miley's experience while also seeing Brent and Wes trying to find her created a completely different kind of tension. Every time the story switched away from Miley, I found myself wanting to get straight back to her chapters, but I also loved seeing the search unfold. Knowing that people were getting closer while Miley was still trapped made the whole situation feel even more urgent.\n\nIf I had one criticism, it would be that certain parts of the story felt quite drawn out, particularly as Miley's captivity continued. I understand why the author took the time to establish just how difficult her situation was, but there were moments when I was desperately waiting for something to change. Nevertheless, the payoff was worth it. This was such an intense read, and I think the combination of survival, psychological tension and character development made it stand out.",
+      "oneSentenceTakeaway": "A gripping exploration of survival, resilience and identity that examines how people reclaim control over their lives after prolonged captivity and trauma.",
+      "author": "Noelle W. IHLI",
+      "tropes": [
+        "Mental Models",
+        "Character Study",
+        "Grief & Healing",
+        "Existential Reflections",
+        "Deep Focus & Habits",
+        "Cognitive Biases",
+        "Horror",
+        "Semi Fiction",
+        "Based On True Events",
+        "Psychological Manipulation",
+        "Captivity & Escape",
+        "Trauma & Recovery"
+      ],
+      "catalogNumber": "NF-003",
+      "themes": [
+        "Mental Models",
+        "Character Study",
+        "Grief & Healing",
+        "Existential Reflections",
+        "Deep Focus & Habits",
+        "Cognitive Biases",
+        "Horror",
+        "Semi Fiction",
+        "Based On True Events",
+        "Psychological Manipulation",
+        "Captivity & Escape",
+        "Trauma & Recovery"
+      ],
+      "coverUrl": "/covers/gray-after-dark.jpg",
+      "dateLogged": "Nov 02, 2026",
+      "id": "nf-nf-003-1793636018127",
+      "fullReview": "Honestly wasn't prepared for just how stressful this read would become. One of my favourite things about Gray After Dark was the setting. There's something particularly unsettling about the idea of being stranded in the middle of an enormous wilderness, completely cut off from the rest of the world. The cabin, the surrounding forest and the sheer distance from civilisation create an atmosphere that makes everything feel so much more threatening.\n\nMiley was definitely one of the strongest parts of the book for me. I loved how her background as an athlete actually became an important part of her survival rather than just being an interesting detail about her character. Her discipline, determination and ability to think strategically all come into play. What I found particularly interesting, though, was that her biggest struggle wasn't just physical. Her guilt surrounding her mother's death had clearly affected the way she viewed herself, and I liked how her personal journey developed alongside the survival storyline.\n\nThe dynamic between Miley and Mary was another part I really enjoyed. At first, I wasn't entirely sure what to make of Mary, and I found myself constantly questioning how much she knew and whether she could actually be trusted. Watching their relationship develop was particularly interesting because it added another emotional layer to a story that could otherwise have focused entirely on escaping the cabin. Their eventual alliance became one of the most important parts of the book.\n\nI also really appreciated the alternating perspectives. Being able to follow Miley's experience while also seeing Brent and Wes trying to find her created a completely different kind of tension. Every time the story switched away from Miley, I found myself wanting to get straight back to her chapters, but I also loved seeing the search unfold. Knowing that people were getting closer while Miley was still trapped made the whole situation feel even more urgent.\n\nIf I had one criticism, it would be that certain parts of the story felt quite drawn out, particularly as Miley's captivity continued. I understand why the author took the time to establish just how difficult her situation was, but there were moments when I was desperately waiting for something to change. Nevertheless, the payoff was worth it. This was such an intense read, and I think the combination of survival, psychological tension and character development made it stand out.",
+      "dateStarted": "April 22, 2025",
+      "coverImage": "/covers/gray-after-dark.jpg",
+      "likes": 1,
+      "favoriteQuotes": [
+        "Survival is not simply about staying alive; it is about finding a way to remain yourself.",
+        "Sometimes the hardest part of escaping is learning how to live afterwards."
+      ],
+      "summary": "After an accident sidelines her Olympic ambitions, Miley takes a job at a remote mountain lodge in Idaho. However, a morning run turns into a nightmare when she is abducted by Fred and his son Hamish and taken to an isolated cabin. There, she encounters Mary, another woman held captive for years. As Miley struggles to escape, her friend Brent and lodge employee Wes begin searching for her, refusing to accept that she has simply disappeared. Through alternating perspectives, the novel explores survival, psychological control, trauma and the determination to reclaim one's identity."
+    },
+    {
+      "likes": 2,
+      "actionItems": [
+        "Pay attention to the choices you are making now instead of constantly comparing them to hypothetical alternatives.",
+        "Don't confuse achievement with fulfilment."
+      ],
+      "reviewText": "Dark Matter takes a huge sci-fi concept and makes it surprisingly personal. The multiverse isn't just used as a way to create increasingly complicated worlds; it becomes a way of exploring regret, ambition, identity, and the choices that shape a person's life.\n\nThe science is definitely a major part of the appeal, but the emotional side is what gives the story weight. Jason's desperation to get back to Daniela and Charlie keeps the story grounded even when the plot becomes increasingly impossible.\n\nI also liked how the book plays with the idea of meeting versions of yourself who made completely different decisions. It turns the familiar “what if I had chosen differently?” question into an actual reality. The pacing is extremely quick, with Crouch constantly throwing another problem or revelation into the story, which makes it very easy to keep reading.\n\nWhat stayed with me most is the question underneath all the science: if there are countless versions of your life, how do you decide which one is actually yours?",
+      "summary": "This book is mind numbingly perfect, I'm in no way a sci-fi reader but this book was so well written, it had such a great, unique plot and is probably my most memorable read. Jason Dessen is abducted and wakes up in a reality where his life has completely changed. His wife and son are gone, while an alternate version of Jason has become a brilliant physicist and achieved something impossible. Jason must navigate alternate realities to find his way back to the family and life he remembers.",
       "mindsetRatings": {
         "readability": 4,
         "actionability": 4,
-        "intellectualImpact": 5,
-        "originality": 5
+        "originality": 5,
+        "intellectualImpact": 5
       },
+      "dateFinished": "Nov 23, 2025",
       "keyTakeaways": [
         "Your choices don't just change your circumstances; they shape who you become.",
         "An imagined alternative life can look perfect from a distance without actually being better."
       ],
-      "actionItems": [
-        "Pay attention to the choices you are making now instead of constantly comparing them to hypothetical alternatives.",
-        "Don't confuse achievement with fulfilment."
+      "rating": 5,
+      "favoriteQuote": "“Are you happy with your life?”",
+      "yearRead": 2025,
+      "pages": 398,
+      "genre": "Sci-Fi & Speculative",
+      "oneSentenceTakeaway": "A fast-moving exploration of how different choices can create completely different versions of a life and what makes one of them worth fighting for.",
+      "coverImage": "/covers/dark-matter.jpg",
+      "id": "nf-nf-002-1789808286142",
+      "dateLogged": "Sep 19, 2026",
+      "fullReview": "Dark Matter takes a huge sci-fi concept and makes it surprisingly personal. The multiverse isn't just used as a way to create increasingly complicated worlds; it becomes a way of exploring regret, ambition, identity, and the choices that shape a person's life.\n\nThe science is definitely a major part of the appeal, but the emotional side is what gives the story weight. Jason's desperation to get back to Daniela and Charlie keeps the story grounded even when the plot becomes increasingly impossible.\n\nI also liked how the book plays with the idea of meeting versions of yourself who made completely different decisions. It turns the familiar “what if I had chosen differently?” question into an actual reality. The pacing is extremely quick, with Crouch constantly throwing another problem or revelation into the story, which makes it very easy to keep reading.\n\nWhat stayed with me most is the question underneath all the science: if there are countless versions of your life, how do you decide which one is actually yours?",
+      "notesScratchpad": [
+        "Someone has found a way to manipulate alternate realities, and Jason’s abduction is connected to the existence of another version of himself. Key Questions: Who caused Jason’s abduction? Why does another Jason exist? Can Jason return home? Emerging Hypothesis: The real question is whether Jason’s original life is worth fighting for.",
+        "The real question is whether Jason’s original life is worth fighting for."
       ],
       "tags": [
         "Mental Models",
@@ -458,6 +1040,7 @@
         "Alternate Universes",
         "Identity & Self"
       ],
+      "coverUrl": "/covers/dark-matter.jpg",
       "themes": [
         "Mental Models",
         "Multiverse Theory",
@@ -467,6 +1050,8 @@
         "Alternate Universes",
         "Identity & Self"
       ],
+      "title": "Dark Matter",
+      "dateStarted": "Nov 11, 2025",
       "tropes": [
         "Mental Models",
         "Multiverse Theory",
@@ -476,82 +1061,84 @@
         "Alternate Universes",
         "Identity & Self"
       ],
-      "notesScratchpad": [
-        "Someone has found a way to manipulate alternate realities, and Jason’s abduction is connected to the existence of another version of himself. Key Questions: Who caused Jason’s abduction? Why does another Jason exist? Can Jason return home? Emerging Hypothesis: The real question is whether Jason’s original life is worth fighting for.",
-        "The real question is whether Jason’s original life is worth fighting for."
-      ],
-      "likes": 1,
-      "coverUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
-      "id": "nf-nf-002-1789808286142"
+      "author": "Blake Crouch",
+      "personalThoughts": "",
+      "catalogNumber": "NF-002",
+      "tagline": "A fast-moving exploration of how different choices can create completely different versions of a life and what makes one of them worth fighting for.",
+      "favoriteQuotes": [
+        "“Are you happy with your life?”"
+      ]
     },
     {
-      "id": "nf-004",
-      "catalogNumber": "NF-004",
-      "title": "Project Hail Mary",
-      "author": "Andy Weir",
-      "coverImage": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
-      "genre": "Sci-Fi & Speculative",
-      "dateStarted": "Jan 22, 2026",
-      "dateFinished": "Jan 27, 2026",
-      "dateLogged": "Jan 27, 2026",
-      "yearRead": 2026,
-      "pages": 496,
-      "rating": 5,
-      "status": "COMPLETED",
-      "readingFormat": "Audiobook",
-      "oneSentenceTakeaway": "A thrilling tale of scientific problem-solving, interstellar resilience, and an unexpected cosmic friendship.",
-      "summary": "Ryland Grace is the sole survivor on a desperate, last-chance mission to save humanity from a star-dimming microorganism. As his memories slowly return, he must use science, humor, and an alien ally named Rocky to survive.",
+      "tagline": "A thrilling tale of scientific problem-solving, interstellar resilience, and an unexpected cosmic friendship.",
       "reviewText": "I HAD to read this book after watching the movie because what a masterpiece that movie is. The emotional rollercoaster I went through watching is unmatched, I don't think any thing else will get such a explosive reaction out of me.While the book was different to the movie it absolutely did not disappoint. It was so witty and humorious I didn't feel like I was reading sci-fi at all. While not a murder mystery, this has all the investigative thrills of a locked-room paradox set in deep space. Ryland Grace figuring out interstellar physics from first principles is pure joy. Ray Porter's narration in the audiobook is an absolute 10/10.",
+      "tropes": [
+        "Sci-Fi",
+        "Science",
+        "Space Exploration",
+        "Friendship",
+        "Problem Solving"
+      ],
+      "author": "Andy Weir",
       "favoriteQuote": "“Human beings have a remarkable ability to accept the abnormal and make it normal.”",
-      "quoteContext": "Chapter 11: Astrophage Experiments",
+      "id": "nf-004",
+      "themes": [
+        "Sci-Fi",
+        "Science",
+        "Space Exploration",
+        "Friendship",
+        "Problem Solving"
+      ],
+      "likes": 390,
+      "dateStarted": "Jan 22, 2026",
+      "status": "COMPLETED",
+      "favoriteQuotes": [
+        "“Human beings have a remarkable ability to accept the abnormal and make it normal.”"
+      ],
+      "readerReflections": "Rocky is one of the best characters in all of modern fiction. Fist my bump! Amaze!",
+      "yearRead": 2026,
+      "oneSentenceTakeaway": "A thrilling tale of scientific problem-solving, interstellar resilience, and an unexpected cosmic friendship.",
+      "coverImage": "/covers/project-hail-mary.jpg",
+      "rating": 5,
+      "fullReview": "I HAD to read this book after watching the movie because what a masterpiece that movie is. The emotional rollercoaster I went through watching is unmatched, I don't think any thing else will get such a explosive reaction out of me.While the book was different to the movie it absolutely did not disappoint. It was so witty and humorious I didn't feel like I was reading sci-fi at all. While not a murder mystery, this has all the investigative thrills of a locked-room paradox set in deep space. Ryland Grace figuring out interstellar physics from first principles is pure joy. Ray Porter's narration in the audiobook is an absolute 10/10.",
+      "dateFinished": "Jan 27, 2026",
       "keyTakeaways": [
         "Scientific methodology and empirical iteration can solve seemingly insurmountable crises.",
         "Cooperation across radical differences yields solutions no individual could achieve alone.",
         "Optimism and humor are survival tools, not mere emotional luxuries."
       ],
+      "tags": [
+        "Sci-Fi",
+        "Science",
+        "Space Exploration",
+        "Friendship",
+        "Problem Solving"
+      ],
+      "catalogNumber": "NF-004",
+      "pages": 496,
+      "genre": "Sci-Fi & Speculative",
+      "dateLogged": "Jan 27, 2026",
+      "notesScratchpad": [
+        "Amaze! Amaze! Amaze!",
+        "“Rocky watch crew die, could not fix. Grace say Grace will die, Rocky fix.”"
+      ],
+      "coverUrl": "/covers/project-hail-mary.jpg",
+      "summary": "Ryland Grace is the sole survivor on a desperate, last-chance mission to save humanity from a star-dimming microorganism. As his memories slowly return, he must use science, humor, and an alien ally named Rocky to survive.",
+      "quoteContext": "Chapter 11: Astrophage Experiments",
+      "recommendedTo": "Fans of *The Martian*, interstellar science fiction, and smart, heartwarming problem-solving.",
+      "readingFormat": "Audiobook",
+      "title": "Project Hail Mary",
+      "personalThoughts": "Rocky is one of the best characters in all of modern fiction. Fist my bump! Amaze!",
       "actionItems": [
         "Approach complex coding and analytical problems through scientific first principles.",
         "Break intimidating technical challenges into small, testable hypotheses."
       ],
       "mindsetRatings": {
         "readability": 5,
-        "actionability": 3,
         "intellectualImpact": 4,
+        "actionability": 3,
         "originality": 5
-      },
-      "tags": [
-        "Sci-Fi",
-        "Science",
-        "Space Exploration",
-        "Friendship",
-        "Problem Solving"
-      ],
-      "readerReflections": "Rocky is one of the best characters in all of modern fiction. Fist my bump! Amaze!",
-      "recommendedTo": "Fans of *The Martian*, interstellar science fiction, and smart, heartwarming problem-solving.",
-      "likes": 389,
-      "notesScratchpad": [
-        "Amaze! Amaze! Amaze!"
-      ],
-      "coverUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
-      "tagline": "A thrilling tale of scientific problem-solving, interstellar resilience, and an unexpected cosmic friendship.",
-      "fullReview": "I HAD to read this book after watching the movie because what a masterpiece that movie is. The emotional rollercoaster I went through watching is unmatched, I don't think any thing else will get such a explosive reaction out of me.While the book was different to the movie it absolutely did not disappoint. It was so witty and humorious I didn't feel like I was reading sci-fi at all. While not a murder mystery, this has all the investigative thrills of a locked-room paradox set in deep space. Ryland Grace figuring out interstellar physics from first principles is pure joy. Ray Porter's narration in the audiobook is an absolute 10/10.",
-      "favoriteQuotes": [
-        "“Human beings have a remarkable ability to accept the abnormal and make it normal.”"
-      ],
-      "themes": [
-        "Sci-Fi",
-        "Science",
-        "Space Exploration",
-        "Friendship",
-        "Problem Solving"
-      ],
-      "tropes": [
-        "Sci-Fi",
-        "Science",
-        "Space Exploration",
-        "Friendship",
-        "Problem Solving"
-      ]
+      }
     }
   ],
   "heroConfig": {
@@ -565,31 +1152,42 @@
     "quoteAttribution": "Chief Student Investigator"
   },
   "currentlyReading": {
-    "title": "The Last Word",
-    "author": "Taylor Adams",
-    "coverImage": "/covers/the-last-word.jpg",
-    "genre": "Psychological Thriller",
-    "currentPage": 51,
-    "totalPages": 337,
-    "startDate": "Feb 12, 2026",
-    "currentTheory": "H.G. Kane is way too invested in Emma’s review. Either there’s something personal behind his reaction, or he’s hiding something much bigger.",
-    "suspectsNoted": [
-      "H.G. Kane (Author)",
-      "Deek (Neighbour)",
-      "Jules Phelps (Homeowner)",
-      "Emma Carpenter (Reviewer)"
+    "showNonThriller": false,
+    "title": "Tuesdays With Morrie",
+    "nonThrillerThoughts": "I'm sure this book will make me cry, a start to a new book is always exciting but this particular one remained on my wishlist because I knew it would make me emotional. I hold this new read dear to heart, my first book suggestion from my dad, who thought the obsession was rather silly. So far it has made me yearn for a relationship like this for someone to be so ready to guide me like Morrie is and I hope I continue the book as much as I do right now.",
+    "nonThrillerTitle": "Tuesdays With Morrie",
+    "additionalBooks": [
+      {
+        "currentPage": 1,
+        "currentTheory": "I loved the series, and I’m hoping I’ll love the book even more. I do hope the story feels more carefully planned and put together, as books often do. This is a sensitive topic, so I know I need to approach the review thoughtfully and be mindful of how I express my opinions. Thankfully, I haven’t experienced anything like what the story explores, and I don’t want to speak as though I understand something I haven’t lived through. If anything I write comes across as insensitive or based on false assumptions, that’s not my intention. With that said, I’m hoping this read won’t leave me permanently scarred.",
+        "thoughts": "I loved the series, and I’m hoping I’ll love the book even more. I do hope the story feels more carefully planned and put together, as books often do. This is a sensitive topic, so I know I need to approach the review thoughtfully and be mindful of how I express my opinions. Thankfully, I haven’t experienced anything like what the story explores, and I don’t want to speak as though I understand something I haven’t lived through. If anything I write comes across as insensitive or based on false assumptions, that’s not my intention. With that said, I’m hoping this read won’t leave me permanently scarred.",
+        "title": "13 Reasons Why",
+        "id": "cr-book-1793417666807",
+        "notes": "",
+        "totalPages": 310,
+        "category": "thriller",
+        "genre": "Psychological Thriller",
+        "coverImage": "/covers/13-reasons-why.jpg",
+        "startDate": "Oct 31, 2026",
+        "author": "Jay Asher"
+      }
     ],
-    "paranoiaLevel": "Extremely High (Suspicious of everyone’s coffee order)",
-    "showNonThriller": true,
-    "nonThrillerTitle": "Dark Matter",
-    "nonThrillerAuthor": "Blake Crouch",
-    "nonThrillerGenre": "Sci-Fi & Speculative Fiction",
-    "nonThrillerCoverImage": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&auto=format&fit=crop&q=80",
-    "nonThrillerCurrentPage": 184,
-    "nonThrillerTotalPages": 398,
-    "nonThrillerStartDate": "Feb 18, 2026",
-    "nonThrillerThoughts": "Reading this alongside my crime dispatches. The concept of infinite alternative lives based on microscopic decisions is gripping. Crouch creates genuine existential anxiety without any detective tropes.",
-    "nonThrillerNotes": "Explores regret, ambition, and identity through quantum mechanics. Highly recommended for when thriller suspects get overwhelming."
+    "currentTheory": "I'm almost certain this book will make me cry. There's always something exciting about starting a new read, but this particular one stayed on my wishlist for a long time because I knew it would be an emotional one. It already holds a special place in my heart, not just because of its story, but because it was the first book my dad recommended to me, despite thinking my obsession with reading was rather silly. So far, it has made me long for a connection like the one Morrie offers someone so willing to guide, teach and share their wisdom. Especially at this point of my life where everything feels a bit off still. I can only hope the rest of the book leaves me feeling just as moved as these first few pages have.",
+    "nonThrillerCurrentPage": 64,
+    "genre": "Memoir Nonfiction",
+    "nonThrillerAuthor": "Mitch Albom",
+    "nonThrillerCoverImage": "/covers/tuesdays-with-morrie.jpg",
+    "suspectsNoted": [],
+    "totalPages": 201,
+    "nonThrillerStartDate": "Oct 25, 2026",
+    "author": "Mitch Albom",
+    "paranoiaLevel": "Elevated",
+    "coverImage": "/covers/tuesdays-with-morrie.jpg",
+    "currentPage": 153,
+    "nonThrillerTotalPages": 201,
+    "startDate": "Oct 25, 2026",
+    "nonThrillerGenre": "Memoir Nonfiction",
+    "nonThrillerNotes": ""
   },
   "stats": {
     "year": 2026,
@@ -698,41 +1296,41 @@
     "featuredQuoteText": "“To read a thriller is to willingly enter into a contract of mutual paranoia with the author.”"
   },
   "aboutConfig": {
-    "headerSubtitle": "THE STUDENT BEHIND THE LEDGER",
-    "headerBadge": "CORRESPONDENT PROFILE",
+    "photoStamp": "2:15 am ",
     "pageTitle": "ABOUT THE CURATOR",
-    "curatorPhoto": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=600&q=80",
-    "photoStamp": "DESK AT 2:15 AM",
-    "classification": "Full-Time Student & Chronic Reader",
-    "obsession": "Unreliable Narrators, Deep Ideas & Good Twists",
     "featuredQuote": "I started reading thrillers because I wanted to know what happened. I continued reading them because apparently I enjoy distrusting fictional strangers.",
-    "bioParagraph1": "Welcome to The Midnight Reader. Between university deadlines, lectures, and caffeinated late-night cram sessions, this journal serves as my evidence room. Every book filed here is treated as an active case: forensic character breakdowns, timeline reconstructions, and unfiltered marginalia.",
-    "bioParagraph2": "While psychological thrillers and locked-room mysteries remain my primary obsession, 'The Library' houses everything else that commands my attention—from cosmic science fiction and memoirs to cognitive psychology and philosophy. Reading is both an investigative pursuit and a sanctuary.",
-    "bioParagraph3": "Readers are welcome to vote on plot twists, submit suspect theories, or browse the case file dossiers. Just remember the fundamental rule: never trust a narrator who insists they are telling the whole truth.",
     "rulesHeading": "MY 4 GOLDEN RULES OF READING INVESTIGATION",
+    "headerSubtitle": "THE STUDENT BEHIND THE LEDGER",
+    "bioParagraph2": " The Midnight Reader started as a small idea inspired by my love for reading and my habit of coming up with far too many theories while reading thrillers. I wanted somewhere to collect my reviews, document suspicious characters, connect clues and share my thoughts beyond the pages of a book. More than anything, I hope this becomes a space where other readers can share their interpretations, debate endings and enjoy the little details that make every story memorable.",
+    "curatorPhoto": "/covers/curator-photo.jpg",
+    "bioParagraph1": "Welcome to The Midnight Reader.  Somewhere between igcse deadlines, endless book theories and the occasional reading break, I decided to build a little corner of the internet for stories worth getting lost in. But seriously to me, reading has slowly become more than just a hobby; it's one of my favourite ways to escape, think and explore different perspectives.",
+    "finalNote": "Filed from a dark room and three empty cans of monster ",
     "rules": [
       {
-        "number": 1,
         "title": "RULE #1: TRUST NO NARRATOR",
+        "number": 1,
         "description": "If the narrator repeatedly emphasizes their own innocence, sanity, or sobriety in chapter one, they did it."
       },
       {
+        "description": "Characters mentioned casually on page 42 who vanish until chapter 28 are never just innocent bystanders.",
         "number": 2,
-        "title": "RULE #2: THE INCONSPICUOUS GARDENER RULE",
-        "description": "Characters mentioned casually on page 42 who vanish until chapter 28 are never just innocent bystanders."
+        "title": "RULE #2: THE INCONSPICUOUS GARDENER RULE"
       },
       {
         "number": 3,
-        "title": "RULE #3: THE ATTIC DEADBOLT CONSTANT",
-        "description": "If a door in a Victorian estate is locked from the outside, do not wait for the climax to ask why."
+        "description": "If a door in a Victorian estate is locked from the outside, do not wait for the climax to ask why.",
+        "title": "RULE #3: THE ATTIC DEADBOLT CONSTANT"
       },
       {
-        "number": 4,
         "title": "RULE #4: MULTI-GENRE CURIOSITY",
-        "description": "A sharp mind reads across genres. Step outside the crime scene into philosophy, sci-fi, and essays to keep your deductions agile."
+        "description": "A sharp mind reads across genres. Step outside the crime scene into philosophy, sci-fi, and essays to keep your deductions agile.",
+        "number": 4
       }
     ],
-    "finalNote": "Filed from dorm room desk with three cold mugs of green tea."
+    "obsession": "Unreliable Narrators, Deep Ideas & Good Twists",
+    "headerBadge": "CORRESPONDENT PROFILE",
+    "bioParagraph3": "I'm definitely the kind of reader who suspects everyone, overanalyses the smallest details and changes theories approximately five times before finishing a book. I have a habit of mentally investigating characters instead of simply enjoying the story, and I rarely trust an innocent-looking neighbour. Between procrastinating with one more chapter, collecting books faster than I can read them and trying to balance reading with preboard revision, there's always another story waiting on my shelf.",
+    "classification": "Full-Time Student & Chronic Reader"
   },
   "offTheRecordConfig": {
     "badge": "UNREDACTED DOSSIERS • OFF THE RECORD",
@@ -803,5 +1401,33 @@
       }
     ]
   },
-  "userTheories": []
+  "userTheories": [],
+  "offTheRecordGenres": null,
+  "archiveGenres": null,
+  "customThrillerTropes": null,
+  "customResearchTropes": null,
+  "githubAuth": null,
+  "bookAlbums": [
+    {
+      "id": "album-the-housemaid",
+      "name": "The Housemaid",
+      "description": "Freida McFadden's complete Housemaid thriller sequence in chronological reading order.",
+      "items": [
+        {
+          "kind": "thriller",
+          "id": "case-014"
+        },
+        {
+          "kind": "thriller",
+          "id": "case-003-1793262236164"
+        },
+        {
+          "kind": "thriller",
+          "id": "case-004-1793264724662"
+        }
+      ],
+      "createdAt": "2026-11-13T11:31:34.281Z",
+      "updatedAt": "2026-11-13T11:31:34.281Z"
+    }
+  ]
 }

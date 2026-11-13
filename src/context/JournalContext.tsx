@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import { 
   BookReview, 
   CurrentlyReading, 
@@ -16,7 +16,11 @@ import {
   GitHubUser,
   CurrentlyReadingBook,
   CompletingBookTarget,
-  ArchiveCurrentBookParams
+  ArchiveCurrentBookParams,
+  ALL_OTHER_GENRES,
+  INITIAL_ARCHIVE_GENRES,
+  BookAlbum,
+  BookAlbumItem
 } from '../types';
 import { 
   INITIAL_REVIEWS, 
@@ -31,8 +35,47 @@ import {
   INITIAL_ABOUT_CONFIG,
   INITIAL_OFF_THE_RECORD_CONFIG
 } from '../data/initialData';
-import { db } from '../lib/firebase';
+import { db, OperationType, handleFirestoreError } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { resolveBookCoverUrl } from '../components/common/BookCoverImage';
+
+const sanitizeReviewsList = (list: BookReview[]): BookReview[] => {
+  if (!Array.isArray(list)) return [];
+  return list.map((r) => ({
+    ...r,
+    coverImage: resolveBookCoverUrl(r.coverImage, r.title, r.author, r.genre),
+  }));
+};
+
+const sanitizeNonFictionList = (list: NonFictionBook[]): NonFictionBook[] => {
+  if (!Array.isArray(list)) return [];
+  return list.map((n) => {
+    const clean = resolveBookCoverUrl(n.coverImage || n.coverUrl, n.title, n.author, n.genre);
+    return {
+      ...n,
+      coverImage: clean,
+      coverUrl: clean,
+    };
+  });
+};
+
+const sanitizeCurrentlyReading = (cr: CurrentlyReading): CurrentlyReading => {
+  if (!cr) return cr;
+  const cleanMain = resolveBookCoverUrl(cr.coverImage, cr.title, cr.author, cr.genre);
+  const cleanNonThriller = cr.nonThrillerTitle
+    ? resolveBookCoverUrl(cr.nonThrillerCoverImage, cr.nonThrillerTitle, cr.nonThrillerAuthor, cr.nonThrillerGenre)
+    : cr.nonThrillerCoverImage;
+  const cleanAdditional = (cr.additionalBooks || []).map((b) => ({
+    ...b,
+    coverImage: resolveBookCoverUrl(b.coverImage, b.title, b.author, b.genre),
+  }));
+  return {
+    ...cr,
+    coverImage: cleanMain,
+    nonThrillerCoverImage: cleanNonThriller,
+    additionalBooks: cleanAdditional,
+  };
+};
 
 export type ActiveView = 
   | 'home' 
@@ -109,7 +152,14 @@ interface JournalContextType {
   connectGitHubWithOAuth: () => Promise<{ success: boolean; message?: string; needsConfig?: boolean }>;
   connectGitHubWithToken: (token: string) => Promise<{ success: boolean; message: string; user?: GitHubUser }>;
   disconnectGitHub: () => Promise<void>;
-  syncToGitHub: () => Promise<{ success: boolean; message: string; gistUrl?: string }>;
+  syncToGitHub: (customToken?: string) => Promise<{ success: boolean; message: string; gistUrl?: string }>;
+
+  // Firestore Cloud Database Sync & Health Status
+  isSyncingFirestore: boolean;
+  lastFirestoreSync: Date | null;
+  firestoreSyncError: string | null;
+  retryFirestoreSync: () => Promise<void>;
+  syncWithServer: (statePayload?: any) => Promise<void>;
 
   // Actions
   setActiveView: (view: ActiveView) => void;
@@ -120,33 +170,33 @@ interface JournalContextType {
   setSearchQuery: (query: string) => void;
   setSelectedGenre: (genre: Genre | 'All') => void;
   openReviewById: (id: string) => void;
-  addReview: (review: Omit<BookReview, 'id' | 'caseNumber'> & { id?: string; caseNumber?: string }) => void;
-  updateReview: (id: string, updated: Partial<BookReview>) => void;
-  deleteReview: (id: string) => void;
-  duplicateReview: (id: string) => void;
+  addReview: (review: Omit<BookReview, 'id' | 'caseNumber'> & { id?: string; caseNumber?: string }) => Promise<BookReview>;
+  updateReview: (id: string, updated: Partial<BookReview>) => Promise<void>;
+  deleteReview: (id: string) => Promise<void>;
+  duplicateReview: (id: string) => Promise<BookReview | void>;
 
   // Non-Fiction / Other Books CRUD & Notes
-  addNonFictionBook: (book: Omit<NonFictionBook, 'id' | 'catalogNumber'> & { id?: string; catalogNumber?: string }) => void;
-  updateNonFictionBook: (id: string, updated: Partial<NonFictionBook>) => void;
-  deleteNonFictionBook: (id: string) => void;
-  duplicateNonFictionBook: (id: string) => void;
-  toggleLikeNonFictionBook: (id: string) => void;
-  addNonFictionScratchpadNote: (bookId: string, note: string) => void;
+  addNonFictionBook: (book: Omit<NonFictionBook, 'id' | 'catalogNumber'> & { id?: string; catalogNumber?: string }) => Promise<NonFictionBook>;
+  updateNonFictionBook: (id: string, updated: Partial<NonFictionBook>) => Promise<void>;
+  deleteNonFictionBook: (id: string) => Promise<void>;
+  duplicateNonFictionBook: (id: string) => Promise<NonFictionBook | void>;
+  toggleLikeNonFictionBook: (id: string) => Promise<void>;
+  addNonFictionScratchpadNote: (bookId: string, note: string) => Promise<void>;
 
   // Hero Section Editor
-  updateHeroConfig: (config: Partial<HeroConfig>) => void;
+  updateHeroConfig: (config: Partial<HeroConfig>) => Promise<void>;
   // About Section Editor
-  updateAboutConfig: (config: Partial<AboutConfig>) => void;
+  updateAboutConfig: (config: Partial<AboutConfig>) => Promise<void>;
   // Off The Record (Library) Section Editor
-  updateOffTheRecordConfig: (config: Partial<OffTheRecordConfig>) => void;
+  updateOffTheRecordConfig: (config: Partial<OffTheRecordConfig>) => Promise<void>;
 
-  updateCurrentlyReading: (cr: Partial<CurrentlyReading>) => void;
-  updateStats: (st: Partial<ReadingStats>) => void;
-  updateTimelineStats: (st: Partial<TimelineStats>) => void;
-  addTimelineMilestone: (ms: Omit<TimelineMilestone, 'id'>) => void;
-  updateTimelineMilestone: (id: string, updated: Partial<TimelineMilestone>) => void;
-  deleteTimelineMilestone: (id: string) => void;
-  updateIntelligenceStats: (st: Partial<IntelligenceStats>) => void;
+  updateCurrentlyReading: (cr: Partial<CurrentlyReading>) => Promise<void>;
+  updateStats: (st: Partial<ReadingStats>) => Promise<void>;
+  updateTimelineStats: (st: Partial<TimelineStats>) => Promise<void>;
+  addTimelineMilestone: (ms: Omit<TimelineMilestone, 'id'>) => Promise<void>;
+  updateTimelineMilestone: (id: string, updated: Partial<TimelineMilestone>) => Promise<void>;
+  deleteTimelineMilestone: (id: string) => Promise<void>;
+  updateIntelligenceStats: (st: Partial<IntelligenceStats>) => Promise<void>;
   setVisitorGuess: (reviewId: string, suspectId: string) => void;
   revealAnswer: (reviewId: string) => void;
   toggleClueUnlock: (clueId: string) => void;
@@ -169,14 +219,14 @@ interface JournalContextType {
   setIsCompleteBookModalOpen: (open: boolean) => void;
   setCompletingBookTarget: (target: CompletingBookTarget | null) => void;
   openCompleteAndArchive: (target: CompletingBookTarget) => void;
-  archiveCurrentBook: (params: ArchiveCurrentBookParams) => void;
-  addBookToCurrentReads: (book: Omit<CurrentlyReadingBook, 'id'>) => void;
-  removeBookFromCurrentReads: (id: string) => void;
-  updateAdditionalBook: (id: string, updated: Partial<CurrentlyReadingBook>) => void;
-  moveAdditionalToPrimary: (id: string) => void;
-  moveAdditionalToCompanion: (id: string) => void;
-  movePrimaryToAdditional: () => void;
-  moveCompanionToAdditional: () => void;
+  archiveCurrentBook: (params: ArchiveCurrentBookParams) => Promise<void>;
+  addBookToCurrentReads: (book: Omit<CurrentlyReadingBook, 'id'>) => Promise<void>;
+  removeBookFromCurrentReads: (id: string) => Promise<void>;
+  updateAdditionalBook: (id: string, updated: Partial<CurrentlyReadingBook>) => Promise<void>;
+  moveAdditionalToPrimary: (id: string) => Promise<void>;
+  moveAdditionalToCompanion: (id: string) => Promise<void>;
+  movePrimaryToAdditional: () => Promise<void>;
+  moveCompanionToAdditional: () => Promise<void>;
   openEditAdditionalBook: (id: string) => void;
   editingAdditionalBookId: string | null;
   setEditingAdditionalBookId: (id: string | null) => void;
@@ -190,14 +240,127 @@ interface JournalContextType {
   customThrillerTropes: string[];
   customResearchTropes: string[];
   addCustomThrillerTrope: (trope: string) => void;
+  removeCustomThrillerTrope: (trope: string) => void;
   addCustomResearchTrope: (trope: string) => void;
+  removeCustomResearchTrope: (trope: string) => void;
+  removeTropeFromReview: (reviewId: string, trope: string) => Promise<void>;
+  removeTropeFromNonFiction: (bookId: string, trope: string) => Promise<void>;
+
+  // Genre Management for Off the Record and Archive
+  offTheRecordGenres: string[];
+  addOffTheRecordGenre: (genre: string) => Promise<void>;
+  editOffTheRecordGenre: (oldGenre: string, newGenre: string) => Promise<void>;
+  removeOffTheRecordGenre: (genre: string) => Promise<void>;
+  resetOffTheRecordGenres: () => Promise<void>;
+  archiveGenres: string[];
+  addArchiveGenre: (genre: string) => Promise<void>;
+  editArchiveGenre: (oldGenre: string, newGenre: string) => Promise<void>;
+  removeArchiveGenre: (genre: string) => Promise<void>;
+  resetArchiveGenres: () => Promise<void>;
+
+  // Book Albums (Group existing books together in reading order inside the library)
+  bookAlbums: BookAlbum[];
+  allAlbumNames: string[];
+  viewingAlbumId: string | null;
+  setViewingAlbumId: (id: string | null) => void;
+  isAlbumEditorOpen: boolean;
+  setIsAlbumEditorOpen: (open: boolean) => void;
+  editingAlbum: BookAlbum | null;
+  setEditingAlbum: (album: BookAlbum | null) => void;
+  openAlbumEditor: (album?: BookAlbum | null) => void;
+  openAlbumByName: (name: string) => void;
+  saveBookAlbum: (payload: {
+    id?: string;
+    name: string;
+    description?: string;
+    items: BookAlbumItem[];
+  }) => Promise<BookAlbum>;
+  deleteBookAlbum: (albumId: string) => Promise<void>;
+  addBookToAlbum: (albumId: string, item: BookAlbumItem) => Promise<void>;
+  removeBookFromAlbum: (albumId: string, item: BookAlbumItem) => Promise<void>;
+  reorderAlbumItems: (albumId: string, items: BookAlbumItem[]) => Promise<void>;
+  assignBookToNamedAlbum: (albumName: string | undefined, item: BookAlbumItem, preferredOrder?: number) => Promise<void>;
 
   // Redeployment & Data Portability
   exportDataAsJSON: () => string;
-  importDataFromJSON: (jsonString: string) => { success: boolean; message: string };
+  importDataFromJSON: (jsonString: string) => Promise<{ success: boolean; message: string }>;
   generateSeedCode: () => string;
-  resetToDefaults: () => void;
+  resetToDefaults: () => Promise<void>;
 }
+
+const deriveAlbumsFromBooks = (reviewsList: BookReview[], nfList: NonFictionBook[]): BookAlbum[] => {
+  const map = new Map<string, { name: string; entries: { item: BookAlbumItem; order: number }[] }>();
+  reviewsList.forEach((r) => {
+    const s = r.seriesName?.trim();
+    if (!s) return;
+    const key = s.toLowerCase();
+    if (!map.has(key)) map.set(key, { name: s, entries: [] });
+    map.get(key)!.entries.push({ item: { kind: 'thriller', id: r.id }, order: r.seriesOrder || 999 });
+  });
+  nfList.forEach((b) => {
+    const s = b.seriesName?.trim();
+    if (!s) return;
+    const key = s.toLowerCase();
+    if (!map.has(key)) map.set(key, { name: s, entries: [] });
+    map.get(key)!.entries.push({ item: { kind: 'non-fiction', id: b.id }, order: b.seriesOrder || 999 });
+  });
+  const now = new Date().toISOString();
+  return Array.from(map.values()).map((group) => ({
+    id: `album-${group.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || Date.now()}`,
+    name: group.name,
+    items: group.entries.sort((a, b) => a.order - b.order).map((e) => e.item),
+    createdAt: now,
+    updatedAt: now,
+  }));
+};
+
+const computeNextAlbumsForBook = (
+  albumsList: BookAlbum[],
+  albumName: string | undefined,
+  item: BookAlbumItem,
+  preferredOrder?: number
+): BookAlbum[] => {
+  const clean = albumName?.trim() || '';
+  const now = new Date().toISOString();
+
+  let nextAlbums = albumsList.map((album) => {
+    const matchesTarget = clean && album.name.trim().toLowerCase() === clean.toLowerCase();
+    if (!matchesTarget) {
+      return {
+        ...album,
+        items: album.items.filter((it) => !(it.kind === item.kind && it.id === item.id)),
+      };
+    }
+    const filtered = album.items.filter((it) => !(it.kind === item.kind && it.id === item.id));
+    const insertIdx =
+      preferredOrder && preferredOrder > 0
+        ? Math.min(filtered.length, preferredOrder - 1)
+        : filtered.length;
+    const updatedItems = [...filtered];
+    updatedItems.splice(insertIdx, 0, item);
+    return {
+      ...album,
+      items: updatedItems,
+      updatedAt: now,
+    };
+  });
+
+  if (clean && !nextAlbums.some((a) => a.name.trim().toLowerCase() === clean.toLowerCase())) {
+    nextAlbums = [
+      {
+        id: `album-${clean.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'custom'}-${Date.now()}`,
+        name: clean,
+        description: '',
+        items: [item],
+        createdAt: now,
+        updatedAt: now,
+      },
+      ...nextAlbums,
+    ];
+  }
+
+  return nextAlbums;
+};
 
 const JournalContext = createContext<JournalContextType | undefined>(undefined);
 
@@ -269,6 +432,9 @@ const STORAGE_KEYS = {
   OFF_THE_RECORD_CONFIG: 'midnight_reader_off_the_record_v4',
   CUSTOM_THRILLER_TROPES: 'midnight_reader_custom_thriller_tropes_v4',
   CUSTOM_RESEARCH_TROPES: 'midnight_reader_custom_research_tropes_v4',
+  OFF_THE_RECORD_GENRES: 'midnight_reader_off_the_record_genres_v4',
+  ARCHIVE_GENRES: 'midnight_reader_archive_genres_v4',
+  BOOK_ALBUMS: 'midnight_reader_albums_v1',
 };
 
 const INITIAL_LIKES_SEED: Record<string, number> = {
@@ -320,18 +486,18 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [reviews, setReviews] = useState<BookReview[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.REVIEWS);
-      return saved ? JSON.parse(saved) : INITIAL_REVIEWS;
+      return saved ? sanitizeReviewsList(JSON.parse(saved)) : sanitizeReviewsList(INITIAL_REVIEWS);
     } catch {
-      return INITIAL_REVIEWS;
+      return sanitizeReviewsList(INITIAL_REVIEWS);
     }
   });
 
   const [currentlyReading, setCurrentlyReading] = useState<CurrentlyReading>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.CURRENTLY_READING);
-      return saved ? JSON.parse(saved) : INITIAL_CURRENTLY_READING;
+      return saved ? sanitizeCurrentlyReading(JSON.parse(saved)) : sanitizeCurrentlyReading(INITIAL_CURRENTLY_READING);
     } catch {
-      return INITIAL_CURRENTLY_READING;
+      return sanitizeCurrentlyReading(INITIAL_CURRENTLY_READING);
     }
   });
 
@@ -374,9 +540,9 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [nonFictionBooks, setNonFictionBooks] = useState<NonFictionBook[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.NON_FICTION);
-      return saved ? JSON.parse(saved) : INITIAL_NON_FICTION_BOOKS;
+      return saved ? sanitizeNonFictionList(JSON.parse(saved)) : sanitizeNonFictionList(INITIAL_NON_FICTION_BOOKS);
     } catch {
-      return INITIAL_NON_FICTION_BOOKS;
+      return sanitizeNonFictionList(INITIAL_NON_FICTION_BOOKS);
     }
   });
 
@@ -500,6 +666,29 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [editingReview, setEditingReview] = useState<BookReview | null>(null);
   const [editingNonFictionBook, setEditingNonFictionBook] = useState<NonFictionBook | null>(null);
   const [editingAdditionalBookId, setEditingAdditionalBookId] = useState<string | null>(null);
+  const [bookAlbums, setBookAlbums] = useState<BookAlbum[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.BOOK_ALBUMS);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {
+      // Fallback below
+    }
+    try {
+      const savedRevs = localStorage.getItem(STORAGE_KEYS.REVIEWS);
+      const savedNf = localStorage.getItem(STORAGE_KEYS.NON_FICTION);
+      const revList = savedRevs ? JSON.parse(savedRevs) : INITIAL_REVIEWS;
+      const nfList = savedNf ? JSON.parse(savedNf) : INITIAL_NON_FICTION_BOOKS;
+      return deriveAlbumsFromBooks(revList, nfList);
+    } catch {
+      return deriveAlbumsFromBooks(INITIAL_REVIEWS, INITIAL_NON_FICTION_BOOKS);
+    }
+  });
+  const [viewingAlbumId, setViewingAlbumId] = useState<string | null>(null);
+  const [isAlbumEditorOpen, setIsAlbumEditorOpen] = useState(false);
+  const [editingAlbum, setEditingAlbum] = useState<BookAlbum | null>(null);
 
   // Chief Investigator / Admin Editor clearance (starts locked on every fresh tab/window open)
   const [isAdminUnlocked, setIsAdminUnlocked] = useState<boolean>(() => {
@@ -515,9 +704,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [adminPasscode, setAdminPasscodeState] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.ADMIN_PASSCODE);
-      return saved || INITIAL_ADMIN_PASSCODE || 'detective';
+      if (saved === 'detective' && INITIAL_ADMIN_PASSCODE && INITIAL_ADMIN_PASSCODE !== 'detective') {
+        return INITIAL_ADMIN_PASSCODE;
+      }
+      return saved || INITIAL_ADMIN_PASSCODE || '';
     } catch {
-      return INITIAL_ADMIN_PASSCODE || 'detective';
+      return INITIAL_ADMIN_PASSCODE || '';
     }
   });
 
@@ -562,6 +754,19 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
   };
 
+  const removeCustomThrillerTrope = (tropeToRemove: string) => {
+    const clean = tropeToRemove.trim().toLowerCase();
+    setCustomThrillerTropes((prev) => {
+      const next = prev.filter((t) => t.trim().toLowerCase() !== clean);
+      try {
+        localStorage.setItem(STORAGE_KEYS.CUSTOM_THRILLER_TROPES, JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
+
   const addCustomResearchTrope = (trope: string) => {
     const clean = trope.trim();
     if (!clean) return;
@@ -577,65 +782,410 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     });
   };
 
-  // Helper: Persist state to backend server so changes survive redeployments
-  const syncWithServer = useCallback(async (statePayload?: {
-    reviews?: BookReview[];
-    nonFictionBooks?: NonFictionBook[];
-    heroConfig?: HeroConfig;
-    currentlyReading?: CurrentlyReading;
-    stats?: ReadingStats;
-    timelineStats?: TimelineStats;
-    timelineMilestones?: TimelineMilestone[];
-    intelligenceStats?: IntelligenceStats;
-    aboutConfig?: AboutConfig;
-    offTheRecordConfig?: OffTheRecordConfig;
-    postLikes?: Record<string, number>;
-    readerPollVotes?: Record<string, Record<string, number>>;
-    witnessComments?: Record<string, WitnessComment[]>;
-    userTheories?: UserTheorySubmission[];
-  }) => {
-    try {
-      const payload = statePayload || {
-        reviews,
-        nonFictionBooks,
-        heroConfig,
-        aboutConfig,
-        offTheRecordConfig,
-        currentlyReading,
-        stats,
-        timelineStats,
-        timelineMilestones,
-        intelligenceStats,
-        postLikes,
-        readerPollVotes,
-        witnessComments,
-        userTheories,
-      };
+  const removeCustomResearchTrope = (tropeToRemove: string) => {
+    const clean = tropeToRemove.trim().toLowerCase();
+    setCustomResearchTropes((prev) => {
+      const next = prev.filter((t) => t.trim().toLowerCase() !== clean);
+      try {
+        localStorage.setItem(STORAGE_KEYS.CUSTOM_RESEARCH_TROPES, JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
 
+  const removeTropeFromReview = async (reviewId: string, tropeToRemove: string): Promise<void> => {
+    const clean = tropeToRemove.trim().toLowerCase();
+    let updatedReviews: BookReview[] = reviews;
+    setReviews((prev) => {
+      updatedReviews = prev.map((r) => {
+        if (r.id === reviewId && r.tropes) {
+          return {
+            ...r,
+            tropes: r.tropes.filter((t) => t.trim().toLowerCase() !== clean),
+          };
+        }
+        return r;
+      });
+      try {
+        localStorage.setItem(STORAGE_KEYS.REVIEWS, JSON.stringify(updatedReviews));
+      } catch (e) {
+        console.error(e);
+      }
+      return updatedReviews;
+    });
+
+    if (selectedReview && selectedReview.id === reviewId) {
+      setSelectedReview((prev) =>
+        prev
+          ? {
+              ...prev,
+              tropes: (prev.tropes || []).filter((t) => t.trim().toLowerCase() !== clean),
+            }
+          : null
+      );
+    }
+
+    await syncWithServer({ reviews: updatedReviews });
+  };
+
+  const removeTropeFromNonFiction = async (bookId: string, tropeToRemove: string): Promise<void> => {
+    const clean = tropeToRemove.trim().toLowerCase();
+    let updatedBooks: NonFictionBook[] = nonFictionBooks;
+    setNonFictionBooks((prev) => {
+      updatedBooks = prev.map((b) => {
+        if (b.id === bookId) {
+          const filterFn = (t: string) => t.trim().toLowerCase() !== clean;
+          return {
+            ...b,
+            tropes: (b.tropes || []).filter(filterFn),
+            tags: (b.tags || []).filter(filterFn),
+            themes: (b.themes || []).filter(filterFn),
+          };
+        }
+        return b;
+      });
+      try {
+        localStorage.setItem(STORAGE_KEYS.NON_FICTION, JSON.stringify(updatedBooks));
+      } catch (e) {
+        console.error(e);
+      }
+      return updatedBooks;
+    });
+
+    if (selectedNonFictionBook && selectedNonFictionBook.id === bookId) {
+      setSelectedNonFictionBook((prev) => {
+        if (!prev) return null;
+        const filterFn = (t: string) => t.trim().toLowerCase() !== clean;
+        return {
+          ...prev,
+          tropes: (prev.tropes || []).filter(filterFn),
+          tags: (prev.tags || []).filter(filterFn),
+          themes: (prev.themes || []).filter(filterFn),
+        };
+      });
+    }
+
+    await syncWithServer({ nonFictionBooks: updatedBooks });
+  };
+
+  // Genre Management: Off the Record & Archive
+  const [offTheRecordGenres, setOffTheRecordGenres] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.OFF_THE_RECORD_GENRES);
+      return saved ? JSON.parse(saved) : (ALL_OTHER_GENRES as string[]);
+    } catch {
+      return ALL_OTHER_GENRES as string[];
+    }
+  });
+
+  const [archiveGenres, setArchiveGenres] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.ARCHIVE_GENRES);
+      return saved ? JSON.parse(saved) : (INITIAL_ARCHIVE_GENRES as string[]);
+    } catch {
+      return INITIAL_ARCHIVE_GENRES as string[];
+    }
+  });
+
+  // Firestore Cloud Database sync tracking state
+  const [isSyncingFirestore, setIsSyncingFirestore] = useState<boolean>(false);
+  const [lastFirestoreSync, setLastFirestoreSync] = useState<Date | null>(null);
+  const [firestoreSyncError, setFirestoreSyncError] = useState<string | null>(null);
+
+  const addOffTheRecordGenre = async (genre: string): Promise<void> => {
+    const clean = genre.trim();
+    if (!clean) return;
+    let nextGenres: string[] = offTheRecordGenres;
+    setOffTheRecordGenres((prev) => {
+      if (prev.some((g) => g.toLowerCase() === clean.toLowerCase())) return prev;
+      nextGenres = [clean, ...prev];
+      try {
+        localStorage.setItem(STORAGE_KEYS.OFF_THE_RECORD_GENRES, JSON.stringify(nextGenres));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextGenres;
+    });
+    await syncWithServer({ offTheRecordGenres: nextGenres } as any);
+  };
+
+  const editOffTheRecordGenre = async (oldGenre: string, newGenre: string): Promise<void> => {
+    const cleanOld = oldGenre.trim();
+    const cleanNew = newGenre.trim();
+    if (!cleanNew || cleanOld.toLowerCase() === cleanNew.toLowerCase()) return;
+
+    let nextGenres: string[] = offTheRecordGenres;
+    setOffTheRecordGenres((prev) => {
+      nextGenres = prev.map((g) => (g.toLowerCase() === cleanOld.toLowerCase() ? cleanNew : g));
+      if (!nextGenres.some((g) => g.toLowerCase() === cleanNew.toLowerCase())) {
+        nextGenres = [cleanNew, ...nextGenres];
+      }
+      try {
+        localStorage.setItem(STORAGE_KEYS.OFF_THE_RECORD_GENRES, JSON.stringify(nextGenres));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextGenres;
+    });
+
+    let updatedBooks = nonFictionBooks;
+    if (nonFictionBooks.some((b) => b.genre?.toLowerCase() === cleanOld.toLowerCase())) {
+      setNonFictionBooks((prev) => {
+        updatedBooks = prev.map((b) =>
+          b.genre?.toLowerCase() === cleanOld.toLowerCase() ? { ...b, genre: cleanNew as any } : b
+        );
+        try {
+          localStorage.setItem(STORAGE_KEYS.NON_FICTION, JSON.stringify(updatedBooks));
+        } catch (e) {
+          console.error(e);
+        }
+        return updatedBooks;
+      });
+    }
+
+    await syncWithServer({ offTheRecordGenres: nextGenres, nonFictionBooks: updatedBooks });
+  };
+
+  const removeOffTheRecordGenre = async (genreToRemove: string): Promise<void> => {
+    const clean = genreToRemove.trim().toLowerCase();
+    if (!clean) return;
+    let nextGenres: string[] = offTheRecordGenres;
+    setOffTheRecordGenres((prev) => {
+      nextGenres = prev.filter((g) => g.toLowerCase() !== clean);
+      try {
+        localStorage.setItem(STORAGE_KEYS.OFF_THE_RECORD_GENRES, JSON.stringify(nextGenres));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextGenres;
+    });
+
+    let updatedBooks = nonFictionBooks;
+    const fallbackGenre = nextGenres[0] || 'Non-Fiction';
+    if (nonFictionBooks.some((b) => b.genre?.toLowerCase() === clean)) {
+      setNonFictionBooks((prev) => {
+        updatedBooks = prev.map((b) =>
+          b.genre?.toLowerCase() === clean ? { ...b, genre: fallbackGenre as any } : b
+        );
+        try {
+          localStorage.setItem(STORAGE_KEYS.NON_FICTION, JSON.stringify(updatedBooks));
+        } catch (e) {
+          console.error(e);
+        }
+        return updatedBooks;
+      });
+    }
+
+    await syncWithServer({ offTheRecordGenres: nextGenres, nonFictionBooks: updatedBooks });
+  };
+
+  const resetOffTheRecordGenres = async (): Promise<void> => {
+    setOffTheRecordGenres(ALL_OTHER_GENRES as string[]);
+    try {
+      localStorage.setItem(STORAGE_KEYS.OFF_THE_RECORD_GENRES, JSON.stringify(ALL_OTHER_GENRES));
+    } catch (e) {
+      console.error(e);
+    }
+    await syncWithServer({ offTheRecordGenres: ALL_OTHER_GENRES } as any);
+  };
+
+  const addArchiveGenre = async (genre: string): Promise<void> => {
+    const clean = genre.trim();
+    if (!clean) return;
+    let nextGenres: string[] = archiveGenres;
+    setArchiveGenres((prev) => {
+      if (prev.some((g) => g.toLowerCase() === clean.toLowerCase())) return prev;
+      nextGenres = [clean, ...prev];
+      try {
+        localStorage.setItem(STORAGE_KEYS.ARCHIVE_GENRES, JSON.stringify(nextGenres));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextGenres;
+    });
+    await syncWithServer({ archiveGenres: nextGenres } as any);
+  };
+
+  const editArchiveGenre = async (oldGenre: string, newGenre: string): Promise<void> => {
+    const cleanOld = oldGenre.trim();
+    const cleanNew = newGenre.trim();
+    if (!cleanNew || cleanOld.toLowerCase() === cleanNew.toLowerCase()) return;
+
+    let nextGenres: string[] = archiveGenres;
+    setArchiveGenres((prev) => {
+      nextGenres = prev.map((g) => (g.toLowerCase() === cleanOld.toLowerCase() ? cleanNew : g));
+      if (!nextGenres.some((g) => g.toLowerCase() === cleanNew.toLowerCase())) {
+        nextGenres = [cleanNew, ...nextGenres];
+      }
+      try {
+        localStorage.setItem(STORAGE_KEYS.ARCHIVE_GENRES, JSON.stringify(nextGenres));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextGenres;
+    });
+
+    let updatedReviews = reviews;
+    if (reviews.some((r) => r.genre?.toLowerCase() === cleanOld.toLowerCase())) {
+      setReviews((prev) => {
+        updatedReviews = prev.map((r) =>
+          r.genre?.toLowerCase() === cleanOld.toLowerCase() ? { ...r, genre: cleanNew as any } : r
+        );
+        try {
+          localStorage.setItem(STORAGE_KEYS.REVIEWS, JSON.stringify(updatedReviews));
+        } catch (e) {
+          console.error(e);
+        }
+        return updatedReviews;
+      });
+    }
+
+    await syncWithServer({ archiveGenres: nextGenres, reviews: updatedReviews });
+  };
+
+  const removeArchiveGenre = async (genreToRemove: string): Promise<void> => {
+    const clean = genreToRemove.trim().toLowerCase();
+    if (!clean) return;
+    let nextGenres: string[] = archiveGenres;
+    setArchiveGenres((prev) => {
+      nextGenres = prev.filter((g) => g.toLowerCase() !== clean);
+      try {
+        localStorage.setItem(STORAGE_KEYS.ARCHIVE_GENRES, JSON.stringify(nextGenres));
+      } catch (e) {
+        console.error(e);
+      }
+      return nextGenres;
+    });
+    await syncWithServer({ archiveGenres: nextGenres } as any);
+  };
+
+  const resetArchiveGenres = async (): Promise<void> => {
+    setArchiveGenres(INITIAL_ARCHIVE_GENRES as string[]);
+    try {
+      localStorage.setItem(STORAGE_KEYS.ARCHIVE_GENRES, JSON.stringify(INITIAL_ARCHIVE_GENRES));
+    } catch (e) {
+      console.error(e);
+    }
+    await syncWithServer({ archiveGenres: INITIAL_ARCHIVE_GENRES } as any);
+  };
+
+  // Helper: Persist state to Firestore cloud database and backend server
+  const syncWithServer = useCallback(async (statePayload?: Partial<{
+    reviews: BookReview[];
+    nonFictionBooks: NonFictionBook[];
+    heroConfig: HeroConfig;
+    currentlyReading: CurrentlyReading;
+    stats: ReadingStats;
+    timelineStats: TimelineStats;
+    timelineMilestones: TimelineMilestone[];
+    intelligenceStats: IntelligenceStats;
+    aboutConfig: AboutConfig;
+    offTheRecordConfig: OffTheRecordConfig;
+    postLikes: Record<string, number>;
+    readerPollVotes: Record<string, Record<string, number>>;
+    witnessComments: Record<string, WitnessComment[]>;
+    userTheories: UserTheorySubmission[];
+    offTheRecordGenres: string[];
+    archiveGenres: string[];
+    bookAlbums: BookAlbum[];
+  }>): Promise<void> => {
+    setIsSyncingFirestore(true);
+    setFirestoreSyncError(null);
+
+    // Merge current state with any explicitly updated slices
+    const fullPayload = {
+      reviews: statePayload?.reviews ?? reviews,
+      nonFictionBooks: statePayload?.nonFictionBooks ?? nonFictionBooks,
+      heroConfig: statePayload?.heroConfig ?? heroConfig,
+      aboutConfig: statePayload?.aboutConfig ?? aboutConfig,
+      offTheRecordConfig: statePayload?.offTheRecordConfig ?? offTheRecordConfig,
+      currentlyReading: statePayload?.currentlyReading ?? currentlyReading,
+      stats: statePayload?.stats ?? stats,
+      timelineStats: statePayload?.timelineStats ?? timelineStats,
+      timelineMilestones: statePayload?.timelineMilestones ?? timelineMilestones,
+      intelligenceStats: statePayload?.intelligenceStats ?? intelligenceStats,
+      postLikes: statePayload?.postLikes ?? postLikes,
+      readerPollVotes: statePayload?.readerPollVotes ?? readerPollVotes,
+      witnessComments: statePayload?.witnessComments ?? witnessComments,
+      userTheories: statePayload?.userTheories ?? userTheories,
+      offTheRecordGenres: statePayload?.offTheRecordGenres ?? offTheRecordGenres,
+      archiveGenres: statePayload?.archiveGenres ?? archiveGenres,
+      bookAlbums: statePayload?.bookAlbums ?? bookAlbums,
+    };
+
+    // Sanitize payload for Firestore (remove undefined fields which crash setDoc)
+    const cleanPayload = JSON.parse(JSON.stringify({
+      ...fullPayload,
+      updatedAt: new Date().toISOString()
+    }));
+
+    let firestoreError: Error | null = null;
+
+    // 1. Primary Firestore Cloud Database Write - Always attempted independently
+    try {
+      await setDoc(doc(db, 'journal_state', 'active'), cleanPayload, { merge: true });
+      setLastFirestoreSync(new Date());
+      setFirestoreSyncError(null);
+    } catch (fsErr: any) {
+      firestoreError = fsErr instanceof Error ? fsErr : new Error(String(fsErr));
+      const formattedMsg = fsErr?.message || String(fsErr);
+      setFirestoreSyncError(formattedMsg);
+      console.error('Firestore cloud database sync error:', fsErr);
+      try {
+        handleFirestoreError(fsErr, OperationType.WRITE, 'journal_state/active');
+      } catch (logErr) {
+        // Formatted JSON error logged to console
+      }
+    }
+
+    // 2. Backend Express Server sync (persists to local disk & initialData.ts fallback)
+    try {
       await fetch('/api/save-state', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           passcode: adminPasscode,
-          ...payload,
+          ...fullPayload,
         }),
       });
-
-      // Also sync to Firestore cloud database
-      try {
-        await setDoc(doc(db, 'journal_state', 'active'), {
-          ...payload,
-          updatedAt: new Date().toISOString()
-        }, { merge: true });
-      } catch (fsErr) {
-        console.warn('Firestore cloud sync skipped/failed:', fsErr);
-      }
-    } catch (e) {
-      console.warn('Server sync skipped/failed (running in client-only mode or dev restart)', e);
+    } catch (serverErr) {
+      console.warn('Server disk sync skipped/failed (client-only or dev restart):', serverErr);
+    } finally {
+      setIsSyncingFirestore(false);
     }
-  }, [adminPasscode, reviews, nonFictionBooks, heroConfig, aboutConfig, offTheRecordConfig, currentlyReading, stats, timelineStats, timelineMilestones, intelligenceStats, postLikes, readerPollVotes, witnessComments, userTheories]);
 
-  // Initial fetch from server and Firestore to get persistent records
+    // If Firestore write failed, throw the error so callers can catch and display
+    if (firestoreError) {
+      throw firestoreError;
+    }
+  }, [
+    adminPasscode,
+    reviews,
+    nonFictionBooks,
+    heroConfig,
+    aboutConfig,
+    offTheRecordConfig,
+    currentlyReading,
+    stats,
+    timelineStats,
+    timelineMilestones,
+    intelligenceStats,
+    postLikes,
+    readerPollVotes,
+    witnessComments,
+    userTheories,
+    offTheRecordGenres,
+    archiveGenres,
+    bookAlbums
+  ]);
+
+  const retryFirestoreSync = useCallback(async (): Promise<void> => {
+    await syncWithServer();
+  }, [syncWithServer]);
+
+  // Initial fetch from Firestore and server to get persistent records
   useEffect(() => {
     let isMounted = true;
 
@@ -644,12 +1194,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       .then((snap) => {
         if (snap.exists() && isMounted) {
           const data = snap.data();
-          if (data.reviews && Array.isArray(data.reviews) && data.reviews.length > 0) setReviews(data.reviews);
-          if (data.nonFictionBooks && Array.isArray(data.nonFictionBooks) && data.nonFictionBooks.length > 0) setNonFictionBooks(data.nonFictionBooks);
+          if (data.reviews && Array.isArray(data.reviews) && data.reviews.length > 0) setReviews(sanitizeReviewsList(data.reviews));
+          if (data.nonFictionBooks && Array.isArray(data.nonFictionBooks) && data.nonFictionBooks.length > 0) setNonFictionBooks(sanitizeNonFictionList(data.nonFictionBooks));
           if (data.heroConfig) setHeroConfig(data.heroConfig);
           if (data.aboutConfig) setAboutConfig(data.aboutConfig);
           if (data.offTheRecordConfig) setOffTheRecordConfig(data.offTheRecordConfig);
-          if (data.currentlyReading) setCurrentlyReading(data.currentlyReading);
+          if (data.currentlyReading) setCurrentlyReading(sanitizeCurrentlyReading(data.currentlyReading));
           if (data.stats) setStats(data.stats);
           if (data.timelineStats) setTimelineStats(data.timelineStats);
           if (data.timelineMilestones && Array.isArray(data.timelineMilestones)) setTimelineMilestones(data.timelineMilestones);
@@ -658,10 +1208,26 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
           if (data.readerPollVotes) setReaderPollVotes(data.readerPollVotes);
           if (data.witnessComments) setWitnessComments(data.witnessComments);
           if (data.userTheories) setUserTheories(data.userTheories);
+          if (data.offTheRecordGenres && Array.isArray(data.offTheRecordGenres) && data.offTheRecordGenres.length > 0) setOffTheRecordGenres(data.offTheRecordGenres);
+          if (data.archiveGenres && Array.isArray(data.archiveGenres) && data.archiveGenres.length > 0) setArchiveGenres(data.archiveGenres);
+          if (Array.isArray(data.bookAlbums)) {
+            setBookAlbums(data.bookAlbums);
+          } else {
+            const revs = Array.isArray(data.reviews) && data.reviews.length > 0 ? sanitizeReviewsList(data.reviews) : INITIAL_REVIEWS;
+            const nfs = Array.isArray(data.nonFictionBooks) && data.nonFictionBooks.length > 0 ? sanitizeNonFictionList(data.nonFictionBooks) : INITIAL_NON_FICTION_BOOKS;
+            setBookAlbums((prev) => (prev.length > 0 ? prev : deriveAlbumsFromBooks(revs, nfs)));
+          }
+          setLastFirestoreSync(new Date());
+          setFirestoreSyncError(null);
         }
       })
       .catch((err) => {
-        console.log('Firestore initial load skipped, falling back to local/server:', err);
+        console.warn('Firestore initial load error:', err);
+        try {
+          handleFirestoreError(err, OperationType.GET, 'journal_state/active');
+        } catch {
+          // Logged
+        }
       });
 
     fetch('/api/state')
@@ -672,10 +1238,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       .then((data) => {
         if (!isMounted || !data) return;
         if (data.reviews && Array.isArray(data.reviews) && data.reviews.length > 0) {
-          setReviews(data.reviews);
+          setReviews(sanitizeReviewsList(data.reviews));
         }
         if (data.nonFictionBooks && Array.isArray(data.nonFictionBooks) && data.nonFictionBooks.length > 0) {
-          setNonFictionBooks(data.nonFictionBooks);
+          setNonFictionBooks(sanitizeNonFictionList(data.nonFictionBooks));
         }
         if (data.heroConfig) {
           setHeroConfig(data.heroConfig);
@@ -687,7 +1253,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
           setOffTheRecordConfig(data.offTheRecordConfig);
         }
         if (data.currentlyReading) {
-          setCurrentlyReading(data.currentlyReading);
+          setCurrentlyReading(sanitizeCurrentlyReading(data.currentlyReading));
         }
         if (data.stats) {
           setStats(data.stats);
@@ -700,6 +1266,19 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
         if (data.intelligenceStats) {
           setIntelligenceStats(data.intelligenceStats);
+        }
+        if (data.offTheRecordGenres && Array.isArray(data.offTheRecordGenres) && data.offTheRecordGenres.length > 0) {
+          setOffTheRecordGenres(data.offTheRecordGenres);
+        }
+        if (data.archiveGenres && Array.isArray(data.archiveGenres) && data.archiveGenres.length > 0) {
+          setArchiveGenres(data.archiveGenres);
+        }
+        if (Array.isArray(data.bookAlbums)) {
+          setBookAlbums(data.bookAlbums);
+        } else if (data.reviews || data.nonFictionBooks) {
+          const revs = Array.isArray(data.reviews) ? sanitizeReviewsList(data.reviews) : INITIAL_REVIEWS;
+          const nfs = Array.isArray(data.nonFictionBooks) ? sanitizeNonFictionList(data.nonFictionBooks) : INITIAL_NON_FICTION_BOOKS;
+          setBookAlbums((prev) => (prev.length > 0 ? prev : deriveAlbumsFromBooks(revs, nfs)));
         }
         if (data.postLikes) {
           setPostLikes(data.postLikes);
@@ -777,6 +1356,14 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       console.warn('Storage save error', e);
     }
   }, [nonFictionBooks]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEYS.BOOK_ALBUMS, JSON.stringify(bookAlbums));
+    } catch (e) {
+      console.warn('Storage save error', e);
+    }
+  }, [bookAlbums]);
 
   useEffect(() => {
     try {
@@ -907,9 +1494,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   }, [adminPasscode]);
 
-  // Unlock Admin Clearance
+  // Unlock Admin / Chief Investigator Clearance
   const unlockAdmin = async (passcode: string): Promise<boolean> => {
     const trimmed = passcode.trim();
+    if (!trimmed) return false;
     
     // 1. Try server verification
     try {
@@ -921,20 +1509,34 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (res.ok) {
         setIsAdminUnlocked(true);
         setAdminPasscodeState(trimmed);
+        try {
+          sessionStorage.setItem(STORAGE_KEYS.ADMIN_UNLOCKED, 'true');
+          localStorage.setItem(STORAGE_KEYS.ADMIN_PASSCODE, trimmed);
+        } catch (e) {
+          console.warn('Storage save error', e);
+        }
         return true;
+      } else {
+        // Server responded and explicitly denied credentials
+        return false;
       }
     } catch (e) {
-      console.log('Server verify skipped, testing local', e);
+      console.warn('Server verify network error, testing local fallback', e);
+      // 2. Client fallback verification ONLY if server is unreachable
+      const target = (adminPasscode || INITIAL_ADMIN_PASSCODE || '').trim();
+      if (target && trimmed === target) {
+        setIsAdminUnlocked(true);
+        setAdminPasscodeState(trimmed);
+        try {
+          sessionStorage.setItem(STORAGE_KEYS.ADMIN_UNLOCKED, 'true');
+          localStorage.setItem(STORAGE_KEYS.ADMIN_PASSCODE, trimmed);
+        } catch (err) {
+          console.warn('Storage save error', err);
+        }
+        return true;
+      }
+      return false;
     }
-
-    // 2. Client fallback verification
-    const target = (adminPasscode || INITIAL_ADMIN_PASSCODE || 'detective').trim();
-    if (trimmed === target || trimmed === 'detective' || trimmed === 'midnight') {
-      setIsAdminUnlocked(true);
-      return true;
-    }
-
-    return false;
   };
 
   const lockAdmin = () => {
@@ -948,14 +1550,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   // Change Admin Passcode - updates server & initialData.ts permanently
-  const setAdminPasscode = async (newPasscode: string) => {
-    if (!newPasscode || !newPasscode.trim()) return false;
+  const setAdminPasscode = async (newPasscode: string): Promise<boolean> => {
+    if (!newPasscode || !newPasscode.trim() || newPasscode.trim().length < 4) return false;
     const clean = newPasscode.trim();
 
-    setAdminPasscodeState(clean);
-
     try {
-      await fetch('/api/change-passcode', {
+      const res = await fetch('/api/change-passcode', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -963,10 +1563,23 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
           newPasscode: clean,
         }),
       });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.message || 'Server rejected passcode update.');
+      }
+
+      setAdminPasscodeState(clean);
+      try {
+        localStorage.setItem(STORAGE_KEYS.ADMIN_PASSCODE, clean);
+      } catch (e) {
+        console.warn('Storage save error', e);
+      }
+      return true;
     } catch (e) {
       console.warn('Server passcode update sync error', e);
+      throw e;
     }
-    return true;
   };
 
   // GitHub Actions
@@ -1025,15 +1638,22 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     setGithubUser(null);
   };
 
-  const syncToGitHub = async (): Promise<{ success: boolean; message: string; gistUrl?: string }> => {
+  const syncToGitHub = async (customToken?: string): Promise<{ success: boolean; message: string; gistUrl?: string }> => {
     try {
-      const res = await fetch('/api/github/sync', { method: 'POST' });
+      const res = await fetch('/api/github/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(customToken ? { token: customToken.trim() } : {})
+      });
       const data = await res.json();
       if (res.ok && data.success) {
         setGithubUser(prev => prev ? {
           ...prev,
           lastGistId: data.gistId,
           lastGistUrl: data.gistUrl,
+          repository: data.repository || prev.repository,
+          repositoryUrl: data.repository ? `https://github.com/${data.repository}` : prev.repositoryUrl,
+          lastCommitUrl: data.commitUrl || prev.lastCommitUrl,
           lastSyncedAt: data.syncedAt || new Date().toISOString()
         } : null);
         return { success: true, message: data.message, gistUrl: data.gistUrl };
@@ -1052,7 +1672,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
   };
 
-  const addReview = (reviewData: Omit<BookReview, 'id' | 'caseNumber'> & { id?: string; caseNumber?: string }) => {
+  const addReview = async (reviewData: Omit<BookReview, 'id' | 'caseNumber'> & { id?: string; caseNumber?: string }): Promise<BookReview> => {
     const nextCaseNum = reviewData.caseNumber?.trim() || String(reviews.length + 1).padStart(3, '0');
     const newRev: BookReview = {
       ...reviewData,
@@ -1087,40 +1707,79 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     setStats(updatedStats);
 
-    // Persist to server permanently
-    syncWithServer({
+    // Update bookAlbums if seriesName was supplied
+    let updatedAlbums = bookAlbums;
+    if (newRev.seriesName?.trim()) {
+      updatedAlbums = computeNextAlbumsForBook(
+        bookAlbums,
+        newRev.seriesName,
+        { kind: 'thriller', id: newRev.id },
+        newRev.seriesOrder
+      );
+      setBookAlbums(updatedAlbums);
+    }
+
+    // Persist to Firestore cloud database and server permanently
+    await syncWithServer({
       reviews: updated,
       postLikes: updatedLikes,
       readerPollVotes: updatedPolls,
       stats: updatedStats,
+      bookAlbums: updatedAlbums,
     });
+
+    return newRev;
   };
 
-  const updateReview = (id: string, updated: Partial<BookReview>) => {
-    const updatedReviews = reviews.map((r) => (r.id === id ? { ...r, ...updated } : r));
+  const updateReview = async (id: string, updated: Partial<BookReview>): Promise<void> => {
+    const mergeReview = (r: BookReview): BookReview => {
+      const next = { ...r, ...updated };
+      if ('seriesName' in updated && !updated.seriesName) {
+        delete next.seriesName;
+        delete next.seriesOrder;
+      }
+      return next;
+    };
+    const updatedReviews = reviews.map((r) => (r.id === id ? mergeReview(r) : r));
     setReviews(updatedReviews);
     if (selectedReview && selectedReview.id === id) {
-      setSelectedReview((prev) => (prev ? { ...prev, ...updated } : null));
+      setSelectedReview((prev) => (prev ? mergeReview(prev) : null));
     }
-    syncWithServer({ reviews: updatedReviews });
+    let updatedAlbums = bookAlbums;
+    if ('seriesName' in updated || 'seriesOrder' in updated) {
+      const targetRev = updatedReviews.find((r) => r.id === id);
+      updatedAlbums = computeNextAlbumsForBook(
+        bookAlbums,
+        targetRev?.seriesName,
+        { kind: 'thriller', id },
+        targetRev?.seriesOrder
+      );
+      setBookAlbums(updatedAlbums);
+    }
+    await syncWithServer({ reviews: updatedReviews, bookAlbums: updatedAlbums });
   };
 
-  const deleteReview = (id: string) => {
+  const deleteReview = async (id: string): Promise<void> => {
     const updatedReviews = reviews.filter((r) => r.id !== id);
+    const updatedAlbums = bookAlbums.map((a) => ({
+      ...a,
+      items: a.items.filter((it) => !(it.kind === 'thriller' && it.id === id)),
+    }));
     setReviews(updatedReviews);
+    setBookAlbums(updatedAlbums);
     if (selectedReview?.id === id) {
       setSelectedReview(null);
     }
-    syncWithServer({ reviews: updatedReviews });
+    await syncWithServer({ reviews: updatedReviews, bookAlbums: updatedAlbums });
   };
 
-  const duplicateReview = (id: string) => {
+  const duplicateReview = async (id: string): Promise<BookReview | void> => {
     const target = reviews.find((r) => r.id === id);
     if (!target) return;
     const nextCaseNum = String(reviews.length + 1).padStart(3, '0');
     const cloned: BookReview = {
       ...target,
-      id: `case-${nextCaseNum}`,
+      id: `case-${nextCaseNum}-${Date.now()}`,
       caseNumber: nextCaseNum,
       title: `${target.title} (Re-Investigation)`,
       dateRead: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
@@ -1128,16 +1787,17 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     const updatedReviews = [cloned, ...reviews];
     setReviews(updatedReviews);
-    syncWithServer({ reviews: updatedReviews });
+    await syncWithServer({ reviews: updatedReviews });
+    return cloned;
   };
 
-  const updateCurrentlyReading = (cr: Partial<CurrentlyReading>) => {
+  const updateCurrentlyReading = async (cr: Partial<CurrentlyReading>): Promise<void> => {
     const updated = { ...currentlyReading, ...cr };
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const addBookToCurrentReads = (book: Omit<CurrentlyReadingBook, 'id'>) => {
+  const addBookToCurrentReads = async (book: Omit<CurrentlyReadingBook, 'id'>): Promise<void> => {
     const newBook: CurrentlyReadingBook = {
       ...book,
       id: `cr-book-${Date.now()}`,
@@ -1148,20 +1808,20 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       additionalBooks: [...currentAdditional, newBook],
     };
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const removeBookFromCurrentReads = (id: string) => {
+  const removeBookFromCurrentReads = async (id: string): Promise<void> => {
     const currentAdditional = currentlyReading.additionalBooks || [];
     const updated = {
       ...currentlyReading,
       additionalBooks: currentAdditional.filter((b) => b.id !== id),
     };
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const updateAdditionalBook = (id: string, updatedFields: Partial<CurrentlyReadingBook>) => {
+  const updateAdditionalBook = async (id: string, updatedFields: Partial<CurrentlyReadingBook>): Promise<void> => {
     const currentAdditional = currentlyReading.additionalBooks || [];
     const updatedBooks = currentAdditional.map((b) => (b.id === id ? { ...b, ...updatedFields } : b));
     const updated = {
@@ -1169,10 +1829,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       additionalBooks: updatedBooks,
     };
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const moveAdditionalToPrimary = (id: string) => {
+  const moveAdditionalToPrimary = async (id: string): Promise<void> => {
     const currentAdditional = currentlyReading.additionalBooks || [];
     const targetBook = currentAdditional.find((b) => b.id === id);
     if (!targetBook) return;
@@ -1216,10 +1876,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
 
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const moveAdditionalToCompanion = (id: string) => {
+  const moveAdditionalToCompanion = async (id: string): Promise<void> => {
     const currentAdditional = currentlyReading.additionalBooks || [];
     const targetBook = currentAdditional.find((b) => b.id === id);
     if (!targetBook) return;
@@ -1261,10 +1921,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
 
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const movePrimaryToAdditional = () => {
+  const movePrimaryToAdditional = async (): Promise<void> => {
     if (!currentlyReading.title || currentlyReading.title.trim().length === 0) return;
     const oldPrimaryAsAdditional: CurrentlyReadingBook = {
       id: `cr-book-primary-moved-${Date.now()}`,
@@ -1291,10 +1951,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       additionalBooks: [oldPrimaryAsAdditional, ...(currentlyReading.additionalBooks || [])],
     };
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
-  const moveCompanionToAdditional = () => {
+  const moveCompanionToAdditional = async (): Promise<void> => {
     if (!currentlyReading.nonThrillerTitle || currentlyReading.nonThrillerTitle.trim().length === 0) return;
     const oldCompanionAsAdditional: CurrentlyReadingBook = {
       id: `cr-book-comp-moved-${Date.now()}`,
@@ -1320,7 +1980,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       additionalBooks: [oldCompanionAsAdditional, ...(currentlyReading.additionalBooks || [])],
     };
     setCurrentlyReading(updated);
-    syncWithServer({ currentlyReading: updated });
+    await syncWithServer({ currentlyReading: updated });
   };
 
   const openEditAdditionalBook = (id: string) => {
@@ -1333,9 +1993,13 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     setIsCompleteBookModalOpen(true);
   };
 
-  const archiveCurrentBook = (params: ArchiveCurrentBookParams) => {
+  const archiveCurrentBook = async (params: ArchiveCurrentBookParams): Promise<void> => {
     const today = params.dateFinished || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     const currentYear = new Date().getFullYear();
+
+    let updatedReviews = reviews;
+    let updatedNonFiction = nonFictionBooks;
+    let updatedStats = stats;
 
     if (params.targetArchive === 'case') {
       const nextNum = String(reviews.length + 1).padStart(3, '0');
@@ -1369,18 +2033,23 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         suspects: [],
         clues: [],
         likes: 1,
+        ...(params.seriesName?.trim()
+          ? {
+              seriesName: params.seriesName.trim(),
+              seriesOrder: params.seriesOrder ? Number(params.seriesOrder) : undefined,
+            }
+          : {}),
       };
-      const updatedReviews = [newReview, ...reviews];
+      updatedReviews = [newReview, ...reviews];
       setReviews(updatedReviews);
 
-      const updatedStats = {
+      updatedStats = {
         ...stats,
         booksRead: (stats.booksRead || 0) + 1,
         thrillersRead: (stats.thrillersRead || 0) + 1,
         totalPagesRead: (stats.totalPagesRead || 0) + (Number(params.pages) || 0),
       };
       setStats(updatedStats);
-      syncWithServer({ reviews: updatedReviews, stats: updatedStats });
     } else {
       // Off the Record
       const nextCatNum = `NF-${String(nonFictionBooks.length + 1).padStart(3, '0')}`;
@@ -1406,17 +2075,22 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         keyTakeaways: ['Book marked complete and safely archived.'],
         mindsetRatings: { readability: 5, actionability: 4, intellectualImpact: 5, originality: 4 },
         likes: 1,
+        ...(params.seriesName?.trim()
+          ? {
+              seriesName: params.seriesName.trim(),
+              seriesOrder: params.seriesOrder ? Number(params.seriesOrder) : undefined,
+            }
+          : {}),
       };
-      const updatedNonFiction = [newNonFiction, ...nonFictionBooks];
+      updatedNonFiction = [newNonFiction, ...nonFictionBooks];
       setNonFictionBooks(updatedNonFiction);
 
-      const updatedStats = {
+      updatedStats = {
         ...stats,
         booksRead: (stats.booksRead || 0) + 1,
         totalPagesRead: (stats.totalPagesRead || 0) + (Number(params.pages) || 0),
       };
       setStats(updatedStats);
-      syncWithServer({ nonFictionBooks: updatedNonFiction, stats: updatedStats });
     }
 
     // Remove from currently reading
@@ -1469,49 +2143,71 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     }
 
     setCurrentlyReading(updatedCR);
-    syncWithServer({ currentlyReading: updatedCR });
     setIsCompleteBookModalOpen(false);
     setCompletingBookTarget(null);
+
+    let updatedAlbums = bookAlbums;
+    if (params.seriesName?.trim()) {
+      const createdItem: BookAlbumItem =
+        params.targetArchive === 'case'
+          ? { kind: 'thriller', id: updatedReviews[0].id }
+          : { kind: 'non-fiction', id: updatedNonFiction[0].id };
+      updatedAlbums = computeNextAlbumsForBook(
+        bookAlbums,
+        params.seriesName,
+        createdItem,
+        params.seriesOrder ? Number(params.seriesOrder) : undefined
+      );
+      setBookAlbums(updatedAlbums);
+    }
+
+    await syncWithServer({
+      reviews: updatedReviews,
+      nonFictionBooks: updatedNonFiction,
+      stats: updatedStats,
+      currentlyReading: updatedCR,
+      bookAlbums: updatedAlbums,
+    });
   };
 
-  const updateStats = (st: Partial<ReadingStats>) => {
+  const updateStats = async (st: Partial<ReadingStats>): Promise<void> => {
     const updated = { ...stats, ...st };
     setStats(updated);
-    syncWithServer({ stats: updated });
+    await syncWithServer({ stats: updated });
   };
 
-  const updateTimelineStats = (st: Partial<TimelineStats>) => {
+  const updateTimelineStats = async (st: Partial<TimelineStats>): Promise<void> => {
     const updated = { ...timelineStats, ...st };
     setTimelineStats(updated);
-    syncWithServer({ timelineStats: updated });
+    await syncWithServer({ timelineStats: updated });
   };
 
-  const addTimelineMilestone = (ms: Omit<TimelineMilestone, 'id'>) => {
+  const addTimelineMilestone = async (ms: Omit<TimelineMilestone, 'id'>): Promise<void> => {
     const newMs: TimelineMilestone = {
       ...ms,
       id: `ms-${Date.now()}`,
     };
     const updated = [newMs, ...timelineMilestones];
     setTimelineMilestones(updated);
-    syncWithServer({ timelineMilestones: updated });
+    await syncWithServer({ timelineMilestones: updated });
   };
 
-  const updateTimelineMilestone = (id: string, updatedMs: Partial<TimelineMilestone>) => {
+  const updateTimelineMilestone = async (id: string, updatedMs: Partial<TimelineMilestone>): Promise<void> => {
     const updated = timelineMilestones.map((m) => (m.id === id ? { ...m, ...updatedMs } : m));
     setTimelineMilestones(updated);
-    syncWithServer({ timelineMilestones: updated });
+    await syncWithServer({ timelineMilestones: updated });
   };
 
-  const deleteTimelineMilestone = (id: string) => {
+  const deleteTimelineMilestone = async (id: string): Promise<void> => {
     const updated = timelineMilestones.filter((m) => m.id !== id);
     setTimelineMilestones(updated);
-    syncWithServer({ timelineMilestones: updated });
+    await syncWithServer({ timelineMilestones: updated });
   };
 
-  const updateIntelligenceStats = (st: Partial<IntelligenceStats>) => {
+  const updateIntelligenceStats = async (st: Partial<IntelligenceStats>): Promise<void> => {
     const updated = { ...intelligenceStats, ...st };
     setIntelligenceStats(updated);
-    syncWithServer({ intelligenceStats: updated });
+    await syncWithServer({ intelligenceStats: updated });
   };
 
   const setVisitorGuess = (reviewId: string, suspectId: string) => {
@@ -1682,7 +2378,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   };
 
   // Non-Fiction / Other Books CRUD & Notes
-  const addNonFictionBook = (bookData: Omit<NonFictionBook, 'id' | 'catalogNumber'> & { id?: string; catalogNumber?: string }) => {
+  const addNonFictionBook = async (bookData: Omit<NonFictionBook, 'id' | 'catalogNumber'> & { id?: string; catalogNumber?: string }): Promise<NonFictionBook> => {
     const nextCatNum = bookData.catalogNumber?.trim() || `NF-${String(nonFictionBooks.length + 1).padStart(3, '0')}`;
     const newBook: NonFictionBook = {
       ...bookData,
@@ -1692,28 +2388,63 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     const updated = [newBook, ...nonFictionBooks];
     setNonFictionBooks(updated);
-    syncWithServer({ nonFictionBooks: updated });
+    let updatedAlbums = bookAlbums;
+    if (newBook.seriesName?.trim()) {
+      updatedAlbums = computeNextAlbumsForBook(
+        bookAlbums,
+        newBook.seriesName,
+        { kind: 'non-fiction', id: newBook.id },
+        newBook.seriesOrder
+      );
+      setBookAlbums(updatedAlbums);
+    }
+    await syncWithServer({ nonFictionBooks: updated, bookAlbums: updatedAlbums });
+    return newBook;
   };
 
-  const updateNonFictionBook = (id: string, updated: Partial<NonFictionBook>) => {
-    const updatedBooks = nonFictionBooks.map((b) => (b.id === id ? { ...b, ...updated } : b));
+  const updateNonFictionBook = async (id: string, updated: Partial<NonFictionBook>): Promise<void> => {
+    const mergeBook = (b: NonFictionBook): NonFictionBook => {
+      const next = { ...b, ...updated };
+      if ('seriesName' in updated && !updated.seriesName) {
+        delete next.seriesName;
+        delete next.seriesOrder;
+      }
+      return next;
+    };
+    const updatedBooks = nonFictionBooks.map((b) => (b.id === id ? mergeBook(b) : b));
     setNonFictionBooks(updatedBooks);
     if (selectedNonFictionBook && selectedNonFictionBook.id === id) {
-      setSelectedNonFictionBook((prev) => (prev ? { ...prev, ...updated } : null));
+      setSelectedNonFictionBook((prev) => (prev ? mergeBook(prev) : null));
     }
-    syncWithServer({ nonFictionBooks: updatedBooks });
+    let updatedAlbums = bookAlbums;
+    if ('seriesName' in updated || 'seriesOrder' in updated) {
+      const targetBook = updatedBooks.find((b) => b.id === id);
+      updatedAlbums = computeNextAlbumsForBook(
+        bookAlbums,
+        targetBook?.seriesName,
+        { kind: 'non-fiction', id },
+        targetBook?.seriesOrder
+      );
+      setBookAlbums(updatedAlbums);
+    }
+    await syncWithServer({ nonFictionBooks: updatedBooks, bookAlbums: updatedAlbums });
   };
 
-  const deleteNonFictionBook = (id: string) => {
+  const deleteNonFictionBook = async (id: string): Promise<void> => {
     const updatedBooks = nonFictionBooks.filter((b) => b.id !== id);
+    const updatedAlbums = bookAlbums.map((a) => ({
+      ...a,
+      items: a.items.filter((it) => !(it.kind === 'non-fiction' && it.id === id)),
+    }));
     setNonFictionBooks(updatedBooks);
+    setBookAlbums(updatedAlbums);
     if (selectedNonFictionBook?.id === id) {
       setSelectedNonFictionBook(null);
     }
-    syncWithServer({ nonFictionBooks: updatedBooks });
+    await syncWithServer({ nonFictionBooks: updatedBooks, bookAlbums: updatedAlbums });
   };
 
-  const duplicateNonFictionBook = (id: string) => {
+  const duplicateNonFictionBook = async (id: string): Promise<NonFictionBook | void> => {
     const target = nonFictionBooks.find((b) => b.id === id);
     if (!target) return;
     const nextCatNum = `NF-${String(nonFictionBooks.length + 1).padStart(3, '0')}`;
@@ -1727,10 +2458,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
     const updatedBooks = [cloned, ...nonFictionBooks];
     setNonFictionBooks(updatedBooks);
-    syncWithServer({ nonFictionBooks: updatedBooks });
+    await syncWithServer({ nonFictionBooks: updatedBooks });
+    return cloned;
   };
 
-  const toggleLikeNonFictionBook = (id: string) => {
+  const toggleLikeNonFictionBook = async (id: string): Promise<void> => {
+    let updatedList: NonFictionBook[] = [];
     setNonFictionBooks((prev) => {
       const updated = prev.map((b) => {
         if (b.id === id) {
@@ -1738,13 +2471,15 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
         return b;
       });
-      syncWithServer({ nonFictionBooks: updated });
+      updatedList = updated;
       return updated;
     });
+    await syncWithServer({ nonFictionBooks: updatedList });
   };
 
-  const addNonFictionScratchpadNote = (bookId: string, note: string) => {
+  const addNonFictionScratchpadNote = async (bookId: string, note: string): Promise<void> => {
     if (!note || !note.trim()) return;
+    let updatedList: NonFictionBook[] = [];
     setNonFictionBooks((prev) => {
       const updated = prev.map((b) => {
         if (b.id === bookId) {
@@ -1753,27 +2488,28 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
         return b;
       });
-      syncWithServer({ nonFictionBooks: updated });
+      updatedList = updated;
       return updated;
     });
+    await syncWithServer({ nonFictionBooks: updatedList });
   };
 
   // Hero Section Editor
-  const updateHeroConfig = (config: Partial<HeroConfig>) => {
+  const updateHeroConfig = async (config: Partial<HeroConfig>): Promise<void> => {
     const updated = { ...heroConfig, ...config };
     setHeroConfig(updated);
-    syncWithServer({ heroConfig: updated });
+    await syncWithServer({ heroConfig: updated });
   };
 
   // About Section Editor
-  const updateAboutConfig = (config: Partial<AboutConfig>) => {
+  const updateAboutConfig = async (config: Partial<AboutConfig>): Promise<void> => {
     const updated = { ...aboutConfig, ...config };
     setAboutConfig(updated);
-    syncWithServer({ aboutConfig: updated });
+    await syncWithServer({ aboutConfig: updated });
   };
 
   // Off The Record Section Editor
-  const updateOffTheRecordConfig = (config: Partial<OffTheRecordConfig>) => {
+  const updateOffTheRecordConfig = async (config: Partial<OffTheRecordConfig>): Promise<void> => {
     const updated = { ...offTheRecordConfig, ...config };
     setOffTheRecordConfig(updated);
     try {
@@ -1781,7 +2517,7 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
     } catch (e) {
       console.warn('Storage save error', e);
     }
-    syncWithServer({ offTheRecordConfig: updated });
+    await syncWithServer({ offTheRecordConfig: updated });
   };
 
   // Redeployment & Data Export / Import utilities
@@ -1803,11 +2539,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       readerPollVotes,
       witnessComments,
       userTheories,
+      bookAlbums,
     };
     return JSON.stringify(exportBundle, null, 2);
   };
 
-  const importDataFromJSON = (jsonString: string): { success: boolean; message: string } => {
+  const importDataFromJSON = async (jsonString: string): Promise<{ success: boolean; message: string }> => {
     try {
       const parsed = JSON.parse(jsonString);
       if (!parsed.reviews || !Array.isArray(parsed.reviews)) {
@@ -1826,8 +2563,12 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
       if (parsed.readerPollVotes) setReaderPollVotes(parsed.readerPollVotes);
       if (parsed.witnessComments) setWitnessComments(parsed.witnessComments);
       if (parsed.userTheories) setUserTheories(parsed.userTheories);
+      const nextAlbums = Array.isArray(parsed.bookAlbums)
+        ? parsed.bookAlbums
+        : deriveAlbumsFromBooks(parsed.reviews, parsed.nonFictionBooks || nonFictionBooks);
+      setBookAlbums(nextAlbums);
 
-      syncWithServer({
+      await syncWithServer({
         reviews: parsed.reviews,
         nonFictionBooks: parsed.nonFictionBooks || nonFictionBooks,
         heroConfig: parsed.heroConfig || heroConfig,
@@ -1841,9 +2582,10 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
         readerPollVotes: parsed.readerPollVotes,
         witnessComments: parsed.witnessComments,
         userTheories: parsed.userTheories,
+        bookAlbums: nextAlbums,
       });
 
-      return { success: true, message: `Successfully restored ${parsed.reviews.length} thriller case files, ${parsed.nonFictionBooks?.length || 0} field research books, hero config, about config, and metrics!` };
+      return { success: true, message: `Successfully restored ${parsed.reviews.length} thriller case files, ${parsed.nonFictionBooks?.length || 0} field research books, ${nextAlbums.length} book albums, hero config, about config, and metrics!` };
     } catch (e: any) {
       return { success: false, message: `Failed to parse JSON file: ${e.message}` };
     }
@@ -1859,7 +2601,8 @@ export const JournalProvider: React.FC<{ children: ReactNode }> = ({ children })
   TimelineMilestone,
   TimelineStats,
   IntelligenceStats,
-  AboutConfig
+  AboutConfig,
+  OffTheRecordConfig
 } from '../types';
 
 export const INITIAL_ADMIN_PASSCODE: string = ${JSON.stringify(adminPasscode || 'detective')};
@@ -1886,7 +2629,7 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
 `;
   };
 
-  const resetToDefaults = () => {
+  const resetToDefaults = async (): Promise<void> => {
     if (window.confirm('Reset the journal archive to original default case files? All custom edits will be reverted.')) {
       setReviews(INITIAL_REVIEWS);
       setNonFictionBooks(INITIAL_NON_FICTION_BOOKS);
@@ -1909,8 +2652,10 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
       setReaderPollVotes(INITIAL_POLLS_SEED);
       setUserPollVotes({});
       setWitnessComments(INITIAL_COMMENTS_SEED);
+      const defaultAlbums = deriveAlbumsFromBooks(INITIAL_REVIEWS, INITIAL_NON_FICTION_BOOKS);
+      setBookAlbums(defaultAlbums);
       localStorage.clear();
-      syncWithServer({
+      await syncWithServer({
         reviews: INITIAL_REVIEWS,
         nonFictionBooks: INITIAL_NON_FICTION_BOOKS,
         heroConfig: INITIAL_HERO_CONFIG,
@@ -1925,8 +2670,220 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         readerPollVotes: INITIAL_POLLS_SEED,
         witnessComments: INITIAL_COMMENTS_SEED,
         userTheories: [],
+        bookAlbums: defaultAlbums,
       });
     }
+  };
+
+  const allAlbumNames = useMemo(() => {
+    const names = new Set<string>();
+    bookAlbums.forEach((a) => {
+      if (a.name?.trim()) names.add(a.name.trim());
+    });
+    reviews.forEach((r) => {
+      if (r.seriesName?.trim()) names.add(r.seriesName.trim());
+    });
+    nonFictionBooks.forEach((b) => {
+      if (b.seriesName?.trim()) names.add(b.seriesName.trim());
+    });
+    return Array.from(names).sort((a, b) => a.localeCompare(b));
+  }, [bookAlbums, reviews, nonFictionBooks]);
+
+  const syncBookSeriesMetadataFromAlbums = (
+    albumsList: BookAlbum[],
+    reviewsList: BookReview[],
+    nfList: NonFictionBook[]
+  ) => {
+    const revMap = new Map<string, { name: string; order: number }>();
+    const nfMap = new Map<string, { name: string; order: number }>();
+    albumsList.forEach((album) => {
+      album.items.forEach((item, idx) => {
+        if (item.kind === 'thriller' && !revMap.has(item.id)) {
+          revMap.set(item.id, { name: album.name, order: idx + 1 });
+        } else if (item.kind === 'non-fiction' && !nfMap.has(item.id)) {
+          nfMap.set(item.id, { name: album.name, order: idx + 1 });
+        }
+      });
+    });
+
+    const nextReviews = reviewsList.map((r) => {
+      const assigned = revMap.get(r.id);
+      if (assigned) {
+        return { ...r, seriesName: assigned.name, seriesOrder: assigned.order };
+      }
+      if (r.seriesName || r.seriesOrder !== undefined) {
+        const clone = { ...r };
+        delete clone.seriesName;
+        delete clone.seriesOrder;
+        return clone;
+      }
+      return r;
+    });
+
+    const nextNf = nfList.map((b) => {
+      const assigned = nfMap.get(b.id);
+      if (assigned) {
+        return { ...b, seriesName: assigned.name, seriesOrder: assigned.order };
+      }
+      if (b.seriesName || b.seriesOrder !== undefined) {
+        const clone = { ...b };
+        delete clone.seriesName;
+        delete clone.seriesOrder;
+        return clone;
+      }
+      return b;
+    });
+
+    return { nextReviews, nextNf };
+  };
+
+  const openAlbumEditor = (album: BookAlbum | null = null) => {
+    setEditingAlbum(album);
+    setIsAlbumEditorOpen(true);
+  };
+
+  const openAlbumByName = (name: string) => {
+    const target = name.trim().toLowerCase();
+    if (!target) return;
+    const found = bookAlbums.find((a) => a.name.trim().toLowerCase() === target);
+    if (found) {
+      setViewingAlbumId(found.id);
+    } else {
+      openAlbumEditor(null);
+    }
+  };
+
+  const saveBookAlbum = async (payload: {
+    id?: string;
+    name: string;
+    description?: string;
+    items: BookAlbumItem[];
+  }): Promise<BookAlbum> => {
+    const cleanName = payload.name.trim();
+    const now = new Date().toISOString();
+    const dedupedItems: BookAlbumItem[] = [];
+    const seen = new Set<string>();
+    payload.items.forEach((it) => {
+      const key = `${it.kind}:${it.id}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        dedupedItems.push(it);
+      }
+    });
+
+    const existing = payload.id ? bookAlbums.find((a) => a.id === payload.id) : null;
+    const savedAlbum: BookAlbum = existing
+      ? {
+          ...existing,
+          name: cleanName || existing.name,
+          description: payload.description?.trim() || '',
+          items: dedupedItems,
+          updatedAt: now,
+        }
+      : {
+          id: `album-${cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'custom'}-${Date.now()}`,
+          name: cleanName || 'Untitled Album',
+          description: payload.description?.trim() || '',
+          items: dedupedItems,
+          createdAt: now,
+          updatedAt: now,
+        };
+
+    const nextAlbums = existing
+      ? bookAlbums.map((a) => (a.id === savedAlbum.id ? savedAlbum : a))
+      : [savedAlbum, ...bookAlbums];
+
+    const { nextReviews, nextNf } = syncBookSeriesMetadataFromAlbums(nextAlbums, reviews, nonFictionBooks);
+    setBookAlbums(nextAlbums);
+    setReviews(nextReviews);
+    setNonFictionBooks(nextNf);
+
+    if (selectedReview) {
+      const refreshed = nextReviews.find((r) => r.id === selectedReview.id);
+      if (refreshed) setSelectedReview(refreshed);
+    }
+    if (selectedNonFictionBook) {
+      const refreshed = nextNf.find((b) => b.id === selectedNonFictionBook.id);
+      if (refreshed) setSelectedNonFictionBook(refreshed);
+    }
+
+    await syncWithServer({
+      bookAlbums: nextAlbums,
+      reviews: nextReviews,
+      nonFictionBooks: nextNf,
+    });
+
+    return savedAlbum;
+  };
+
+  const deleteBookAlbum = async (albumId: string): Promise<void> => {
+    const nextAlbums = bookAlbums.filter((a) => a.id !== albumId);
+    const { nextReviews, nextNf } = syncBookSeriesMetadataFromAlbums(nextAlbums, reviews, nonFictionBooks);
+    setBookAlbums(nextAlbums);
+    setReviews(nextReviews);
+    setNonFictionBooks(nextNf);
+
+    if (viewingAlbumId === albumId) {
+      setViewingAlbumId(null);
+    }
+    if (selectedReview) {
+      const refreshed = nextReviews.find((r) => r.id === selectedReview.id);
+      if (refreshed) setSelectedReview(refreshed);
+    }
+    if (selectedNonFictionBook) {
+      const refreshed = nextNf.find((b) => b.id === selectedNonFictionBook.id);
+      if (refreshed) setSelectedNonFictionBook(refreshed);
+    }
+
+    await syncWithServer({
+      bookAlbums: nextAlbums,
+      reviews: nextReviews,
+      nonFictionBooks: nextNf,
+    });
+  };
+
+  const addBookToAlbum = async (albumId: string, item: BookAlbumItem): Promise<void> => {
+    const album = bookAlbums.find((a) => a.id === albumId);
+    if (!album) return;
+    if (album.items.some((it) => it.kind === item.kind && it.id === item.id)) return;
+    await saveBookAlbum({
+      id: album.id,
+      name: album.name,
+      description: album.description,
+      items: [...album.items, item],
+    });
+  };
+
+  const removeBookFromAlbum = async (albumId: string, item: BookAlbumItem): Promise<void> => {
+    const album = bookAlbums.find((a) => a.id === albumId);
+    if (!album) return;
+    await saveBookAlbum({
+      id: album.id,
+      name: album.name,
+      description: album.description,
+      items: album.items.filter((it) => !(it.kind === item.kind && it.id === item.id)),
+    });
+  };
+
+  const reorderAlbumItems = async (albumId: string, items: BookAlbumItem[]): Promise<void> => {
+    const album = bookAlbums.find((a) => a.id === albumId);
+    if (!album) return;
+    await saveBookAlbum({
+      id: album.id,
+      name: album.name,
+      description: album.description,
+      items,
+    });
+  };
+
+  const assignBookToNamedAlbum = async (
+    albumName: string | undefined,
+    item: BookAlbumItem,
+    preferredOrder?: number
+  ): Promise<void> => {
+    const nextAlbums = computeNextAlbumsForBook(bookAlbums, albumName, item, preferredOrder);
+    setBookAlbums(nextAlbums);
+    await syncWithServer({ bookAlbums: nextAlbums });
   };
 
   return (
@@ -2053,11 +3010,46 @@ export const INITIAL_NON_FICTION_BOOKS: NonFictionBook[] = ${JSON.stringify(nonF
         customThrillerTropes,
         customResearchTropes,
         addCustomThrillerTrope,
+        removeCustomThrillerTrope,
         addCustomResearchTrope,
+        removeCustomResearchTrope,
+        removeTropeFromReview,
+        removeTropeFromNonFiction,
+        offTheRecordGenres,
+        addOffTheRecordGenre,
+        editOffTheRecordGenre,
+        removeOffTheRecordGenre,
+        resetOffTheRecordGenres,
+        archiveGenres,
+        addArchiveGenre,
+        editArchiveGenre,
+        removeArchiveGenre,
+        resetArchiveGenres,
+        bookAlbums,
+        allAlbumNames,
+        viewingAlbumId,
+        setViewingAlbumId,
+        isAlbumEditorOpen,
+        setIsAlbumEditorOpen,
+        editingAlbum,
+        setEditingAlbum,
+        openAlbumEditor,
+        openAlbumByName,
+        saveBookAlbum,
+        deleteBookAlbum,
+        addBookToAlbum,
+        removeBookFromAlbum,
+        reorderAlbumItems,
+        assignBookToNamedAlbum,
         exportDataAsJSON,
         importDataFromJSON,
         generateSeedCode,
         resetToDefaults,
+        isSyncingFirestore,
+        lastFirestoreSync,
+        firestoreSyncError,
+        retryFirestoreSync,
+        syncWithServer,
       }}
     >
       {children}

@@ -83,15 +83,31 @@ export const GitHubAuthModal: React.FC = () => {
     setIsVerifyingToken(true);
     setStatusMsg(null);
 
-    const result = await connectGitHubWithToken(tokenInput.trim());
+    const rawToken = tokenInput.trim();
+    const result = await connectGitHubWithToken(rawToken);
     setIsVerifyingToken(false);
 
     if (result.success) {
       setTokenInput('');
       setStatusMsg({
-        type: 'success',
-        text: `Clearance verified! Connected to GitHub as @${result.user?.username}. Chief Investigator desk unlocked.`
+        type: 'info',
+        text: `Clearance verified for @${result.user?.username}! Pushing non-fiction changes (Stone Blind, Gray After Dark), initialData.ts, and case files to GitHub repository...`
       });
+      setIsSyncing(true);
+      const syncRes = await syncToGitHub(rawToken);
+      setIsSyncing(false);
+      if (syncRes.success) {
+        setStatusMsg({
+          type: 'success',
+          text: `All non-fiction changes (Stone Blind, Gray After Dark), case files, and covers successfully committed to GitHub repository!`,
+          link: syncRes.gistUrl
+        });
+      } else {
+        setStatusMsg({
+          type: 'success',
+          text: `Clearance verified! Connected to GitHub as @${result.user?.username}. Click "Backup to GitHub" to push non-fiction changes.`
+        });
+      }
     } else {
       setStatusMsg({
         type: 'error',
@@ -183,23 +199,31 @@ export const GitHubAuthModal: React.FC = () => {
             </div>
 
             {isGitHubConnected && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleSyncToGist}
-                  disabled={isSyncing}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#8b0000] hover:bg-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
-                  title="Export case files and book ledger to a private GitHub Gist"
-                >
-                  <CloudUpload size={13} />
-                  <span>{isSyncing ? 'Syncing...' : 'Backup to GitHub'}</span>
-                </button>
-                <button
-                  onClick={disconnectGitHub}
-                  className="p-1.5 border border-black hover:bg-[#fee2e2] text-[#8b0000] transition-colors"
-                  title="Disconnect GitHub account"
-                >
-                  <LogOut size={14} />
-                </button>
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleSyncToGist}
+                    disabled={isSyncing}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#8b0000] hover:bg-black text-white text-xs font-sans font-bold uppercase tracking-wider transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 cursor-pointer"
+                    title="Export case files and book ledger to GitHub"
+                  >
+                    <CloudUpload size={13} />
+                    <span>{isSyncing ? 'Syncing...' : 'Backup to GitHub'}</span>
+                  </button>
+                  <button
+                    onClick={disconnectGitHub}
+                    className="p-1.5 border border-black hover:bg-[#fee2e2] text-[#8b0000] transition-colors cursor-pointer"
+                    title="Disconnect GitHub account"
+                  >
+                    <LogOut size={14} />
+                  </button>
+                </div>
+                {githubUser?.lastSyncedAt && (
+                  <span className="text-[9px] font-mono text-[#555] flex items-center gap-1">
+                    <CheckCircle2 size={10} className="text-[#166534]" />
+                    Synced: {new Date(githubUser.lastSyncedAt).toLocaleString()}
+                  </span>
+                )}
               </div>
             )}
           </div>

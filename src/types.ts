@@ -6,7 +6,19 @@ export type Genre =
   | 'Legal Thriller'
   | 'Cozy Mystery'
   | 'Crime & Police Procedural'
-  | 'Gothic Thriller';
+  | 'Gothic Thriller'
+  | (string & {});
+
+export const INITIAL_ARCHIVE_GENRES: string[] = [
+  'Psychological Thriller',
+  'Murder Mystery',
+  'Domestic Thriller',
+  'Locked Room Mystery',
+  'Legal Thriller',
+  'Gothic Thriller',
+  'Crime & Police Procedural',
+  'Cozy Mystery',
+];
 
 export type OtherGenre = 
   | 'Non-Fiction'
@@ -25,7 +37,8 @@ export type OtherGenre =
   | 'Investigative Journalism'
   | 'Poetry, Plays & Art'
   | 'Creativity & Craft'
-  | 'Other Literature';
+  | 'Other Literature'
+  | (string & {});
 
 export const ALL_OTHER_GENRES: OtherGenre[] = [
   'Psychology & Behaviour',
@@ -47,7 +60,15 @@ export const ALL_OTHER_GENRES: OtherGenre[] = [
   'Other Literature',
 ];
 
-export type CaseStatus = 'CLOSED' | 'UNDER INVESTIGATION' | 'COLD CASE' | 'HIGH CONFIDENCE GUESS';
+export type CaseStatus = 
+  | 'CLOSED' 
+  | 'UNDER INVESTIGATION' 
+  | 'COLD CASE' 
+  | 'HIGH CONFIDENCE GUESS'
+  | 'Active'
+  | 'Cold Case'
+  | 'Solved'
+  | 'COMPLETED';
 
 export interface Suspect {
   id: string;
@@ -93,6 +114,7 @@ export interface BookReview {
   dateFinished?: string; // e.g. "Nov 04, 2025"
   yearRead: number;
   pages: number;
+  currentPage?: number;
   rating: number; // 1 to 5
   status: CaseStatus;
   leadQuote: string;
@@ -128,6 +150,8 @@ export interface BookReview {
     jawDroppedEnding?: number;
   };
   witnessComments?: WitnessComment[];
+  seriesName?: string;
+  seriesOrder?: number;
 }
 
 export interface MindsetRatings {
@@ -172,6 +196,8 @@ export interface NonFictionBook {
   recommendedTo?: string;
   likes?: number;
   notesScratchpad?: string[];
+  seriesName?: string;
+  seriesOrder?: number;
 }
 
 export interface HeroConfig {
@@ -212,6 +238,8 @@ export interface CurrentlyReadingBook {
   notes?: string;
   suspectsNoted?: string[];
   paranoiaLevel?: string;
+  seriesName?: string;
+  seriesOrder?: number;
 }
 
 export interface CompletingBookTarget {
@@ -243,6 +271,8 @@ export interface ArchiveCurrentBookParams {
   whatIThought?: string;
   whatActuallyHappened?: string;
   readingFormat?: string;
+  seriesName?: string;
+  seriesOrder?: number;
 }
 
 export interface CurrentlyReading {
@@ -401,6 +431,9 @@ export interface GitHubUser {
   lastGistId?: string;
   lastGistUrl?: string;
   lastSyncedAt?: string;
+  repository?: string;
+  repositoryUrl?: string;
+  lastCommitUrl?: string;
 }
 
 export interface GitHubStatus {
@@ -408,4 +441,18 @@ export interface GitHubStatus {
   configured: boolean;
   user: GitHubUser | null;
   callbackUrl?: string;
+}
+
+export interface BookAlbumItem {
+  kind: 'thriller' | 'non-fiction';
+  id: string;
+}
+
+export interface BookAlbum {
+  id: string;
+  name: string;
+  description?: string;
+  items: BookAlbumItem[];
+  createdAt: string;
+  updatedAt: string;
 }

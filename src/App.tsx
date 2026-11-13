@@ -14,6 +14,9 @@ import { CaseFileFullView } from './components/CaseFileFullView';
 import { ArchiveManager } from './components/ArchiveManager';
 import { BackupSyncSection } from './components/BackupSyncSection';
 import { ReaderAnalyticsDashboard } from './components/ReaderAnalyticsDashboard';
+import { AlbumEditorModal } from './components/modals/AlbumEditorModal';
+import { AlbumDetailModal } from './components/modals/AlbumDetailModal';
+import { NonFictionDetailModal } from './components/NonFictionDetailModal';
 import { NewReviewModal } from './components/modals/NewReviewModal';
 import { EditReviewModal } from './components/modals/EditReviewModal';
 import { NonFictionEditorModal } from './components/NonFictionEditorModal';
@@ -93,7 +96,7 @@ const MainContent: React.FC = () => {
 };
 
 function AppContent() {
-  const { setIsAdminModalOpen } = useJournal();
+  const { setIsAdminModalOpen, selectedNonFictionBook, setSelectedNonFictionBook } = useJournal();
 
   // Listen for secret keyboard combo (Ctrl+Alt+E or Cmd+Alt+E) or ?editor=true URL param
   React.useEffect(() => {
@@ -139,6 +142,16 @@ function AppContent() {
       <CompleteAndArchiveModal />
       <AdminAuthModal />
       <GitHubAuthModal />
+      <AlbumEditorModal />
+      <AlbumDetailModal />
+
+      {selectedNonFictionBook && (
+        <NonFictionDetailModal
+          book={selectedNonFictionBook}
+          onClose={() => setSelectedNonFictionBook(null)}
+          onSelectBook={(b) => setSelectedNonFictionBook(b)}
+        />
+      )}
 
       <Footer />
     </div>

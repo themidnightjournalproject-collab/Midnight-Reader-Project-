@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
 import { NonFictionBook } from '../types';
 import { QuickImageModal } from './modals/QuickImageModal';
+import { BookCoverImage } from './common/BookCoverImage';
 import { 
   X, 
   Calendar, 
@@ -29,14 +30,21 @@ import {
 interface NonFictionDetailModalProps {
   book: NonFictionBook | null;
   onClose: () => void;
+  onSelectBook?: (book: NonFictionBook) => void;
 }
 
-export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ book, onClose }) => {
+export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ book, onClose, onSelectBook }) => {
   const { 
+    reviews,
+    nonFictionBooks,
+    setSelectedReview,
+    setSelectedNonFictionBook,
     setEditingNonFictionBook, 
     setIsNewNonFictionModalOpen, 
     deleteNonFictionBook, 
     updateNonFictionBook,
+    openAlbumByName,
+    removeTropeFromNonFiction,
     toggleLikeNonFictionBook,
     addNonFictionScratchpadNote,
     isAdminUnlocked
@@ -47,24 +55,58 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
   const [copiedQuoteIdx, setCopiedQuoteIdx] = useState<number | null>(null);
   const [isQuickImageOpen, setIsQuickImageOpen] = useState(false);
 
-  if (!book) return null;
+  const liveBook = book ? (nonFictionBooks.find((b) => b.id === book.id) || book) : null;
+
+  if (!liveBook) return null;
+
+  const seriesKey = liveBook.seriesName?.trim().toLowerCase() || '';
+  const seriesVolumes = seriesKey
+    ? [
+        ...reviews
+          .filter((r) => r.seriesName?.trim().toLowerCase() === seriesKey)
+          .map((r) => ({
+            kind: 'thriller' as const,
+            id: r.id,
+            title: r.title,
+            coverImage: r.coverImage,
+            author: r.author,
+            genre: r.genre,
+            seriesOrder: r.seriesOrder || 999,
+            code: `CASE #${r.caseNumber}`,
+            data: r,
+          })),
+        ...nonFictionBooks
+          .filter((b) => b.seriesName?.trim().toLowerCase() === seriesKey)
+          .map((b) => ({
+            kind: 'non-fiction' as const,
+            id: b.id,
+            title: b.title,
+            coverImage: b.coverImage || b.coverUrl || '',
+            author: b.author,
+            genre: b.genre,
+            seriesOrder: b.seriesOrder || 999,
+            code: b.catalogNumber,
+            data: b,
+          })),
+      ].sort((a, b) => a.seriesOrder - b.seriesOrder)
+    : [];
 
   const handleUpdateCover = (newUrl: string) => {
-    updateNonFictionBook(book.id, {
+    updateNonFictionBook(liveBook.id, {
       coverImage: newUrl,
       coverUrl: newUrl
     });
   };
 
   const handleEdit = () => {
-    setEditingNonFictionBook(book);
+    setEditingNonFictionBook(liveBook);
     setIsNewNonFictionModalOpen(true);
     onClose();
   };
 
   const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete dossier [${book.catalogNumber}] ${book.title}?`)) {
-      deleteNonFictionBook(book.id);
+    if (window.confirm(`Are you sure you want to delete dossier [${liveBook.catalogNumber}] ${liveBook.title}?`)) {
+      deleteNonFictionBook(liveBook.id);
       onClose();
     }
   };
@@ -72,7 +114,7 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
   const handleAddNote = (e: React.FormEvent) => {
     e.preventDefault();
     if (!scratchpadInput.trim()) return;
-    addNonFictionScratchpadNote(book.id, scratchpadInput.trim());
+    addNonFictionScratchpadNote(liveBook.id, scratchpadInput.trim());
     setScratchpadInput('');
   };
 
@@ -115,13 +157,30 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
       >
         {/* Top Control Bar */}
         <div className="flex flex-wrap items-center justify-between border-b-2 border-black pb-4 mb-6 gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span className="bg-black text-white px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-widest">
-              {book.catalogNumber}
+              {liveBook.catalogNumber}
             </span>
             <span className="bg-[#8b0000] text-white px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider">
-              {book.genre}
+              {liveBook.genre}
             </span>
+            {liveBook.seriesName && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  openAlbumByName(liveBook.seriesName!);
+                }}
+                className="inline-flex items-center gap-1 bg-white hover:bg-black hover:text-white border border-black px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                title="Open this book album"
+              >
+                <Layers size={11} className="text-[#8b0000]" />
+                <span>
+                  {liveBook.seriesName}
+                  {liveBook.seriesOrder ? ` · BOOK ${liveBook.seriesOrder}` : ''}
+                </span>
+              </button>
+            )}
             <span className="text-[11px] font-sans font-semibold text-gray-600 uppercase">
               Field Research File
             </span>
@@ -129,12 +188,12 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => toggleLikeNonFictionBook(book.id)}
+              onClick={() => toggleLikeNonFictionBook(liveBook.id)}
               className="flex items-center gap-1.5 px-3 py-1 bg-white border border-black text-xs font-bold uppercase hover:bg-red-50 transition-colors cursor-pointer"
               title="Endorse / Recommend this book"
             >
               <Heart size={14} className="text-[#8b0000] fill-[#8b0000]" />
-              <span>{book.likes || 1}</span>
+              <span>{liveBook.likes || 1}</span>
             </button>
 
             {isAdminUnlocked && (
@@ -172,14 +231,16 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
           {/* Cover Image */}
           <div className="md:col-span-4 flex flex-col items-center">
             <div className="w-full max-w-[220px] aspect-[2/3] bg-black border-2 border-black p-1 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] relative group">
-              <img
-                src={book.coverImage || book.coverUrl}
-                alt={book.title}
-                referrerPolicy="no-referrer"
+              <BookCoverImage
+                src={liveBook.coverImage || liveBook.coverUrl}
+                title={liveBook.title}
+                author={liveBook.author}
+                genre={liveBook.genre}
+                alt={liveBook.title}
                 className="w-full h-full object-cover grayscale contrast-110 group-hover:grayscale-0 transition-all duration-300"
               />
               <div className="absolute top-2 left-2 bg-black/80 text-white text-[9px] font-mono px-1.5 py-0.5">
-                {book.pages} PAGES
+                {liveBook.pages} PAGES
               </div>
 
               {/* Cover Replacement button - unlocked admin */}
@@ -207,15 +268,15 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               </div>
               <div className="flex justify-between items-center text-gray-700">
                 <span className="font-medium">Started:</span>
-                <span className="font-mono font-semibold">{book.dateStarted || '—'}</span>
+                <span className="font-mono font-semibold">{liveBook.dateStarted || '—'}</span>
               </div>
               <div className="flex justify-between items-center text-gray-700">
                 <span className="font-medium">Completed:</span>
-                <span className="font-mono font-semibold text-[#8b0000]">{book.dateFinished || '—'}</span>
+                <span className="font-mono font-semibold text-[#8b0000]">{liveBook.dateFinished || '—'}</span>
               </div>
               <div className="flex justify-between items-center text-gray-500 pt-1 border-t border-dotted border-gray-200">
                 <span>Logged:</span>
-                <span className="font-mono text-[10px]">{book.dateLogged || 'Archive Entry'}</span>
+                <span className="font-mono text-[10px]">{liveBook.dateLogged || 'Archive Entry'}</span>
               </div>
             </div>
           </div>
@@ -224,17 +285,17 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
           <div className="md:col-span-8 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-mono font-bold uppercase text-gray-500">By {book.author}</span>
+                <span className="text-xs font-mono font-bold uppercase text-gray-500">By {liveBook.author}</span>
                 <span className="text-gray-300">•</span>
-                {renderStars(book.rating)}
+                {renderStars(liveBook.rating)}
               </div>
 
               <h1 className="text-2xl sm:text-4xl font-serif font-black uppercase tracking-tight text-black leading-tight mb-3">
-                {book.title}
+                {liveBook.title}
               </h1>
 
               <p className="font-serif italic text-base text-[#8b0000] font-medium mb-4 leading-snug border-l-2 border-[#8b0000] pl-3 py-0.5">
-                “{book.tagline || book.oneSentenceTakeaway}”
+                “{liveBook.tagline || liveBook.oneSentenceTakeaway}”
               </p>
 
               <div className="bg-white p-4 border border-black mb-4">
@@ -242,29 +303,43 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
                   Executive Briefing:
                 </span>
                 <p className="font-serif text-sm text-gray-800 leading-relaxed">
-                  {book.summary}
+                  {liveBook.summary}
                 </p>
               </div>
 
               {/* Tropes & Key Concepts */}
-              {((book.tropes && book.tropes.length > 0) || (book.tags && book.tags.length > 0)) && (
+              {((liveBook.tropes && liveBook.tropes.length > 0) || (liveBook.tags && liveBook.tags.length > 0)) && (
                 <div className="flex flex-wrap items-center gap-1.5 mb-4">
                   <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] mr-1">
                     Tropes & Key Concepts:
                   </span>
-                  {(book.tropes || book.tags || []).map((trope, idx) => (
+                  {(liveBook.tropes || liveBook.tags || []).map((trope, idx) => (
                     <span
                       key={idx}
-                      className="px-2.5 py-0.5 bg-[#faf9f5] text-black text-[10px] font-sans font-bold uppercase tracking-wider border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                      className="px-2.5 py-0.5 bg-[#faf9f5] text-black text-[10px] font-sans font-bold uppercase tracking-wider border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] inline-flex items-center gap-1.5"
                     >
-                      {trope}
+                      <span>{trope}</span>
+                      {isAdminUnlocked && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`Remove trope "${trope}" from this book?`)) {
+                              removeTropeFromNonFiction(liveBook.id, trope);
+                            }
+                          }}
+                          title={`Remove "${trope}" from this book`}
+                          className="text-gray-400 hover:text-red-700 font-bold text-xs cursor-pointer"
+                        >
+                          ×
+                        </button>
+                      )}
                     </span>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Compact Book Pulse / Score Ribbon (Made smaller & renamed from cognitive impact) */}
+            {/* Compact Book Pulse / Score Ribbon */}
             <div className="bg-[#faf9f5] px-3.5 py-2.5 border border-black">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="font-sans text-[9px] font-bold uppercase tracking-widest text-[#8b0000]">
@@ -277,24 +352,101 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               <div className="grid grid-cols-4 gap-2 text-center font-sans">
                 <div className="py-1 px-1.5 bg-white border border-black/40">
                   <span className="block text-[8px] uppercase font-bold text-gray-500">Pacing</span>
-                  <span className="text-xs font-mono font-bold text-black">{book.mindsetRatings?.readability || 5}/5</span>
+                  <span className="text-xs font-mono font-bold text-black">{liveBook.mindsetRatings?.readability || 5}/5</span>
                 </div>
                 <div className="py-1 px-1.5 bg-white border border-black/40">
                   <span className="block text-[8px] uppercase font-bold text-gray-500">Takeaway</span>
-                  <span className="text-xs font-mono font-bold text-black">{book.mindsetRatings?.actionability || 4}/5</span>
+                  <span className="text-xs font-mono font-bold text-black">{liveBook.mindsetRatings?.actionability || 4}/5</span>
                 </div>
                 <div className="py-1 px-1.5 bg-white border border-black/40">
                   <span className="block text-[8px] uppercase font-bold text-gray-500">Depth</span>
-                  <span className="text-xs font-mono font-bold text-[#8b0000]">{book.mindsetRatings?.intellectualImpact || 5}/5</span>
+                  <span className="text-xs font-mono font-bold text-[#8b0000]">{liveBook.mindsetRatings?.intellectualImpact || 5}/5</span>
                 </div>
                 <div className="py-1 px-1.5 bg-white border border-black/40">
                   <span className="block text-[8px] uppercase font-bold text-gray-500">Originality</span>
-                  <span className="text-xs font-mono font-bold text-black">{book.mindsetRatings?.originality || 4}/5</span>
+                  <span className="text-xs font-mono font-bold text-black">{liveBook.mindsetRatings?.originality || 4}/5</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Volumes in This Series Cross-Navigation */}
+        {liveBook.seriesName && seriesVolumes.length > 0 && (
+          <div className="mb-6 p-4 bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-black pb-2 mb-3">
+              <div className="flex items-center gap-2">
+                <Layers size={15} className="text-[#8b0000]" />
+                <span className="font-sans text-[11px] uppercase font-bold text-black tracking-widest">
+                  Books in Album: {liveBook.seriesName} ({seriesVolumes.length})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  openAlbumByName(liveBook.seriesName!);
+                }}
+                className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] hover:underline cursor-pointer"
+              >
+                Open / Reorder Album →
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {seriesVolumes.map((vol) => {
+                const isCurrent = vol.kind === 'non-fiction' && vol.id === liveBook.id;
+                return (
+                  <button
+                    key={`${vol.kind}-${vol.id}`}
+                    type="button"
+                    onClick={() => {
+                      if (isCurrent) return;
+                      if (vol.kind === 'non-fiction') {
+                        if (onSelectBook) {
+                          onSelectBook(vol.data);
+                        } else {
+                          setSelectedNonFictionBook(vol.data);
+                        }
+                      } else {
+                        onClose();
+                        setSelectedReview(vol.data);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className={`flex items-center gap-2 p-2 border text-left transition-all ${
+                      isCurrent
+                        ? 'bg-black text-white border-black cursor-default'
+                        : 'bg-[#fcfaf2] text-black border-black hover:bg-[#f5f2ed] cursor-pointer'
+                    }`}
+                  >
+                    <div className="w-9 h-13 shrink-0 border border-black/30 overflow-hidden bg-black">
+                      <BookCoverImage
+                        src={vol.coverImage}
+                        title={vol.title}
+                        author={vol.author}
+                        genre={vol.genre}
+                        alt={vol.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span
+                        className={`text-[9px] font-mono font-bold uppercase block ${
+                          isCurrent ? 'text-[#fbbf24]' : 'text-[#8b0000]'
+                        }`}
+                      >
+                        {vol.seriesOrder < 999 ? `BOOK ${vol.seriesOrder}` : 'SERIES'} • {vol.code}
+                      </span>
+                      <span className="font-serif font-bold text-xs leading-tight line-clamp-2 block">
+                        {vol.title}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Main Review & Forensic Literary Analysis */}
         <div className="mb-6">
@@ -306,7 +458,7 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
           </div>
           <div className="p-5 bg-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
             <p className="font-serif text-sm sm:text-base text-gray-900 leading-relaxed whitespace-pre-line">
-              {book.reviewText || book.fullReview}
+              {liveBook.reviewText || liveBook.fullReview}
             </p>
           </div>
         </div>
@@ -318,11 +470,11 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
             <div className="flex items-center gap-2 border-b border-black pb-2 mb-3">
               <Lightbulb size={16} className="text-[#8b0000]" />
               <h4 className="font-sans font-bold uppercase text-xs tracking-wider text-black">
-                Core Principles & Takeaways ({book.keyTakeaways?.length || 0})
+                Core Principles & Takeaways ({liveBook.keyTakeaways?.length || 0})
               </h4>
             </div>
             <ul className="space-y-2.5 font-sans text-xs">
-              {(book.keyTakeaways || []).map((takeaway, idx) => (
+              {(liveBook.keyTakeaways || []).map((takeaway, idx) => (
                 <li key={idx} className="flex items-start gap-2 text-gray-800">
                   <span className="font-mono font-bold text-[#8b0000] mt-0.5">{String(idx + 1).padStart(2, '0')}.</span>
                   <span className="leading-snug">{takeaway}</span>
@@ -345,7 +497,7 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               </span>
             </div>
             <div className="space-y-2 font-sans text-xs">
-              {(book.actionItems || []).map((action, idx) => {
+              {(liveBook.actionItems || []).map((action, idx) => {
                 const isChecked = Boolean(completedActions[idx]);
                 return (
                   <div
@@ -367,7 +519,7 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
         </div>
 
         {/* Highlighted Quotes */}
-        {((book.favoriteQuotes && book.favoriteQuotes.length > 0) || book.favoriteQuote) && (
+        {((liveBook.favoriteQuotes && liveBook.favoriteQuotes.length > 0) || liveBook.favoriteQuote) && (
           <div className="mb-6 bg-[#fffef7] p-5 border-2 border-black">
             <div className="flex items-center gap-2 border-b border-black pb-2 mb-3">
               <Quote size={16} className="text-[#8b0000]" />
@@ -376,7 +528,7 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               </h4>
             </div>
             <div className="space-y-3">
-              {(book.favoriteQuotes?.length ? book.favoriteQuotes : [book.favoriteQuote || '']).map((quote, idx) => (
+              {(liveBook.favoriteQuotes?.length ? liveBook.favoriteQuotes : [liveBook.favoriteQuote || '']).map((quote, idx) => (
                 <div key={idx} className="flex items-start justify-between gap-3 p-3 bg-white border border-black">
                   <p className="font-marginalia text-base sm:text-lg text-black font-bold leading-snug">
                     “{quote}”
@@ -408,14 +560,14 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
               </h4>
             </div>
             <span className="text-[10px] font-mono text-gray-500 uppercase">
-              {book.notesScratchpad?.length || 0} Logged Notes
+              {liveBook.notesScratchpad?.length || 0} Logged Notes
             </span>
           </div>
 
           {/* Existing scratchpad notes */}
-          {book.notesScratchpad && book.notesScratchpad.length > 0 ? (
+          {liveBook.notesScratchpad && liveBook.notesScratchpad.length > 0 ? (
             <div className="space-y-2 mb-4">
-              {book.notesScratchpad.map((note, idx) => (
+              {liveBook.notesScratchpad.map((note, idx) => (
                 <div key={idx} className="p-2.5 bg-[#fcfaf2] border-l-2 border-black text-xs font-mono text-gray-800">
                   <span className="text-[9px] text-[#8b0000] font-bold block uppercase tracking-wider mb-0.5">
                     Field Memo #{idx + 1}:
@@ -454,9 +606,9 @@ export const NonFictionDetailModal: React.FC<NonFictionDetailModalProps> = ({ bo
           isOpen={isQuickImageOpen}
           onClose={() => setIsQuickImageOpen(false)}
           targetType="custom"
-          initialImage={book.coverImage || book.coverUrl || ''}
+          initialImage={liveBook.coverImage || liveBook.coverUrl || ''}
           onSaveImage={handleUpdateCover}
-          title={`Replace Cover Photo for [${book.catalogNumber}]: ${book.title}`}
+          title={`Replace Cover Photo for [${liveBook.catalogNumber}]: ${liveBook.title}`}
         />
       </div>
     </div>

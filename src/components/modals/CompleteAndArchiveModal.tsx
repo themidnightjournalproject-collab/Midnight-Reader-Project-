@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useJournal } from '../../context/JournalContext';
-import { Archive, Star, CheckCircle, ShieldAlert, BookOpen, ArrowRight } from 'lucide-react';
+import { Archive, Star, CheckCircle, ShieldAlert, BookOpen, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
+import { BookCoverImage } from '../common/BookCoverImage';
 
 export const CompleteAndArchiveModal: React.FC = () => {
   const {
@@ -10,18 +11,24 @@ export const CompleteAndArchiveModal: React.FC = () => {
     setCompletingBookTarget,
     archiveCurrentBook,
     setIsNewReviewModalOpen,
+    allAlbumNames,
   } = useJournal();
 
   const [targetArchive, setTargetArchive] = useState<'case' | 'offTheRecord'>('case');
   const [rating, setRating] = useState<number>(5);
   const [readingFormat, setReadingFormat] = useState<string>('Paperback');
   const [dateFinished, setDateFinished] = useState<string>('');
+  const [seriesName, setSeriesName] = useState<string>('');
+  const [seriesOrder, setSeriesOrder] = useState<string>('');
   const [summary, setSummary] = useState<string>('');
   const [reviewText, setReviewText] = useState<string>('');
   const [whatActuallyHappened, setWhatActuallyHappened] = useState<string>('');
+  const [isArchiving, setIsArchiving] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (completingBookTarget && isCompleteBookModalOpen) {
+      setErrorMessage(null);
       const today = new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
       setDateFinished(today);
       
@@ -50,25 +57,36 @@ export const CompleteAndArchiveModal: React.FC = () => {
 
   if (!isCompleteBookModalOpen || !completingBookTarget) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    archiveCurrentBook({
-      bookType: completingBookTarget.bookType,
-      additionalBookId: completingBookTarget.additionalBookId,
-      targetArchive,
-      title: completingBookTarget.title,
-      author: completingBookTarget.author,
-      genre: completingBookTarget.genre,
-      coverImage: completingBookTarget.coverImage,
-      pages: completingBookTarget.totalPages || completingBookTarget.currentPage || 300,
-      rating,
-      dateFinished,
-      summary,
-      reviewText,
-      whatIThought: completingBookTarget.notes || '',
-      whatActuallyHappened,
-      readingFormat,
-    });
+    setIsArchiving(true);
+    setErrorMessage(null);
+    try {
+      await archiveCurrentBook({
+        bookType: completingBookTarget.bookType,
+        additionalBookId: completingBookTarget.additionalBookId,
+        targetArchive,
+        title: completingBookTarget.title,
+        author: completingBookTarget.author,
+        genre: completingBookTarget.genre,
+        coverImage: completingBookTarget.coverImage,
+        pages: completingBookTarget.totalPages || completingBookTarget.currentPage || 300,
+        rating,
+        dateFinished,
+        summary,
+        reviewText,
+        whatIThought: completingBookTarget.notes || '',
+        whatActuallyHappened,
+        readingFormat,
+        seriesName: seriesName.trim() || undefined,
+        seriesOrder: seriesName.trim() && seriesOrder ? Number(seriesOrder) : undefined,
+      });
+    } catch (err: any) {
+      console.error('Failed to archive book:', err);
+      setErrorMessage(err?.message || 'Failed to archive book to Firestore. Please retry.');
+    } finally {
+      setIsArchiving(false);
+    }
   };
 
   return (
@@ -102,13 +120,32 @@ export const CompleteAndArchiveModal: React.FC = () => {
           </button>
         </div>
 
+        {/* Sync Error Notification */}
+        {errorMessage && (
+          <div className="mb-5 bg-[#8b0000]/10 border-2 border-[#8b0000] p-3 text-xs text-[#8b0000] flex items-center justify-between font-sans">
+            <div className="flex items-center gap-2">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setErrorMessage(null)}
+              className="font-bold underline uppercase ml-2 text-[10px]"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
         {/* Book Preview Banner */}
         <div className="bg-white border-2 border-black p-4 mb-6 flex items-center gap-4 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
-          <img
+          <BookCoverImage
             src={completingBookTarget.coverImage || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80'}
+            title={completingBookTarget.title}
+            author={completingBookTarget.author}
+            genre={completingBookTarget.genre}
             alt={completingBookTarget.title}
             className="w-16 h-24 object-cover border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] shrink-0"
-            referrerPolicy="no-referrer"
           />
           <div className="space-y-1">
             <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] bg-[#8b0000]/10 px-2 py-0.5 border border-[#8b0000]/20 inline-block">
@@ -249,6 +286,40 @@ export const CompleteAndArchiveModal: React.FC = () => {
                 <option value="Audiobook">Audiobook</option>
               </select>
             </div>
+
+            <div className="sm:col-span-2">
+              <label className="block text-[#8b0000] font-bold mb-1 uppercase text-[10px]">
+                Part of an Album / Series? (Optional)
+              </label>
+              <input
+                type="text"
+                value={seriesName}
+                onChange={(e) => setSeriesName(e.target.value)}
+                list="complete-archive-series-list"
+                placeholder="e.g. The Housemaid (leave blank if standalone)"
+                className="w-full bg-[#fcfaf2] border border-black p-2 text-xs font-serif font-bold"
+              />
+              <datalist id="complete-archive-series-list">
+                {allAlbumNames.map((s) => (
+                  <option key={s} value={s} />
+                ))}
+              </datalist>
+            </div>
+
+            <div>
+              <label className="block text-[#1a1a1a] font-bold mb-1 uppercase text-[10px]">
+                Order # in Album
+              </label>
+              <input
+                type="number"
+                min={1}
+                value={seriesOrder}
+                onChange={(e) => setSeriesOrder(e.target.value)}
+                disabled={!seriesName.trim()}
+                placeholder="1, 2..."
+                className="w-full bg-[#fcfaf2] border border-black p-2 text-xs font-mono disabled:bg-gray-100 disabled:opacity-60"
+              />
+            </div>
           </div>
 
           {/* Verdict & Takeaway */}
@@ -303,21 +374,23 @@ export const CompleteAndArchiveModal: React.FC = () => {
             <div className="flex items-center gap-3">
               <button
                 type="button"
+                disabled={isArchiving}
                 onClick={() => {
                   setIsCompleteBookModalOpen(false);
                   setCompletingBookTarget(null);
                 }}
-                className="px-4 py-2 text-[#4a4a4a] hover:text-black uppercase font-bold text-xs cursor-pointer"
+                className="px-4 py-2 text-[#4a4a4a] hover:text-black uppercase font-bold text-xs cursor-pointer disabled:opacity-50"
               >
                 Cancel
               </button>
               
               <button
                 type="submit"
-                className="bg-[#166534] hover:bg-black text-white px-6 py-2.5 uppercase font-bold text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all flex items-center gap-2 cursor-pointer"
+                disabled={isArchiving}
+                className="bg-[#166534] hover:bg-black text-white px-6 py-2.5 uppercase font-bold text-xs shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                <CheckCircle size={14} />
-                <span>Move to Archive</span>
+                {isArchiving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle size={14} />}
+                <span>{isArchiving ? 'ARCHIVING TO FIRESTORE...' : 'Move to Archive'}</span>
               </button>
             </div>
           </div>

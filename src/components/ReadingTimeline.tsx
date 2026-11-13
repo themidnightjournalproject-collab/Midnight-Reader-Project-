@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useJournal } from '../context/JournalContext';
 import { Edit3, Clock, Sparkles, Award, Bookmark, Calendar, ArrowRight } from 'lucide-react';
+import { BookCoverImage } from './common/BookCoverImage';
 
 export const ReadingTimeline: React.FC = () => {
   const { 
@@ -228,11 +229,13 @@ export const ReadingTimeline: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
                 <div className="sm:col-span-3 flex justify-center sm:justify-start">
-                  <img
+                  <BookCoverImage
                     src={review.coverImage}
+                    title={review.title}
+                    author={review.author}
+                    genre={review.genre}
                     alt={review.title}
                     className="w-20 h-28 object-cover border-2 border-black grayscale-[20%]"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
 

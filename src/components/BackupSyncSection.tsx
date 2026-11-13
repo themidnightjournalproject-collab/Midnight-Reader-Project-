@@ -571,31 +571,50 @@ export const BackupSyncSection: React.FC = () => {
             </div>
 
             {isGitHubConnected ? (
-              <button
-                onClick={async () => {
-                  setIsSyncingGh(true);
-                  setGhStatusMsg(null);
-                  const res = await syncToGitHub();
-                  setIsSyncingGh(false);
-                  if (res.success) {
-                    setGhStatusMsg({
-                      type: 'success',
-                      text: 'Case files, non-fiction dossiers, and stats successfully backed up to your GitHub account!',
-                      link: res.gistUrl
-                    });
-                  } else {
-                    setGhStatusMsg({
-                      type: 'error',
-                      text: res.message || 'Failed to sync to GitHub.'
-                    });
-                  }
-                }}
-                disabled={isSyncingGh}
-                className="flex items-center gap-2 px-5 py-2.5 bg-[#8b0000] hover:bg-black text-white font-sans text-xs font-bold uppercase tracking-wider transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50"
-              >
-                <CloudUpload size={15} />
-                <span>{isSyncingGh ? 'Backing Up...' : 'Backup Archive to GitHub'}</span>
-              </button>
+              <div className="flex flex-col items-end gap-1.5">
+                <button
+                  onClick={async () => {
+                    setIsSyncingGh(true);
+                    setGhStatusMsg(null);
+                    const res = await syncToGitHub();
+                    setIsSyncingGh(false);
+                    if (res.success) {
+                      setGhStatusMsg({
+                        type: 'success',
+                        text: res.message || 'Case files, non-fiction dossiers, and stats successfully backed up to your GitHub account!',
+                        link: res.gistUrl
+                      });
+                    } else {
+                      setGhStatusMsg({
+                        type: 'error',
+                        text: res.message || 'Failed to sync to GitHub.'
+                      });
+                    }
+                  }}
+                  disabled={isSyncingGh}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#8b0000] hover:bg-black text-white font-sans text-xs font-bold uppercase tracking-wider transition-colors shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 cursor-pointer"
+                >
+                  <CloudUpload size={15} />
+                  <span>{isSyncingGh ? 'Backing Up...' : 'Backup Archive to GitHub'}</span>
+                </button>
+                {githubUser?.lastSyncedAt && (
+                  <span className="text-[10px] font-mono text-[#555] flex items-center gap-1">
+                    <CheckCircle2 size={11} className="text-[#166534]" />
+                    Synced: {new Date(githubUser.lastSyncedAt).toLocaleString()}
+                  </span>
+                )}
+                {githubUser?.repository && (
+                  <a
+                    href={githubUser.repositoryUrl || `https://github.com/${githubUser.repository}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[10px] font-mono underline text-[#4a4a4a] hover:text-black flex items-center gap-1"
+                  >
+                    <span>Repo: {githubUser.repository}</span>
+                    <ExternalLink size={10} />
+                  </a>
+                )}
+              </div>
             ) : (
               <button
                 onClick={async () => {
@@ -648,17 +667,37 @@ export const BackupSyncSection: React.FC = () => {
             <form
               onSubmit={async (e) => {
                 e.preventDefault();
-                if (!githubTokenInput.trim()) return;
+                const rawToken = githubTokenInput.trim();
+                if (!rawToken) return;
                 setIsVerifyingGhToken(true);
-                setGhStatusMsg(null);
-                const res = await connectGitHubWithToken(githubTokenInput.trim());
+                setGhStatusMsg({
+                  type: 'info',
+                  text: 'Verifying GitHub clearance credentials...'
+                });
+                const res = await connectGitHubWithToken(rawToken);
                 setIsVerifyingGhToken(false);
                 if (res.success) {
                   setGithubTokenInput('');
                   setGhStatusMsg({
-                    type: 'success',
-                    text: `Clearance granted! Registered as @${res.user?.username}. Chief Investigator desk unlocked.`
+                    type: 'info',
+                    text: `Clearance granted for @${res.user?.username}! Pushing non-fiction changes (Stone Blind, Gray After Dark), initialData.ts, and case files to GitHub repository...`
                   });
+                  setIsSyncingGh(true);
+                  const syncRes = await syncToGitHub(rawToken);
+                  setIsSyncingGh(false);
+                  if (syncRes.success) {
+                    setGhStatusMsg({
+                      type: 'success',
+                      text: `Successfully synced non-fiction dossiers, case reviews, initialData.ts, and covers directly to GitHub repository @${githubUser?.repository || 'themidnightjournalproject-collab/Midnight-Reader-Project-'}!`,
+                      link: syncRes.gistUrl
+                    });
+                  } else {
+                    setGhStatusMsg({
+                      type: 'success',
+                      text: `Registered as @${res.user?.username}. Click "Backup Archive to GitHub" above to complete repository push.`,
+                      link: syncRes.gistUrl
+                    });
+                  }
                 } else {
                   setGhStatusMsg({
                     type: 'error',

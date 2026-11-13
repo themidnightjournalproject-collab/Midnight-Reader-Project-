@@ -101,7 +101,71 @@ interface DatabaseSchema {
     lastGistId?: string;
     lastGistUrl?: string;
     lastSyncedAt?: string;
+    repository?: string;
+    repositoryUrl?: string;
+    lastCommitUrl?: string;
   } | null;
+  offTheRecordGenres?: string[];
+  archiveGenres?: string[];
+  customThrillerTropes?: string[];
+  customResearchTropes?: string[];
+  bookAlbums?: any[];
+}
+
+const KNOWN_COVERS_MAP: Record<string, string> = {
+  'the housemaid is watching': '/covers/the-housemaid-is-watching.jpg',
+  'housemaid is watching': '/covers/the-housemaid-is-watching.jpg',
+  "the housemaid's secret": '/covers/the-housmaid-s-secret.jpg',
+  'the housemaids secret': '/covers/the-housmaid-s-secret.jpg',
+  "the housmaid's secret": '/covers/the-housmaid-s-secret.jpg',
+  'the housmaids secret': '/covers/the-housmaid-s-secret.jpg',
+  "housemaid's secret": '/covers/the-housmaid-s-secret.jpg',
+  'housemaids secret': '/covers/the-housmaid-s-secret.jpg',
+  "housmaid's secret": '/covers/the-housmaid-s-secret.jpg',
+  'housmaids secret': '/covers/the-housmaid-s-secret.jpg',
+  'the housemaid': '/covers/the-housemaid.jpg',
+  'housemaid': '/covers/the-housemaid.jpg',
+  'the silent patient': '/covers/silent-patient.jpg',
+  'silent patient': '/covers/silent-patient.jpg',
+  'the last word': '/covers/the-last-word.jpg',
+  'last word': '/covers/the-last-word.jpg',
+  'listen for the lie': '/covers/listen-for-the-lie.jpg',
+  'listen to the lie': '/covers/listen-for-the-lie.jpg',
+  '13 reasons why': '/covers/13-reasons-why.jpg',
+  'thirteen reasons why': '/covers/13-reasons-why.jpg',
+  'tuesdays with morrie': '/covers/tuesdays-with-morrie.jpg',
+  'dark matter': '/covers/dark-matter.jpg',
+  'project hail mary': '/covers/project-hail-mary.jpg',
+  'gray after dark': '/covers/gray-after-dark.jpg',
+  'grey after dark': '/covers/gray-after-dark.jpg',
+};
+
+function sanitizeBookCover(title?: string, currentCover?: string): string {
+  if (!title) return currentCover || '';
+  const normalized = title.trim().toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ');
+
+  // 1. Exact match
+  for (const [key, path] of Object.entries(KNOWN_COVERS_MAP)) {
+    const normKey = key.replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ');
+    if (normalized === normKey) {
+      return path;
+    }
+  }
+
+  // 2. Longest-matching key check
+  const sorted = Object.entries(KNOWN_COVERS_MAP).sort((a, b) => b[0].length - a[0].length);
+  for (const [key, path] of sorted) {
+    const normKey = key.replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ');
+    if (normalized.includes(normKey) || (normKey.length > 8 && normKey.includes(normalized))) {
+      return path;
+    }
+  }
+
+  if (currentCover && currentCover.includes('imgs.search.brave.com')) {
+    return '/covers/the-housemaid.jpg';
+  }
+
+  return currentCover || '';
 }
 
 function loadDatabase(): DatabaseSchema {
@@ -109,12 +173,37 @@ function loadDatabase(): DatabaseSchema {
     try {
       const raw = fs.readFileSync(DATA_FILE, 'utf-8');
       const parsed = JSON.parse(raw);
+
+      // Sanitize covers in reviews
+      const loadedReviews = (parsed.reviews || INITIAL_REVIEWS).map((r: any) => ({
+        ...r,
+        coverImage: sanitizeBookCover(r.title, r.coverImage)
+      }));
+
+      // Sanitize covers in nonFictionBooks
+      const loadedNonFiction = (parsed.nonFictionBooks || INITIAL_NON_FICTION_BOOKS).map((n: any) => ({
+        ...n,
+        coverImage: sanitizeBookCover(n.title, n.coverImage || n.coverUrl),
+        coverUrl: sanitizeBookCover(n.title, n.coverImage || n.coverUrl),
+      }));
+
+      const loadedCR = parsed.currentlyReading || INITIAL_CURRENTLY_READING;
+      if (loadedCR) {
+        loadedCR.coverImage = sanitizeBookCover(loadedCR.title, loadedCR.coverImage);
+        if (loadedCR.additionalBooks && Array.isArray(loadedCR.additionalBooks)) {
+          loadedCR.additionalBooks = loadedCR.additionalBooks.map((b: any) => ({
+            ...b,
+            coverImage: sanitizeBookCover(b.title, b.coverImage)
+          }));
+        }
+      }
+
       return {
         adminPasscode: parsed.adminPasscode || INITIAL_ADMIN_PASSCODE || 'detective',
-        reviews: parsed.reviews || INITIAL_REVIEWS,
-        nonFictionBooks: parsed.nonFictionBooks || INITIAL_NON_FICTION_BOOKS,
+        reviews: loadedReviews,
+        nonFictionBooks: loadedNonFiction,
         heroConfig: parsed.heroConfig || INITIAL_HERO_CONFIG,
-        currentlyReading: parsed.currentlyReading || INITIAL_CURRENTLY_READING,
+        currentlyReading: loadedCR,
         stats: parsed.stats || INITIAL_STATS,
         timelineStats: parsed.timelineStats || INITIAL_TIMELINE_STATS,
         timelineMilestones: parsed.timelineMilestones || INITIAL_TIMELINE_MILESTONES,
@@ -126,6 +215,11 @@ function loadDatabase(): DatabaseSchema {
         witnessComments: parsed.witnessComments || {},
         userTheories: parsed.userTheories || [],
         githubAuth: parsed.githubAuth || null,
+        offTheRecordGenres: parsed.offTheRecordGenres || null,
+        archiveGenres: parsed.archiveGenres || null,
+        customThrillerTropes: parsed.customThrillerTropes || null,
+        customResearchTropes: parsed.customResearchTropes || null,
+        bookAlbums: Array.isArray(parsed.bookAlbums) ? parsed.bookAlbums : undefined,
       };
     } catch (err) {
       console.error('Error reading database file, using fallback', err);
@@ -275,6 +369,7 @@ async function startServer() {
       readerPollVotes: db.readerPollVotes,
       witnessComments: db.witnessComments,
       userTheories: db.userTheories,
+      bookAlbums: db.bookAlbums,
       githubUser: db.githubAuth ? {
         username: db.githubAuth.username,
         name: db.githubAuth.name,
@@ -284,6 +379,9 @@ async function startServer() {
         lastGistId: db.githubAuth.lastGistId,
         lastGistUrl: db.githubAuth.lastGistUrl,
         lastSyncedAt: db.githubAuth.lastSyncedAt,
+        repository: db.githubAuth.repository,
+        repositoryUrl: db.githubAuth.repositoryUrl,
+        lastCommitUrl: db.githubAuth.lastCommitUrl,
       } : null,
       isGitHubConfigured: !!(process.env.CLIENT_ID || process.env.GITHUB_CLIENT_ID),
       isPasswordProtected: true,
@@ -312,8 +410,8 @@ async function startServer() {
       return res.status(400).json({ success: false, message: 'New passcode must be at least 4 characters.' });
     }
 
-    // Check current passcode if provided, or allow if matched
-    if (currentPasscode && currentPasscode.trim() !== db.adminPasscode.trim()) {
+    // Require valid current passcode to authorize changes
+    if (!currentPasscode || currentPasscode.trim() !== db.adminPasscode.trim()) {
       return res.status(401).json({ success: false, message: 'Current passcode is incorrect.' });
     }
 
@@ -341,11 +439,17 @@ async function startServer() {
       postLikes, 
       readerPollVotes, 
       witnessComments, 
-      userTheories 
+      userTheories,
+      offTheRecordGenres,
+      archiveGenres,
+      customThrillerTropes,
+      customResearchTropes,
+      bookAlbums
     } = req.body;
 
-    // Verify passcode if provided
-    if (passcode && passcode.trim() !== db.adminPasscode.trim()) {
+    // Verify passcode or GitHub authenticated clearance
+    const isGithubAuth = !!db.githubAuth;
+    if ((!passcode || passcode.trim() !== db.adminPasscode.trim()) && !isGithubAuth) {
       return res.status(401).json({ success: false, message: 'Unauthorized: Invalid passcode' });
     }
 
@@ -363,6 +467,11 @@ async function startServer() {
     if (readerPollVotes) db.readerPollVotes = readerPollVotes;
     if (witnessComments) db.witnessComments = witnessComments;
     if (userTheories) db.userTheories = userTheories;
+    if (offTheRecordGenres && Array.isArray(offTheRecordGenres)) db.offTheRecordGenres = offTheRecordGenres;
+    if (archiveGenres && Array.isArray(archiveGenres)) db.archiveGenres = archiveGenres;
+    if (customThrillerTropes && Array.isArray(customThrillerTropes)) db.customThrillerTropes = customThrillerTropes;
+    if (customResearchTropes && Array.isArray(customResearchTropes)) db.customResearchTropes = customResearchTropes;
+    if (bookAlbums && Array.isArray(bookAlbums)) db.bookAlbums = bookAlbums;
 
     saveDatabase(db);
     return res.json({ success: true, message: 'State permanently saved across redeployments.' });
@@ -647,6 +756,9 @@ async function startServer() {
         lastGistId: db.githubAuth.lastGistId,
         lastGistUrl: db.githubAuth.lastGistUrl,
         lastSyncedAt: db.githubAuth.lastSyncedAt,
+        repository: db.githubAuth.repository,
+        repositoryUrl: db.githubAuth.repositoryUrl,
+        lastCommitUrl: db.githubAuth.lastCommitUrl,
       } : null,
     });
   });
@@ -715,13 +827,45 @@ async function startServer() {
     res.json({ success: true, message: 'GitHub account disconnected.' });
   });
 
-  // F. Direct Sync / Backup to GitHub Gist
+  // F. Direct Sync / Backup to GitHub (Repository or Gist)
+  // F. Direct Sync / Backup to GitHub (Repository or Gist)
   app.post('/api/github/sync', async (req, res) => {
-    if (!db.githubAuth || !db.githubAuth.token) {
+    const directToken = (req.body?.token && typeof req.body.token === 'string') ? req.body.token.trim() : null;
+    const envToken = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || process.env.GITHUB_PAT || null;
+    const activeToken = directToken || db.githubAuth?.token || envToken;
+
+    if (!activeToken) {
       return res.status(401).json({
         success: false,
-        message: 'No GitHub connection found. Please sign into GitHub or provide a token first.'
+        message: 'No GitHub connection or token found. Please provide a Personal Access Token in the request body, connect in the UI, or set GITHUB_TOKEN.'
       });
+    }
+
+    // Auto-register profile if direct token passed and not already saved
+    if (directToken && (!db.githubAuth || db.githubAuth.token !== directToken)) {
+      try {
+        const userRes = await fetch('https://api.github.com/user', {
+          headers: {
+            'Authorization': `Bearer ${directToken}`,
+            'User-Agent': 'TheMidnightReader-AIStudio',
+            'Accept': 'application/vnd.github.v3+json',
+          }
+        });
+        if (userRes.ok) {
+          const ghUser = await userRes.json() as any;
+          db.githubAuth = {
+            username: ghUser.login,
+            name: ghUser.name || ghUser.login,
+            avatarUrl: ghUser.avatar_url,
+            profileUrl: ghUser.html_url,
+            connectedAt: new Date().toISOString(),
+            token: directToken,
+          };
+          saveDatabase(db);
+        }
+      } catch (err) {
+        console.warn('Could not auto-fetch user profile for direct token:', err);
+      }
     }
 
     try {
@@ -744,8 +888,164 @@ async function startServer() {
         readerPollVotes: db.readerPollVotes,
         witnessComments: db.witnessComments,
         userTheories: db.userTheories,
+        bookAlbums: db.bookAlbums || [],
       }, null, 2);
 
+      // Save locally to public/backup-latest.json
+      try {
+        const backupPath = path.join(process.cwd(), 'public', 'backup-latest.json');
+        fs.writeFileSync(backupPath, backupJson, 'utf-8');
+      } catch (e) {
+        console.warn('Could not write local public/backup-latest.json', e);
+      }
+
+      const syncedAt = new Date().toISOString();
+
+      // 1. Try syncing directly to the user's GitHub repository (matching Midnight Reader)
+      try {
+        let repoFullName = 'themidnightjournalproject-collab/Midnight-Reader-Project-';
+        const reposRes = await fetch('https://api.github.com/user/repos?per_page=100', {
+          headers: {
+            'Authorization': `Bearer ${activeToken}`,
+            'User-Agent': 'TheMidnightReader-AIStudio',
+            'Accept': 'application/vnd.github.v3+json',
+          }
+        });
+
+        if (reposRes.ok) {
+          const userRepos = await reposRes.json() as any[];
+          const match = userRepos.find((r: any) => 
+            r.name.toLowerCase().includes('midnight-reader') || 
+            r.name.toLowerCase().includes('midnight_reader') ||
+            r.name.toLowerCase().includes('midnight')
+          );
+          if (match) {
+            repoFullName = match.full_name;
+          }
+        }
+
+        const [repoOwner, repoName] = repoFullName.split('/');
+
+        // Prepare file payload bundle for GitHub commit
+        const filesToSync: { path: string; contentBuffer: Buffer; commitMessage: string }[] = [];
+
+        // File 1: src/data/initialData.ts (Contains TypeScript constants for non-fiction books & reviews)
+        const initialDataPath = path.join(process.cwd(), 'src', 'data', 'initialData.ts');
+        if (fs.existsSync(initialDataPath)) {
+          filesToSync.push({
+            path: 'src/data/initialData.ts',
+            contentBuffer: fs.readFileSync(initialDataPath),
+            commitMessage: `Update non-fiction ledger & case reviews (Stone Blind, Gray After Dark, Listen For The Lie)`,
+          });
+        }
+
+        // File 2: public/backup-latest.json (Portable JSON state)
+        filesToSync.push({
+          path: 'public/backup-latest.json',
+          contentBuffer: Buffer.from(backupJson, 'utf-8'),
+          commitMessage: `Automated archive sync (${new Date().toLocaleDateString()}) - ${db.reviews.length} cases & ${db.nonFictionBooks.length} non-fiction dossiers`,
+        });
+
+        // File 3: data/journal_store.json (Sanitized database store without plain text tokens)
+        const safeStore = { ...db, githubAuth: db.githubAuth ? { ...db.githubAuth, token: undefined } : null };
+        filesToSync.push({
+          path: 'data/journal_store.json',
+          contentBuffer: Buffer.from(JSON.stringify(safeStore, null, 2), 'utf-8'),
+          commitMessage: `Update persistent journal store with latest non-fiction entries and reviews`,
+        });
+
+        // File 4: Static book cover images from public/covers
+        const coversDir = path.join(process.cwd(), 'public', 'covers');
+        if (fs.existsSync(coversDir)) {
+          const coverFiles = fs.readdirSync(coversDir).filter(f => f.endsWith('.jpg') || f.endsWith('.png'));
+          for (const cf of coverFiles) {
+            const cp = path.join(coversDir, cf);
+            filesToSync.push({
+              path: `public/covers/${cf}`,
+              contentBuffer: fs.readFileSync(cp),
+              commitMessage: `Add verified book cover asset for ${cf}`,
+            });
+          }
+        }
+
+        const committedFiles: { path: string; commitUrl?: string; htmlUrl?: string }[] = [];
+
+        for (const fileItem of filesToSync) {
+          // Check if file exists on GitHub to fetch existing sha
+          let existingSha: string | undefined;
+          try {
+            const getFileRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileItem.path}`, {
+              headers: {
+                'Authorization': `Bearer ${activeToken}`,
+                'User-Agent': 'TheMidnightReader-AIStudio',
+                'Accept': 'application/vnd.github.v3+json',
+              }
+            });
+
+            if (getFileRes.ok) {
+              const fileData = await getFileRes.json() as any;
+              existingSha = fileData.sha;
+            }
+          } catch (getErr) {
+            console.warn(`Could not check SHA for ${fileItem.path}:`, getErr);
+          }
+
+          // Commit/PUT file to GitHub repository
+          const commitRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${fileItem.path}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${activeToken}`,
+              'User-Agent': 'TheMidnightReader-AIStudio',
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              message: fileItem.commitMessage,
+              content: fileItem.contentBuffer.toString('base64'),
+              sha: existingSha,
+            })
+          });
+
+          if (commitRes.ok) {
+            const commitData = await commitRes.json() as any;
+            committedFiles.push({
+              path: fileItem.path,
+              commitUrl: commitData.commit?.html_url,
+              htmlUrl: commitData.content?.html_url || `https://github.com/${repoFullName}/blob/main/${fileItem.path}`,
+            });
+          } else {
+            const errText = await commitRes.text();
+            console.warn(`Failed to commit ${fileItem.path} to GitHub:`, errText);
+          }
+        }
+
+        if (committedFiles.length > 0) {
+          const primaryFile = committedFiles[0];
+          const targetUrl = primaryFile.htmlUrl || `https://github.com/${repoFullName}`;
+          if (db.githubAuth) {
+            db.githubAuth.repository = repoFullName;
+            db.githubAuth.repositoryUrl = `https://github.com/${repoFullName}`;
+            db.githubAuth.lastCommitUrl = primaryFile.commitUrl;
+            db.githubAuth.lastGistUrl = targetUrl;
+            db.githubAuth.lastSyncedAt = syncedAt;
+            saveDatabase(db);
+          }
+
+          return res.json({
+            success: true,
+            message: `Successfully synchronized ${committedFiles.length} files (including non-fiction dossiers & case files) to GitHub repository @${repoFullName}!`,
+            gistUrl: targetUrl,
+            commitUrl: primaryFile.commitUrl,
+            repository: repoFullName,
+            committedFiles,
+            syncedAt,
+          });
+        }
+      } catch (repoErr) {
+        console.warn('Repository sync attempt error, attempting Gist fallback:', repoErr);
+      }
+
+      // 2. Gist fallback if repository write fails or user prefers Gist
       const gistPayload = {
         description: `The Midnight Reader Case Files & Journal Backup (${new Date().toLocaleDateString()})`,
         public: false,
@@ -763,7 +1063,6 @@ async function startServer() {
       let createdGist: any;
 
       if (db.githubAuth.lastGistId) {
-        // Update existing gist
         gistResponse = await fetch(`https://api.github.com/gists/${db.githubAuth.lastGistId}`, {
           method: 'PATCH',
           headers: {
@@ -778,7 +1077,6 @@ async function startServer() {
         if (gistResponse.ok) {
           createdGist = await gistResponse.json();
         } else {
-          // Fallback to creating a new gist if the old one was deleted
           gistResponse = await fetch('https://api.github.com/gists', {
             method: 'POST',
             headers: {
@@ -792,7 +1090,6 @@ async function startServer() {
           createdGist = await gistResponse.json();
         }
       } else {
-        // Create initial gist
         gistResponse = await fetch('https://api.github.com/gists', {
           method: 'POST',
           headers: {
@@ -807,10 +1104,9 @@ async function startServer() {
       }
 
       if (!gistResponse.ok) {
-        throw new Error(createdGist?.message || 'Failed to update GitHub Gist backup.');
+        throw new Error(createdGist?.message || 'Failed to update GitHub backup.');
       }
 
-      const syncedAt = new Date().toISOString();
       db.githubAuth.lastGistId = createdGist.id;
       db.githubAuth.lastGistUrl = createdGist.html_url;
       db.githubAuth.lastSyncedAt = syncedAt;

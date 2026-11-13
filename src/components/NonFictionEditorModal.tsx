@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useJournal, DEFAULT_RESEARCH_TROPES } from '../context/JournalContext';
 import { NonFictionBook, OtherGenre, ALL_OTHER_GENRES, MindsetRatings } from '../types';
-import { X, Save, Plus, Trash2, Calendar, BookOpen, Sparkles, Tag, Check, Undo2 } from 'lucide-react';
+import { X, Save, Plus, Trash2, Calendar, BookOpen, Sparkles, Tag, Check, Undo2, Edit3 } from 'lucide-react';
 import { ImageUploader } from './common/ImageUploader';
 
 const GENRE_OPTIONS = ALL_OTHER_GENRES;
@@ -16,10 +16,20 @@ export const NonFictionEditorModal: React.FC = () => {
     updateNonFictionBook,
     customResearchTropes,
     addCustomResearchTrope,
+    removeCustomResearchTrope,
+    offTheRecordGenres,
+    addOffTheRecordGenre,
+    editOffTheRecordGenre,
+    removeOffTheRecordGenre,
+    allAlbumNames,
   } = useJournal();
 
   const isEditing = Boolean(editingNonFictionBook);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [isAddingNewGenre, setIsAddingNewGenre] = useState(false);
+  const [newGenreInput, setNewGenreInput] = useState('');
+  const [isEditingGenre, setIsEditingGenre] = useState(false);
+  const [editGenreInput, setEditGenreInput] = useState('');
 
   const initialFormState: Omit<NonFictionBook, 'id'> = {
     catalogNumber: '',
@@ -54,6 +64,8 @@ export const NonFictionEditorModal: React.FC = () => {
     tropes: ['Mental Models', 'Character Study'],
     notesScratchpad: [],
     likes: 1,
+    seriesName: '',
+    seriesOrder: undefined,
   };
 
   const [formData, setFormData] = useState<Omit<NonFictionBook, 'id'>>(initialFormState);
@@ -97,6 +109,8 @@ export const NonFictionEditorModal: React.FC = () => {
         tropes: editingNonFictionBook.tropes?.length ? [...editingNonFictionBook.tropes] : (editingNonFictionBook.tags?.length ? [...editingNonFictionBook.tags] : ['Mental Models']),
         notesScratchpad: editingNonFictionBook.notesScratchpad ? [...editingNonFictionBook.notesScratchpad] : [],
         likes: editingNonFictionBook.likes || 1,
+        seriesName: editingNonFictionBook.seriesName || '',
+        seriesOrder: editingNonFictionBook.seriesOrder,
       });
     } else {
       setFormData(initialFormState);
@@ -161,6 +175,8 @@ export const NonFictionEditorModal: React.FC = () => {
       tropes: cleanTropes.length ? cleanTropes : ['Character Study'],
       tags: cleanTropes.length ? cleanTropes : ['Character Study'],
       themes: cleanTropes.length ? cleanTropes : ['Character Study'],
+      seriesName: currentData.seriesName?.trim() || undefined,
+      seriesOrder: currentData.seriesName?.trim() && currentData.seriesOrder ? Number(currentData.seriesOrder) : undefined,
     };
 
     if (isEditing && editingNonFictionBook) {
@@ -380,20 +396,161 @@ export const NonFictionEditorModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold uppercase text-[10px] text-gray-700 mb-1">
-                  Primary Genre / Category *
-                </label>
-                <select
-                  value={formData.genre}
-                  onChange={(e) => setFormData({ ...formData, genre: e.target.value as OtherGenre })}
-                  className="w-full bg-[#fcfaf2] border border-black p-2 text-xs focus:ring-1 focus:ring-black"
-                >
-                  {GENRE_OPTIONS.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold uppercase text-[10px] text-gray-700">
+                    Primary Genre / Category *
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {!isAddingNewGenre && !isEditingGenre && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditGenreInput(formData.genre);
+                            setIsEditingGenre(true);
+                          }}
+                          className="text-[10px] text-gray-600 hover:text-black font-bold uppercase tracking-wider underline cursor-pointer"
+                        >
+                          Rename Genre
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setIsAddingNewGenre(true)}
+                          className="text-[10px] text-[#8b0000] hover:text-black font-bold uppercase tracking-wider underline cursor-pointer"
+                        >
+                          + Add Genre
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {isEditingGenre ? (
+                  <div className="flex items-center gap-1.5 bg-white border-2 border-[#8b0000] p-1 shadow-[2px_2px_0px_0px_rgba(139,0,0,0.2)]">
+                    <input
+                      type="text"
+                      autoFocus
+                      value={editGenreInput}
+                      onChange={(e) => setEditGenreInput(e.target.value)}
+                      placeholder="Rename this genre..."
+                      className="w-full p-1 text-xs border border-gray-300 focus:outline-none focus:border-black"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const clean = editGenreInput.trim();
+                          if (clean && clean !== formData.genre) {
+                            editOffTheRecordGenre(formData.genre, clean);
+                            setFormData((prev) => ({ ...prev, genre: clean as any }));
+                          }
+                          setIsEditingGenre(false);
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const clean = editGenreInput.trim();
+                        if (clean && clean !== formData.genre) {
+                          editOffTheRecordGenre(formData.genre, clean);
+                          setFormData((prev) => ({ ...prev, genre: clean as any }));
+                        }
+                        setIsEditingGenre(false);
+                      }}
+                      className="px-2.5 py-1 bg-[#8b0000] text-white text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors cursor-pointer"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingGenre(false)}
+                      className="px-1.5 text-gray-500 hover:text-black text-xs font-bold cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : !isAddingNewGenre ? (
+                  <div className="flex items-center gap-1.5">
+                    <select
+                      value={formData.genre}
+                      onChange={(e) => setFormData({ ...formData, genre: e.target.value as OtherGenre })}
+                      className="w-full bg-[#fcfaf2] border border-black p-2 text-xs focus:ring-1 focus:ring-black"
+                    >
+                      {Array.from(new Set([formData.genre, ...offTheRecordGenres])).filter(Boolean).map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
+                    {offTheRecordGenres.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const target = formData.genre;
+                          if (!target) return;
+                          if (window.confirm(`Delete genre "${target}" from Off the Record genres?`)) {
+                            removeOffTheRecordGenre(target);
+                            const remaining = offTheRecordGenres.filter((g) => g !== target);
+                            if (remaining.length > 0) {
+                              setFormData((prev) => ({ ...prev, genre: remaining[0] as any }));
+                            }
+                          }
+                        }}
+                        title={`Remove "${formData.genre}" from genres list`}
+                        className="p-2 border border-black bg-white hover:bg-red-50 hover:text-red-600 text-gray-500 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 bg-white border border-black p-1 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                    <input
+                      type="text"
+                      autoFocus
+                      value={newGenreInput}
+                      onChange={(e) => setNewGenreInput(e.target.value)}
+                      placeholder="Type custom genre..."
+                      className="w-full p-1 text-xs border border-gray-300 focus:outline-none focus:border-black"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          const clean = newGenreInput.trim();
+                          if (clean) {
+                            addOffTheRecordGenre(clean);
+                            setFormData((prev) => ({ ...prev, genre: clean as any }));
+                            setNewGenreInput('');
+                            setIsAddingNewGenre(false);
+                          }
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const clean = newGenreInput.trim();
+                        if (clean) {
+                          addOffTheRecordGenre(clean);
+                          setFormData((prev) => ({ ...prev, genre: clean as any }));
+                          setNewGenreInput('');
+                          setIsAddingNewGenre(false);
+                        }
+                      }}
+                      className="px-2.5 py-1 bg-[#8b0000] text-white text-[10px] font-bold uppercase tracking-wider hover:bg-black transition-colors cursor-pointer"
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingNewGenre(false);
+                        setNewGenreInput('');
+                      }}
+                      className="px-1.5 text-gray-500 hover:text-black text-xs font-bold cursor-pointer"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -440,6 +597,45 @@ export const NonFictionEditorModal: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, yearRead: Number(e.target.value) })}
                   placeholder={String(new Date().getFullYear())}
                   className="w-full bg-[#fcfaf2] border border-black p-2 text-xs focus:ring-1 focus:ring-black"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold uppercase text-[10px] text-[#8b0000] mb-1">
+                  Book Album / Series (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={formData.seriesName || ''}
+                  onChange={(e) => setFormData({ ...formData, seriesName: e.target.value })}
+                  list="nf-editor-series-list"
+                  placeholder="e.g. Red Rising, The Housemaid..."
+                  className="w-full bg-[#fcfaf2] border border-black p-2 text-xs font-serif font-bold focus:ring-1 focus:ring-black"
+                />
+                <datalist id="nf-editor-series-list">
+                  {allAlbumNames.map((s) => (
+                    <option key={s} value={s} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div>
+                <label className="block font-bold uppercase text-[10px] text-gray-700 mb-1">
+                  Order # in Album
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  value={formData.seriesOrder ?? ''}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      seriesOrder: e.target.value ? Number(e.target.value) : undefined,
+                    })
+                  }
+                  disabled={!formData.seriesName?.trim()}
+                  placeholder="e.g. 1, 2, 3..."
+                  className="w-full bg-[#fcfaf2] border border-black p-2 text-xs font-mono focus:ring-1 focus:ring-black disabled:bg-gray-100 disabled:opacity-60"
                 />
               </div>
             </div>
@@ -524,23 +720,80 @@ export const NonFictionEditorModal: React.FC = () => {
               Select or create research, literary, and thematic tropes (e.g. Systems Thinking, Dual Timelines, Character Study, Speculative Worldbuilding).
             </p>
 
+            {/* Currently Assigned Tropes & Themes with direct remove button */}
+            {(formData.tropes || []).length > 0 && (
+              <div className="bg-[#faf7f2] border border-black p-2.5">
+                <span className="block text-[10px] font-bold uppercase tracking-wider text-black mb-1.5">
+                  Currently Assigned to this Book (Click × to remove):
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {(formData.tropes || []).map((trope) => (
+                    <span
+                      key={trope}
+                      className="inline-flex items-center gap-1.5 bg-[#8b0000] text-white text-[11px] font-sans font-bold px-2.5 py-1 border border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      <span>{trope}</span>
+                      <button
+                        type="button"
+                        onClick={() => toggleTrope(trope)}
+                        title={`Remove "${trope}" from this book`}
+                        className="text-white hover:text-black hover:bg-white/80 rounded-full w-4 h-4 inline-flex items-center justify-center font-bold text-xs cursor-pointer"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-gray-700">
+              Select or Toggle Tropes / Themes:
+            </span>
+
             {/* Trope Pills */}
             <div className="flex flex-wrap gap-1.5 pt-1">
               {availableTropes.map((trope) => {
                 const isSelected = (formData.tropes || []).includes(trope);
+                const isCustom = (customResearchTropes || []).includes(trope);
+
                 return (
-                  <button
+                  <div
                     key={trope}
-                    type="button"
-                    onClick={() => toggleTrope(trope)}
-                    className={`px-2.5 py-1 text-[11px] font-sans font-bold border transition-all cursor-pointer ${
+                    className={`inline-flex items-center border transition-all ${
                       isSelected
                         ? 'bg-[#8b0000] text-white border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
                         : 'bg-[#faf9f5] text-[#1a1a1a] border-black border-opacity-30 hover:border-black'
                     }`}
                   >
-                    {isSelected ? '✓ ' : '+ '}{trope}
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleTrope(trope)}
+                      className="px-2.5 py-1 text-[11px] font-sans font-bold cursor-pointer"
+                    >
+                      {isSelected ? '✓ ' : '+ '}{trope}
+                    </button>
+                    {isCustom && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm(`Delete custom trope "${trope}" from saved research tropes?`)) {
+                            removeCustomResearchTrope(trope);
+                            if (isSelected) {
+                              toggleTrope(trope);
+                            }
+                          }
+                        }}
+                        title={`Delete custom trope "${trope}" from suggestions`}
+                        className={`px-1.5 py-1 text-xs font-bold border-l cursor-pointer ${
+                          isSelected ? 'border-red-900 hover:text-black hover:bg-white/40' : 'border-gray-300 hover:text-red-700 hover:bg-red-50'
+                        }`}
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
                 );
               })}
             </div>

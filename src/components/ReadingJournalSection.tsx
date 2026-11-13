@@ -14,11 +14,19 @@ import {
   Lightbulb, 
   Brain,
   Layers,
-  ArrowRight
+  ArrowRight,
+  X,
+  Plus,
+  Tag,
+  Trash2
 } from 'lucide-react';
 import { QuickImageModal } from './modals/QuickImageModal';
 import { NonFictionDetailModal } from './NonFictionDetailModal';
 import { NonFictionCard } from './NonFictionCard';
+import { BookAlbumCard } from './BookAlbumCard';
+import { CaseStatusBadge, computeReviewProgressStatus, ReviewProgressStatus } from './common/CaseStatusBadge';
+import { Snowflake, CheckCircle2 } from 'lucide-react';
+import { BookCoverImage } from './common/BookCoverImage';
 
 const THRILLER_GENRES: (Genre | 'All')[] = [
   'All',
@@ -55,14 +63,54 @@ export const ReadingJournalSection: React.FC = () => {
     postLikes,
     userLikedPosts,
     toggleLikePost,
-    toggleLikeNonFictionBook
+    toggleLikeNonFictionBook,
+    offTheRecordGenres,
+    addOffTheRecordGenre,
+    removeOffTheRecordGenre,
+    archiveGenres,
+    addArchiveGenre,
+    removeArchiveGenre,
+    bookAlbums,
+    openAlbumEditor,
+    openAlbumByName
   } = useJournal();
 
   const [categoryFilter, setCategoryFilter] = useState<BookCategoryFilter>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | ReviewProgressStatus>('ALL');
   const [layoutMode, setLayoutMode] = useState<'feed' | 'grid'>('feed');
   const [activeReplaceReview, setActiveReplaceReview] = useState<BookReview | null>(null);
   const [activeReplaceNonFiction, setActiveReplaceNonFiction] = useState<NonFictionBook | null>(null);
   const [activeDetailNonFiction, setActiveDetailNonFiction] = useState<NonFictionBook | null>(null);
+  const [isAddingGenre, setIsAddingGenre] = useState(false);
+  const [newGenreInput, setNewGenreInput] = useState('');
+
+  const handleAddGenre = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = newGenreInput.trim();
+    if (!clean) return;
+    if (categoryFilter === 'NON_FICTION') {
+      addOffTheRecordGenre(clean);
+    } else {
+      addArchiveGenre(clean);
+    }
+    setSelectedGenre(clean as any);
+    setNewGenreInput('');
+    setIsAddingGenre(false);
+  };
+
+  const handleRemoveGenre = (genreToRemove: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm(`Remove genre "${genreToRemove}" from ${categoryFilter === 'NON_FICTION' ? 'Off the Record' : 'Archives'}?`)) {
+      if (categoryFilter === 'NON_FICTION') {
+        removeOffTheRecordGenre(genreToRemove);
+      } else {
+        removeArchiveGenre(genreToRemove);
+      }
+      if (selectedGenre === genreToRemove) {
+        setSelectedGenre('All');
+      }
+    }
+  };
 
   const handleUpdateCardCover = (newUrl: string) => {
     if (activeReplaceReview) {
@@ -149,9 +197,58 @@ export const ReadingJournalSection: React.FC = () => {
         }
       }
 
+      // 3. Review progress status filter ('Active', 'Cold Case', 'Solved')
+      if (statusFilter !== 'ALL') {
+        const itemProgress = computeReviewProgressStatus(item.data);
+        if (itemProgress.status !== statusFilter) return false;
+      }
+
       return true;
     });
-  }, [unifiedItems, selectedGenre, searchQuery]);
+  }, [unifiedItems, selectedGenre, searchQuery, statusFilter]);
+
+  const { visibleAlbums, standaloneFilteredItems } = useMemo(() => {
+    const filteredKeySet = new Set(filteredItems.map((it) => `${it.kind}:${it.id}`));
+    const q = searchQuery.trim().toLowerCase();
+
+    const matchedAlbums = bookAlbums.filter((album) => {
+      const hasMatchingMember = album.items.some((it) => filteredKeySet.has(`${it.kind}:${it.id}`));
+      if (hasMatchingMember) return true;
+      if (
+        album.items.length === 0 &&
+        categoryFilter === 'ALL' &&
+        selectedGenre === 'All' &&
+        statusFilter === 'ALL'
+      ) {
+        if (!q) return true;
+        return (
+          album.name.toLowerCase().includes(q) ||
+          (album.description || '').toLowerCase().includes(q)
+        );
+      }
+      if (
+        q &&
+        categoryFilter === 'ALL' &&
+        selectedGenre === 'All' &&
+        statusFilter === 'ALL' &&
+        (album.name.toLowerCase().includes(q) || (album.description || '').toLowerCase().includes(q))
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    const groupedKeySet = new Set<string>();
+    matchedAlbums.forEach((album) => {
+      album.items.forEach((it) => groupedKeySet.add(`${it.kind}:${it.id}`));
+    });
+
+    const standalone = filteredItems.filter(
+      (item) => !groupedKeySet.has(`${item.kind}:${item.id}`)
+    );
+
+    return { visibleAlbums: matchedAlbums, standaloneFilteredItems: standalone };
+  }, [bookAlbums, filteredItems, categoryFilter, selectedGenre, statusFilter, searchQuery]);
 
   const totalAllBooksCount = reviews.length + nonFictionBooks.length;
 
@@ -256,35 +353,120 @@ export const ReadingJournalSection: React.FC = () => {
         {/* Genre Filter & Layout Controls Ribbon */}
         <div className="flex flex-wrap items-center justify-between gap-3 mt-3 pt-2">
           {/* Genre tabs */}
-          <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-            {(categoryFilter === 'NON_FICTION' 
-              ? (['All', ...ALL_OTHER_GENRES] as string[])
+          <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
+            {/* 'All' button */}
+            <button
+              type="button"
+              onClick={() => setSelectedGenre('All')}
+              className={`text-xs font-sans uppercase font-bold px-2 py-0.5 transition-all ${
+                selectedGenre === 'All'
+                  ? 'bg-black text-white'
+                  : 'text-[#4a4a4a] hover:bg-[#e8e2d8] hover:text-black'
+              }`}
+            >
+              All
+            </button>
+
+            {/* Dynamic Genre Chips with Remove Option */}
+            {(categoryFilter === 'NON_FICTION'
+              ? offTheRecordGenres
               : categoryFilter === 'THRILLER'
-                ? (THRILLER_GENRES as string[])
-                : (['All', 'Psychological Thriller', 'Murder Mystery', 'Domestic Thriller', 'True Crime & Forensics', 'Psychology & Human Nature', 'Philosophy & Mindset'] as string[])
-            ).map((genre) => (
+                ? archiveGenres
+                : Array.from(new Set([...archiveGenres.slice(0, 4), ...offTheRecordGenres.slice(0, 4)]))
+            ).map((genre) => {
+              const isSelected = selectedGenre === genre;
+              return (
+                <div
+                  key={genre}
+                  className={`inline-flex items-center text-xs font-sans uppercase font-bold transition-all border ${
+                    isSelected
+                      ? 'bg-black text-white border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                      : 'bg-white text-[#4a4a4a] border-gray-300 hover:border-black hover:text-black'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGenre(genre as any)}
+                    className="px-2 py-0.5 cursor-pointer"
+                  >
+                    {genre}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => handleRemoveGenre(genre, e)}
+                    title={`Remove "${genre}" genre`}
+                    className={`px-1 py-0.5 text-[11px] border-l cursor-pointer ${
+                      isSelected
+                        ? 'border-neutral-700 text-neutral-400 hover:text-red-300'
+                        : 'border-gray-200 text-gray-400 hover:text-red-600 hover:bg-red-50'
+                    }`}
+                  >
+                    <X size={10} />
+                  </button>
+                </div>
+              );
+            })}
+
+            {/* Add Genre Trigger / Input */}
+            {!isAddingGenre ? (
               <button
-                key={genre}
-                onClick={() => setSelectedGenre(genre as any)}
-                className={`text-xs font-sans uppercase font-bold px-2 py-0.5 transition-all ${
-                  selectedGenre === genre
-                    ? 'bg-black text-white'
-                    : 'text-[#4a4a4a] hover:bg-[#e8e2d8] hover:text-black'
-                }`}
+                type="button"
+                onClick={() => setIsAddingGenre(true)}
+                className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-sans font-bold uppercase tracking-wider text-[#8b0000] border border-dashed border-[#8b0000] hover:bg-[#8b0000] hover:text-white transition-colors cursor-pointer"
+                title={`Add genre to ${categoryFilter === 'NON_FICTION' ? 'Off the Record' : 'Archives'}`}
               >
-                {genre}
+                <Plus size={10} />
+                <span>+ Add Genre</span>
               </button>
-            ))}
+            ) : (
+              <form onSubmit={handleAddGenre} className="inline-flex items-center gap-1 bg-white border border-black p-0.5">
+                <input
+                  type="text"
+                  autoFocus
+                  value={newGenreInput}
+                  onChange={(e) => setNewGenreInput(e.target.value)}
+                  placeholder="New genre..."
+                  className="px-1.5 py-0.5 text-xs font-sans border border-gray-200 focus:outline-none w-28 sm:w-36"
+                />
+                <button
+                  type="submit"
+                  className="px-2 py-0.5 bg-[#8b0000] text-white text-[9px] font-bold uppercase hover:bg-black"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAddingGenre(false);
+                    setNewGenreInput('');
+                  }}
+                  className="px-1 text-gray-500 hover:text-black text-xs font-bold"
+                >
+                  ✕
+                </button>
+              </form>
+            )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            {/* Create Book Album Action */}
+            <button
+              type="button"
+              onClick={() => openAlbumEditor(null)}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-[10px] font-sans font-bold uppercase tracking-wider bg-[#8b0000] hover:bg-black text-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-none transition-all cursor-pointer"
+              title="Create a book album and group books together in reading order"
+            >
+              <Layers size={12} />
+              <span>+ Create Album</span>
+            </button>
+
             {/* View Mode Toggle */}
             <div className="flex items-center border border-black p-0.5 bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
               <button
                 type="button"
                 onClick={() => setLayoutMode('feed')}
                 title="Journal Dispatches View"
-                className={`flex items-center gap-1 px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors ${
+                className={`flex items-center gap-1 px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors cursor-pointer ${
                   layoutMode === 'feed'
                     ? 'bg-black text-white'
                     : 'text-[#4a4a4a] hover:bg-[#e8e2d8] hover:text-black'
@@ -297,7 +479,7 @@ export const ReadingJournalSection: React.FC = () => {
                 type="button"
                 onClick={() => setLayoutMode('grid')}
                 title="Cards Grid View"
-                className={`flex items-center gap-1 px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors ${
+                className={`flex items-center gap-1 px-2 py-1 text-[10px] font-sans font-bold uppercase tracking-wider transition-colors cursor-pointer ${
                   layoutMode === 'grid'
                     ? 'bg-black text-white'
                     : 'text-[#4a4a4a] hover:bg-[#e8e2d8] hover:text-black'
@@ -314,10 +496,76 @@ export const ReadingJournalSection: React.FC = () => {
             </span>
           </div>
         </div>
+
+        {/* Case Status Filter Bar (Active, Cold Case, Solved) */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mt-2 pt-2 border-t border-black border-dashed">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-[#737373] mr-1">
+              Case Status:
+            </span>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('ALL')}
+              className={`text-[10px] font-sans uppercase font-bold px-2 py-0.5 transition-all border ${
+                statusFilter === 'ALL'
+                  ? 'bg-black text-white border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  : 'bg-white text-[#4a4a4a] border-gray-300 hover:border-black hover:text-black'
+              }`}
+            >
+              All Statuses
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('Active')}
+              className={`text-[10px] font-sans uppercase font-bold px-2 py-0.5 transition-all border flex items-center gap-1 ${
+                statusFilter === 'Active'
+                  ? 'bg-[#b45309] text-[#fef3c7] border-[#78350f] shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  : 'bg-[#fffbeb] text-[#92400e] border-[#d97706]/40 hover:border-[#b45309]'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              <span>Active</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('Cold Case')}
+              className={`text-[10px] font-sans uppercase font-bold px-2 py-0.5 transition-all border flex items-center gap-1 ${
+                statusFilter === 'Cold Case'
+                  ? 'bg-[#0f172a] text-[#e2e8f0] border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  : 'bg-[#f1f5f9] text-[#334155] border-[#64748b]/40 hover:border-black'
+              }`}
+            >
+              <Snowflake size={10} className="text-[#38bdf8]" />
+              <span>Cold Case</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('Solved')}
+              className={`text-[10px] font-sans uppercase font-bold px-2 py-0.5 transition-all border flex items-center gap-1 ${
+                statusFilter === 'Solved'
+                  ? 'bg-[#8b0000] text-white border-black shadow-[1px_1px_0px_0px_rgba(0,0,0,1)]'
+                  : 'bg-[#fee2e2]/60 text-[#8b0000] border-[#8b0000]/40 hover:border-[#8b0000]'
+              }`}
+            >
+              <CheckCircle2 size={10} />
+              <span>Solved</span>
+            </button>
+          </div>
+
+          {statusFilter !== 'ALL' && (
+            <button
+              type="button"
+              onClick={() => setStatusFilter('ALL')}
+              className="text-[10px] font-sans font-bold text-[#8b0000] hover:underline"
+            >
+              Clear status filter ✕
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Empty State */}
-      {filteredItems.length === 0 && (
+      {filteredItems.length === 0 && visibleAlbums.length === 0 && (
         <div className="bg-white p-10 text-center border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] my-6">
           <FolderLock size={32} className="mx-auto text-[#737373] mb-3" />
           <h3 className="text-xl font-bold uppercase text-[#1a1a1a] font-serif mb-1">
@@ -339,10 +587,24 @@ export const ReadingJournalSection: React.FC = () => {
         </div>
       )}
 
-      {/* Main Content: Dispatches Feed or Cards Grid */}
+      {/* Main Content: Albums alongside Individual Books (Grid or Dispatches Feed) */}
       {layoutMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredItems.map((item) => {
+          {visibleAlbums.map((album) => (
+            <BookAlbumCard
+              key={`album-${album.id}`}
+              album={album}
+              variant="grid"
+              filterKind={
+                categoryFilter === 'THRILLER'
+                  ? 'thriller'
+                  : categoryFilter === 'NON_FICTION'
+                    ? 'non-fiction'
+                    : 'all'
+              }
+            />
+          ))}
+          {standaloneFilteredItems.map((item) => {
             if (item.kind === 'thriller') {
               const review = item.data;
               const likes = postLikes[review.id] ?? (review.likes || 0);
@@ -363,18 +625,18 @@ export const ReadingJournalSection: React.FC = () => {
                           CASE #{review.caseNumber}
                         </span>
                       </div>
-                      <span className="border border-[#8b0000] text-[#8b0000] font-mono text-[10px] py-0.5 px-1.5 font-bold uppercase rotate-[-2deg]">
-                        {review.status}
-                      </span>
+                      <CaseStatusBadge item={review} size="sm" showProgressDetails />
                     </div>
 
                     <div className="flex gap-3 items-start mb-3">
                       <div className="relative shrink-0 w-16 h-22 bg-white border border-black p-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group/cover">
-                        <img
+                        <BookCoverImage
                           src={review.coverImage}
+                          title={review.title}
+                          author={review.author}
+                          genre={review.genre}
                           alt={review.title}
                           className="w-full h-full object-cover grayscale-[15%] contrast-[105%]"
-                          referrerPolicy="no-referrer"
                         />
                         {isAdminUnlocked && (
                           <button
@@ -392,6 +654,22 @@ export const ReadingJournalSection: React.FC = () => {
                       </div>
 
                       <div className="flex-1 min-w-0">
+                        {review.seriesName && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openAlbumByName(review.seriesName!);
+                            }}
+                            className="inline-flex items-center gap-1 mb-1 px-1.5 py-0.5 bg-white hover:bg-black hover:text-white border border-black text-[9px] font-mono font-bold uppercase tracking-wider text-[#1a1a1a] transition-colors cursor-pointer"
+                          >
+                            <Layers size={10} className="text-[#8b0000]" />
+                            <span>
+                              {review.seriesName}
+                              {review.seriesOrder ? ` · Book ${review.seriesOrder}` : ''}
+                            </span>
+                          </button>
+                        )}
                         <h3 
                           onClick={() => {
                             setSelectedReview(review);
@@ -404,6 +682,23 @@ export const ReadingJournalSection: React.FC = () => {
                         <p className="font-serif text-xs text-[#4a4a4a] italic">
                           By {review.author} • {review.pages} Pages
                         </p>
+                        {review.currentPage && review.pages && review.currentPage < review.pages && (
+                          <div className="mt-1.5 bg-[#fef3c7] border border-[#d97706] p-1.5 space-y-1">
+                            <div className="flex justify-between text-[9px] font-mono font-bold text-[#92400e]">
+                              <span className="flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                Active Sleuthing
+                              </span>
+                              <span>{review.currentPage}/{review.pages} p. ({Math.round((review.currentPage / review.pages) * 100)}%)</span>
+                            </div>
+                            <div className="w-full bg-white h-1 border border-[#d97706] overflow-hidden">
+                              <div
+                                className="bg-[#d97706] h-full"
+                                style={{ width: `${Math.min(100, Math.round((review.currentPage / review.pages) * 100))}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -509,9 +804,23 @@ export const ReadingJournalSection: React.FC = () => {
           })}
         </div>
       ) : (
-        /* Editorial Newspaper Articles Feed */
+        /* Editorial Newspaper Articles Feed (Albums alongside Individual Books) */
         <div className="space-y-8">
-          {filteredItems.map((item) => {
+          {visibleAlbums.map((album) => (
+            <BookAlbumCard
+              key={`album-feed-${album.id}`}
+              album={album}
+              variant="feed"
+              filterKind={
+                categoryFilter === 'THRILLER'
+                  ? 'thriller'
+                  : categoryFilter === 'NON_FICTION'
+                    ? 'non-fiction'
+                    : 'all'
+              }
+            />
+          ))}
+          {standaloneFilteredItems.map((item) => {
             if (item.kind === 'thriller') {
               const review = item.data;
               return (
@@ -550,9 +859,7 @@ export const ReadingJournalSection: React.FC = () => {
                           <span>Edit</span>
                         </button>
                       )}
-                      <span className="bg-black text-white text-[10px] font-sans font-bold uppercase px-2 py-0.5 tracking-wider">
-                        {review.status}
-                      </span>
+                      <CaseStatusBadge item={review} size="md" showProgressDetails />
                     </div>
                   </div>
 
@@ -562,11 +869,13 @@ export const ReadingJournalSection: React.FC = () => {
                     {/* Left Column: Book Photo & Star ratings */}
                     <div className="md:col-span-3 flex flex-col items-center md:items-start">
                       <div className="relative p-1 bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rotate-[-1deg] group-hover:rotate-0 transition-transform">
-                        <img
+                        <BookCoverImage
                           src={review.coverImage}
+                          title={review.title}
+                          author={review.author}
+                          genre={review.genre}
                           alt={review.title}
                           className="w-32 sm:w-36 h-48 object-cover grayscale-[15%]"
-                          referrerPolicy="no-referrer"
                         />
                         <span className="absolute bottom-1 right-1 font-mono text-[9px] bg-black text-white px-1 font-bold">
                           EVID. #{review.caseNumber}
@@ -586,6 +895,19 @@ export const ReadingJournalSection: React.FC = () => {
                     {/* Right Column: Title, Quote, Review Excerpt, What I thought */}
                     <div className="md:col-span-9 space-y-4">
                       <div>
+                        {review.seriesName && (
+                          <button
+                            type="button"
+                            onClick={() => openAlbumByName(review.seriesName!)}
+                            className="inline-flex items-center gap-1 mb-1.5 px-2 py-0.5 bg-[#f5f2ed] hover:bg-black hover:text-white border border-black text-[10px] font-mono font-bold uppercase tracking-wider text-[#1a1a1a] transition-colors cursor-pointer"
+                          >
+                            <Layers size={11} className="text-[#8b0000]" />
+                            <span>
+                              SERIES: {review.seriesName}
+                              {review.seriesOrder ? ` · BOOK ${review.seriesOrder}` : ''}
+                            </span>
+                          </button>
+                        )}
                         <h3 
                           onClick={() => setSelectedReview(review)}
                           className="text-2xl sm:text-3xl font-black text-[#1a1a1a] hover:text-[#8b0000] cursor-pointer transition-colors leading-tight font-serif uppercase tracking-tight"
@@ -707,11 +1029,13 @@ export const ReadingJournalSection: React.FC = () => {
                     {/* Left Column: Book Photo & Ratings */}
                     <div className="md:col-span-3 flex flex-col items-center md:items-start">
                       <div className="relative p-1 bg-white border-2 border-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] rotate-[-1deg] group-hover:rotate-0 transition-transform group/cover">
-                        <img
+                        <BookCoverImage
                           src={book.coverImage || book.coverUrl}
+                          title={book.title}
+                          author={book.author}
+                          genre={book.genre}
                           alt={book.title}
                           className="w-32 sm:w-36 h-48 object-cover contrast-[105%]"
-                          referrerPolicy="no-referrer"
                         />
                         {isAdminUnlocked && (
                           <button
@@ -744,6 +1068,19 @@ export const ReadingJournalSection: React.FC = () => {
                     {/* Right Column */}
                     <div className="md:col-span-9 space-y-4">
                       <div>
+                        {book.seriesName && (
+                          <button
+                            type="button"
+                            onClick={() => openAlbumByName(book.seriesName!)}
+                            className="inline-flex items-center gap-1 mb-1.5 px-2 py-0.5 bg-white hover:bg-black hover:text-white border border-black text-[10px] font-mono font-bold uppercase tracking-wider text-[#1a1a1a] transition-colors cursor-pointer"
+                          >
+                            <Layers size={11} className="text-[#8b0000]" />
+                            <span>
+                              SERIES: {book.seriesName}
+                              {book.seriesOrder ? ` · BOOK ${book.seriesOrder}` : ''}
+                            </span>
+                          </button>
+                        )}
                         <h3 
                           onClick={() => setActiveDetailNonFiction(book)}
                           className="text-2xl sm:text-3xl font-black text-[#1a1a1a] hover:text-[#8b0000] cursor-pointer transition-colors leading-tight font-serif uppercase tracking-tight"
@@ -824,6 +1161,7 @@ export const ReadingJournalSection: React.FC = () => {
         <NonFictionDetailModal
           book={activeDetailNonFiction}
           onClose={() => setActiveDetailNonFiction(null)}
+          onSelectBook={(b) => setActiveDetailNonFiction(b)}
         />
       )}
 

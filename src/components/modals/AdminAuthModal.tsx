@@ -89,8 +89,8 @@ export const AdminAuthModal: React.FC = () => {
       setSuccessMsg('Passcode successfully changed and permanently saved across redeployments!');
       setIsSubmitting(false);
       setTimeout(() => setSuccessMsg(''), 4000);
-    } catch {
-      setErrorMsg('Failed to update passcode on server.');
+    } catch (err: any) {
+      setErrorMsg(err?.message || 'Failed to update passcode on server.');
       setIsSubmitting(false);
     }
   };
@@ -144,7 +144,7 @@ export const AdminAuthModal: React.FC = () => {
           <div className="flex items-center justify-between border-b-2 border-black pb-3">
             <div>
               <h3 className="font-serif text-xl font-bold uppercase text-[#1a1a1a]">
-                EDITORIAL CLEARANCE
+                INVESTIGATOR MODE CLEARANCE
               </h3>
               <p className="font-serif text-xs italic text-[#4a4a4a]">
                 Controls editing permissions across all book reviews and dossier files.
@@ -225,7 +225,7 @@ export const AdminAuthModal: React.FC = () => {
                   disabled={isSubmitting}
                   className="px-5 py-2 bg-[#8b0000] text-white font-sans text-xs font-bold uppercase tracking-wider shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:bg-black transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Verifying...' : 'Unlock Editor Privileges'}
+                  {isSubmitting ? 'Verifying...' : 'Unlock Investigator Mode'}
                 </button>
               </div>
 
